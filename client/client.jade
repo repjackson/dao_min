@@ -15,13 +15,11 @@ head
 
     script(src='https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js')
     script(src='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js')
-    //- script(src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js")
 
     
 template(name='layout')
     +nav
     +yield
-    +footer
 
 template(name='mlayout')
     +yield
@@ -42,15 +40,3 @@ template(name='not_found')
         a.ui.button(href="/") 
             +i name='home' classes='ui inline mini image'
             |home
-
-
-
-template(name='shortcut_modal')
-    .ui.shortcut.modal
-        .ui.header keyboard shortcuts
-        .content
-            .ui.large.list
-                each shortcuts
-                    .item 
-                        .header #{combo}
-                        .content #{action}
