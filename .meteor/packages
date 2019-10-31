@@ -23,7 +23,6 @@ dburles:collection-helpers
 accounts-password@1.5.1
 shell-server@0.4.0
 accounts-base@1.4.3
-zimme:active-route
 lepozepo:cloudinary
 momentjs:moment
 froala:editor-reactive@=2.4.2
@@ -36,10 +35,6 @@ underscore@1.0.10
 coffeescript
 ecmascript@0.12.4
 reywood:publish-composite
-pascoual:pdfkitx
-lookback:emails
 percolate:synced-cron
 flowkey:hotkeys
 modules@0.13.0
-kevohagan:sweetalert
-mrgalaxy:stripe

@@ -12,10 +12,10 @@ body {
 }
 
 /* .ui.image:not(.avatar), .label,  img:not(.avatar) { */
-/* .ui.image, .label,  img:not(.avatar) {
+img {
     filter: invert(1) !important;
 
-} */
+}
 .spacer {
   height: 10px;
 }
