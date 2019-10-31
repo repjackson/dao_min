@@ -1,0 +1,234 @@
+template(name='school_edit_layout')
+    +nav
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column 
+                    .ui.header 
+                        small editing 
+                        div
+                        strong #{title}
+                        div
+                        small school
+                    a.ui.icon.fluid.button(href="/school/#{_id}" title='save')
+                        i.checkmark.green.large.icon
+                        //- |Save
+                    //- if is_admin
+                    .ui.vertical.fluid.pointing.large.menu
+                        a.item(href="/school/#{_id}/edit/info" class="{{isActiveRoute regex='school_edit_info'}}") 
+                            |info
+                            i.info.icon
+                        a.item(href="/school/#{_id}/edit/settings" class="{{isActiveRoute regex='school_edit_settings'}}") 
+                            |settings
+                            i.cog.icon
+                        //- a.item(href="/school/#{_id}/edit/features" class="{{isActiveRoute regex='school_edit_features'}}")
+                        //-     |features
+                        //-     i.th.icon                    
+                    .ui.vertical.large.fluid.pointing.large.menu
+                        a.disabled.item(href="/school/#{current_doc._id}/edit/files" class="{{isActiveRoute regex='school_edit_files'}}")
+                            |files
+                            i.file.icon
+                        a.disabled.item(href="/school/#{current_doc._id}/edit/debits" class="{{isActiveRoute regex='school_edit_debits'}}")
+                            |debits
+                            i.minus.icon
+                        a.disabled.item(href="/school/#{current_doc._id}/edit/credits" class="{{isActiveRoute regex='school_edit_credits'}}")
+                            |credits
+                            i.plus.icon
+                        a.disabled.item(href="/school/#{current_doc._id}/edit/shop" class="{{isActiveRoute regex='school_edit_shop'}}")
+                            |shop
+                            i.shop.icon
+                        a.disabled.item(href="/school/#{current_doc._id}/edit/students" class="{{isActiveRoute regex='school_edit_students'}}")
+                            |students
+                            i.users.icon
+                    //- .ui.vertical.large.fluid.pointing.menu
+                    //-     each enabled_features
+                    //-         a.disabled.item(href="/school/#{current_doc._id}/edit/f/#{slug}")
+                    //-             |#{title}
+                    //-             i.icon(class=icon)
+                .twelve.wide.column
+                    +yield
+
+template(name='school_edit_settings')
+    .ui.header 
+        i.cog.icon
+        |settings
+    .ui.one.column.grid
+        //- if is_admin 
+        .column
+            +boolean_edit key='allow_sponsorship' label='allow sponsorships' direct=true
+            +boolean_edit key='published' label='published' icon='eye' direct=true
+            +boolean_edit key='private' label='private' icon='invisible' direct=true
+            if private
+                +multi_user_edit key='visible_user_ids' label='visible to users' icon='users' direct=true
+            .ui.orange.button.remove_school
+                i.remove.icon
+                |remove school
+
+
+template(name='school_edit_info')
+    .ui.header 
+        i.info.icon
+        |info
+    .ui.two.column.grid
+        .column
+            +text_edit key='title' label='school title' direct=true
+            +text_edit key='principal_name' label='principals name' placeholder='enter your name' tooltip='examples: john smith' direct=true
+            +image_edit key='image_id' label='image' direct=true
+        .column
+            +textarea_edit key='description' label='description' direct=true
+            +array_edit key='tags' label='tags' icon='tags' direct=true
+            div
+            //- +boolean_edit key='phone_exists' label='phone' icon='phone' direct=true
+            //- if phone_exists 
+            //-     +phone_edit key='phone_number' label='phone number' direct=true
+            //- div
+            //- +boolean_edit key='address_exists' label='address' icon='address' direct=true
+            //- if address_exists 
+            //-     +text_edit key='address' label='address' direct=true
+            //-     +array_edit key='location_tags' label='location tags' direct=true
+            //- div
+            //- +boolean_edit key='hours_exist' label='hours' icon='clock' direct=true
+            //- if hours_exist 
+            //-     +text_edit key='hours' label='hours' direct=true
+            //-     +array_edit key='availability_tags' label='availability tags' direct=true
+            if is_admin
+                +teacher_selector
+
+template(name='school_edit_students')                 
+    +student_selector
+
+template(name='school_edit_credits')
+    .ui.large.header 
+        i.plus.icon
+        |credits
+    a.ui.button(href="/school/#{_id}/edit/templates" class="{{isActiveRoute regex='school_edit_templates'}}")
+        i.download.icon
+        |templates
+    .ui.stackable.grid
+        .eight.wide.column
+            .ui.small.header from template
+            .ui.fluid.vertical.pointing.menu
+                each template_credit_types
+                    +credit_menu_item
+            div
+            .ui.small.inline.header custom
+            .ui.icon.button.add_credit_type
+                i.plus.icon
+            .ui.fluid.vertical.pointing.menu
+                each custom_credit_types
+                    +credit_menu_item
+        .eight.wide.column
+            div
+            with selected_credit
+                +transaction
+
+
+template(name='school_edit_shop')       
+    .ui.large.header 
+        i.cart.icon
+        |shop edit
+template(name='school_edit_debits')       
+    .ui.large.header 
+        i.chevron.up.icon
+        |debits
+    a.ui.button(href="/school/#{current_doc._id}/edit/templates" class="{{isActiveRoute regex='school_edit_templates'}}")
+        i.download.icon
+        |templates
+
+    .ui.stackable.grid
+        .row
+            .eight.wide.column
+                .ui.small.header from template
+                .ui.fluid.vertical.pointing.menu
+                    each template_debit_types
+                        +debit_menu_item
+                div
+                .ui.small.inline.header custom
+                .ui.icon.button.add_debit_type
+                    i.plus.icon
+                .ui.fluid.vertical.pointing.menu
+                    each custom_debit_types
+                        +debit_menu_item
+            .eight.wide.column
+                with selected_debit
+                    +transaction
+
+
+
+
+
+
+template(name='school_edit_templates')       
+    .ui.large.header 
+        i.clone.icon
+        |templates
+    .ui.stackable.grid
+        .row
+            .eight.wide.column
+                .ui.header my templates
+                .ui.button.generate_from_current generate template from current structure
+                .ui.fluid.vertical.pointing.menu
+                    each my_transaction_templates
+                        a.item.select_template(class=template_class) 
+                            |#{title}
+                .ui.header template marketplace
+                .ui.fluid.vertical.pointing.menu
+                    each transaction_templates
+                        a.item.select_template(class=template_class) 
+                            |#{title}
+            .eight.wide.column
+                with selected_template
+                    +template
+
+
+template(name='school_edit_features')       
+    .ui.large.inline.header 
+        i.th.icon
+        |features
+    if is_dev
+        .ui.icon.button.add_feature
+            i.plus.icon
+    .ui.stackable.grid
+        .row
+            .eight.wide.column
+                .ui.header
+                    small current monthly bill 
+                    |$#{school_monthly_bill}/month
+        .row
+            .seven.wide.column
+                .ui.small.header enabled
+                .ui.fluid.vertical.pointing.menu
+                    each enabled_features
+                        +feature_menu_item
+                div
+                .ui.small.inline.header available
+                .ui.fluid.vertical.pointing.menu
+                    each disabled_features
+                        +feature_menu_item
+            .nine.wide.column
+                with selected_feature
+                    +feature
+
+
+
+template(name='school_edit_feature')
+    with current_feature
+        .ui.header  
+            if icon 
+                i.icon(class=icon)
+            |#{title}
+        +Template.dynamic template=feature_edit_template
+
+
+
+template(name='school_edit_files')
+    .ui.header file editing
+    //- each file_links
+    //- each mmm_files
+    //-     .ui.button.toggle
+    +link_edit key='link1' label='link 1' direct=true     
+    +link_edit key='link2' label='link 2' direct=true     
+    +link_edit key='link3' label='link 3' direct=true     
+    +link_edit key='link4' label='link 4' direct=true     
+    +link_edit key='link5' label='link 5' direct=true     
+    +link_edit key='link6' label='link 6' direct=true     

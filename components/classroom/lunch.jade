@@ -1,0 +1,49 @@
+template(name='classroom_lunch_small')
+    .ui.inline.header lunch
+    a.ui.button(href="/classroom/#{_id}/lunch")
+        i.external.icon
+        |full 
+    div
+    each classroom_students
+        unless lunch_chosen
+            .ui.segment
+                img.ui.mini.inline.image(src="{{c.url profile_image_id width=300 height=300 gravity='face' crop='fill'}}")
+                .ui.inline.header #{name}
+                .ui.labeled.icon.basic.large.button.choose_home
+                    i.home.icon
+                    |home 
+                    span.ui.red.text $-3
+                .ui.labeled.icon.basic.large.button.choose_cafeteria
+                    i.food.icon
+                    |cafeteria
+                    span.ui.red.text $-5
+
+
+
+template(name='classroom_lunch')        
+    .ui.padded.stackable.grid
+        .row
+            .four.wide.column
+                .ui.center.aligned.large.button.back_to_classroom
+                    i.chevron.left.icon
+                    |#{current_doc.title}
+            .eight.wide.column
+                .ui.center.aligned.large.header 
+                    i.food.icon
+                    |lunch
+    .ui.four.stackable.cards
+        each classroom_students
+            unless lunch_chosen
+                .ui.card
+                    img.ui.image(src="{{c.url profile_image_id width=300 height=300 gravity='face' crop='fill'}}")
+                    .content
+                        .ui.header #{name}
+                        .ui.huge.labeled.icon.fluid.basic.button.choose_home
+                            i.home.icon
+                            |home 
+                            span.ui.red.text $-3
+                        .spacer
+                        .ui.huge.labeled.icon.fluid.basic.button.choose_cafeteria
+                            i.food.icon
+                            |cafeteria
+                            span.ui.red.text $-5c

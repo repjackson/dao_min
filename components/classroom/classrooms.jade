@@ -1,0 +1,139 @@
+template(name='classrooms')
+    .ui.stackable.padded.grid
+        .row
+            .four.wide.column
+                .ui.inline.header 
+                    i.users.icon
+                    |classrooms
+                if currentUser
+                    .ui.icon.button.add_classroom(title='add classroom')
+                        //- +i name='plus' classes='ui mini inline image'
+                        i.green.large.plus.icon
+                        //- |add classroom
+                .spacer
+                if currentUser
+                    .ui.button mine
+                    .ui.button all
+                div
+                +classroom_cloud
+            .twelve.wide.column
+                .filter_row.ui.basic.segment(class=loading_class)
+                    .ui.inline.small.grey.header
+                        |sort by
+                    .ui.compact.small.menu
+                        .ui.simple.dropdown.item
+                            strong #{current_delta.sort_key}
+                            i.dropdown.icon
+                            .menu
+                                each sortable_fields
+                                    .item.set_sort_key 
+                                        //- +ismall name=icon
+                                        |#{title}
+                    //- .ui.compact.icon.button.set_sort_direction
+                    //-     if sorting_up
+                    //-         //- +ismall name='generic-sorting-2'
+                    //-         i.sort.amount.down.icon
+                    //-     else
+                    //-         //- +ismall name='generic-sorting'
+                    //-         i.sort.amount.up.icon
+                    //- .ui.compact.button.set_sort_direction
+                    //-     |#{current_delta.sort_direction}
+                    //- &nbsp;
+                    //- &nbsp;
+                    //- .ui.inline.small.grey.header
+                    //-     |limit
+                    //- .ui.compact.small.menu
+                    //-     .ui.simple.dropdown.item
+                    //-         strong #{current_delta.limit}
+                    //-         i.dropdown.icon
+                    //-         .menu
+                    //-             +set_limit amount=1
+                    //-             +set_limit amount=5
+                    //-             +set_limit amount=10
+                    //-             +set_limit amount=20
+                    //-             +set_limit amount=50
+                
+                    //- .ui.compact.small.menu
+                    //-     .ui.simple.dropdown.item
+                    //-         strong all
+                    //-         i.dropdown.icon
+                    //-         .menu
+                    //-             .item vrain 
+                    //-             .item vrain 
+                    //-             .item vrain 
+                    //-             .item vrain 
+                    //-             .item vrain 
+                
+                each classrooms
+                    +classroom_card_template
+
+template(name='classroom_cloud')
+    .ui.hidden.divider
+    .ui.grey.small.header 
+        i.school.icon
+        |schools    
+    if selected_school_id
+        with selected_school
+            .unselect_school.ui.active.circular.button
+                strong #{title}
+    else 
+        each schools
+            .ui.compact.circular.button.select_school 
+                strong #{title}
+    .spacer
+    .ui.grey.small.header 
+        i.tags.icon
+        |tags    
+    if selected_classroom_tags
+        #clear_classroom_tags.ui.active.icon.circular.button
+            i.remove.icon
+        each selected_classroom_tags
+            .unselect_classroom_tag.ui.active.circular.button
+                strong #{this}
+    each all_classroom_tags
+        .ui.compact.circular.button.select_classroom_tag(class=cloud_tag_class) 
+            strong #{this.name}
+    .spacer
+    .ui.small.grey.header 
+        i.marker.icon
+        |location    
+    if selected_classroom_location_tags
+        #clear_classroom_location_tags.ui.active.icon.circular.button
+            i.remove.icon
+        each selected_classroom_location_tags
+            .unselect_classroom_location_tag.ui.active.circular.button
+                strong #{this}
+    each all_classroom_location_tags
+        .ui.compact.circular.button.select_classroom_location_tag(class=cloud_tag_class) 
+            strong #{this.name}
+
+
+
+
+
+
+template(name='classroom_card_template')
+    .ui.segment.stackable.grid
+        .four.wide.column
+            a(href="/classroom/#{_id}")
+                img.ui.tiny.image(src="{{c.url image_id crop='lpad'}}")
+        .eight.wide.column
+            a.ui.header(href="/classroom/#{_id}" title='balance') #{title} #{school_name}
+            .content
+            each tags
+                .ui.label #{this}
+            .ui.green.inline.header $#{csd.classroom_balance}
+            .ui.green.inline.small.header(title='income') ($#{csd.total_credit_amount}
+            .ui.red.inline.small.header(title='expenses') / -$#{csd.total_debit_amount})
+            div
+            each classroom_students
+                if profile_image_id
+                    img.ui.avatar.image(src="{{c.url profile_image_id}}" title=username)
+                else 
+                    i.user.icon
+            a.ui.header(href="/classroom/#{_id}")
+                |view 
+                i.right.chevron.icon
+        .four.wide.column
+            with classroom_school
+                .ui.header #{title} #{company_name}

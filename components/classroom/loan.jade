@@ -1,0 +1,154 @@
+template(name='classroom_loans')
+    .ui.stackable.padded.grid
+        .row
+            .sixteen.wide.column
+                .ui.inline.header 
+                    +i name='debt'
+                    |loans
+                .ui.button.new_loan
+                    +i name='plus' classes='ui inline mini image'
+                    |new loan    
+                .ui.hidden.divider
+                .ui.stackable.cards
+                    each loans
+                        +loan_card
+
+template(name='loan_card')
+    .ui.card
+        .content
+            .ui.header #{when}
+            +single_user_view key='name' label='name' icon='title' direct=true
+            +text_view key='employer' label='employer' icon='business' direct=true
+            +text_view key='position' label='position' icon='manager' direct=true
+            +number_view key='amount_requested' label='amount requested' icon='money' direct=true
+            +textarea_view key='loan_reason' label='why do you need the loan now?' icon='money' direct=true
+            +boolean_view key='had_loan_before' label='ever had a loan before?' direct=true
+            div
+            if had_loan_before
+                +number_view key='previous_loan_amount' label='how much?' direct=true
+                +boolean_view key='late_payments' label='ever had late payments?' direct=true
+                +textarea_view key='previous_loan_reason' label='why did you need the loan?' direct=true
+            +textarea_view key='office_notes' label='for office use only' icon='user-shield' direct=true
+            +number_view key='approved_interest_rate' label='approved interest rate' icon='percentage' direct=true
+            a.ui.fluid.button(href="/classroom/#{current_doc._id}/loan/#{_id}/view")
+                |view details
+                i.right.arrow.icon
+
+
+template(name='loan_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column 
+                    .ui.header 
+                        i.pencil.icon
+                        | edit '#{title}' loan
+                    a.ui.big.fluid.button(href="/classroom/#{current_doc._id}/loan/#{_id}/view" title='save')
+                        i.checkmark.large.green.icon
+                        |save
+                    +remove_button
+                .twelve.wide.column 
+                    +single_user_edit key='name' label='name' icon='title' direct=true
+                    +text_edit key='employer' label='employer' icon='business' direct=true
+                    +text_edit key='position' label='position' icon='manager' direct=true
+                    +number_edit key='amount_requested' label='amount requested' icon='money' direct=true
+                    +textarea_edit key='loan_reason' label='why do you need the loan now?' icon='money' direct=true
+                    +boolean_edit key='had_loan_before' label='ever had a loan before?' direct=true
+                    div
+                    if had_loan_before
+                        +number_edit key='previous_loan_amount' label='how much?' direct=true
+                        +boolean_edit key='late_payments' label='ever had late payments?' direct=true
+                        +textarea_edit key='previous_loan_reason' label='why did you need the loan?' direct=true
+                    +textarea_edit key='office_notes' label='for office use only' icon='user-shield' direct=true
+                    +number_edit key='approved_interest_rate' label='approved interest rate' icon='percentage' direct=true
+
+
+
+
+
+template(name='loan_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column
+                    a.ui.small.fluid.button(href="/classroom/#{current_doc._id}/loans")
+                        i.chevron.left.icon
+                        +i name='debt' classes='ui avatar image'
+                        |loans
+                    .ui.header loan view 
+                    +image_view key='loan_image_id' label='image' direct=true
+                    a.ui.fluid.button(href="/classroom/#{current_doc._id}/loan/#{_id}/edit")
+                        i.pencil.icon
+                        |edit
+                .twelve.wide.column
+                    .ui.header #{title}
+                    +single_user_view key='name' label='name' icon='title' direct=true
+                    div
+                    +text_view key='employer' label='employer' icon='business' direct=true
+                    div
+                    +text_view key='position' label='position' icon='manager' direct=true
+                    div
+                    +number_view key='amount_requested' label='amount requested' icon='money' direct=true
+                    div
+                    +textarea_view key='loan_reason' label='why do you need the loan now?' icon='money' direct=true
+                    +boolean_view key='had_loan_before' label='ever had a loan before?' direct=true
+                    div
+                    if had_loan_before
+                        +number_view key='previous_loan_amount' label='how much?' direct=true
+                        +boolean_view key='late_payments' label='ever had late payments?' direct=true
+                        +textarea_view key='previous_loan_reason' label='why did you need the loan?' direct=true
+                    +textarea_view key='office_notes' label='for office use only' icon='user-shield' direct=true
+                    +number_view key='approved_interest_rate' label='approved interest rate' icon='percentage' direct=true
+                    div
+                    +comments
+                    
+
+
+template(name='loan_stats')
+    //- .ui.accordion
+    //-     .title
+    .ui.header.refresh_loan_stats
+        i.line.chart.icon
+        |stats
+    //- i.dropdown.icon
+    //- .content
+    .ui.big.list
+        .item #{views} views
+        .item #{reservation_count} reservations
+        .item #{total_earnings}c/#{total_loan_hours}hrs total
+        .item #{average_loan_cost}c / #{average_loan_duration}hrs avg loan
+        //- .item loan ranking # reservations
+        //- .item loan ranking $ earned
+        //- .item # different renters
+        //- .item avg daily earnings
+        //- .item avg weekly earnings
+        //- .item avg monthly earnings
+        //- .item biggest renter
+        //- .item predicted payback duration 
+        //- .item predicted payback date 
+
+    //-     //- .ui.header res slot exists
+    //-     +reservation_slot_template
+    //- else
+    //-     if is_product_author
+    //-         .ui.button.new_slot
+    //-             |new slot
+        
+
+
+template(name='user_loans')
+    +i name='debt' classes='ui inline image'
+    .ui.inline.header loans
+    .ui.button.apply apply for new loan
+    each user_loans
+        +user_loan
+
+template(name='user_loan')
+    //- .ui.header #{when}
+    .ui.segment
+        +single_user_view key='name' label='name' icon='title' direct=true
+        +text_view key='employer' label='employer' icon='business' direct=true
+        +text_view key='position' label='position' icon='manager' direct=true
+        +number_view key='amount_requested' label='amount requested' icon='money' direct=true
+        +textarea_view key='loan_reason' label='reason' icon='money' direct=true
+        +boolean_view key='had_loan_before' label='ever had a loan before?' direct=true
