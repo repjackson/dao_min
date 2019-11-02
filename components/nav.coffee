@@ -6,6 +6,11 @@ if Meteor.isClient
 
     Template.nav.helpers
     Template.nav.events
+        'click .add_doc': ->
+            new_id =
+                Docs.insert
+                    model:'post'
+            Router.go "/m/post/#{new_id}/edit"
         'click #logout': ->
             Session.set 'logging_out', true
             Meteor.logout ->

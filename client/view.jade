@@ -18,7 +18,7 @@ template(name='doc_match')
             if body
                 .ui.basic.segment {{nl2br body}}
             each tags
-                .ui.small.label(class=matching_tag_class) #{this}
+                .ui.label(class=matching_tag_class) #{this}
             //- +author_info
 
 

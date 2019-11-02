@@ -15,39 +15,14 @@ Router.onBeforeAction(force_loggedin, {
   except: [
     'register'
     'login'
-    'home'
-    'page'
     'delta'
-    'sponsorship'
-    'team'
-    'questions'
-    'tests'
-    'classrooms'
-    'choose_persona'
-    'new_teacher'
-    'choose_personas'
-    'student_connect'
-    'parent_connect'
-    'new_student'
-    'new_business'
-    'classroom_view'
-    'contact'
-    'school_view'
-    'parents'
-    'donate'
-    'teachers'
-    'shop'
-    'schools'
-    'donors'
     'forgot_password'
     'reset_password'
+    'home'
     'doc_view'
     'verify-email'
-    'download_rules_pdf'
   ]
 });
-
-Router.route "/add_guest/:new_guest_id", -> @render 'add_guest'
 
 Router.route '/inbox', -> @render 'inbox'
 Router.route '/stats', -> @render 'stats'
@@ -110,9 +85,9 @@ Router.route '/download_rules_pdf/:username', (->
     ), name: 'download_rules_pdf'
 
 
-Router.route '/', -> @redirect '/m/post'
+# Router.route '/', -> @redirect '/m/post'
 # Router.route '/', -> @redirect "/user/#{Meteor.user().username}"
-# Router.route '/', -> @render 'home'
+Router.route '/', -> @render 'home'
 # Router.route '/', (->
 #     @layout 'layout'
 #     @render 'home'

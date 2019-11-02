@@ -53,10 +53,9 @@ Meteor.methods
                 # console.log 'categories',response.categories
                 adding_tags = []
                 for category in response.categories
-                    console.log category.label.split('/')
+                    # console.log category.label.split('/')
                     for tag in category.label.split('/')
                         if tag.length > 0 then adding_tags.push tag
-                console.log 'adding tags', adding_tags
                 Docs.update { _id: doc_id },
                     $addToSet:
                         tags:$each:adding_tags
@@ -69,9 +68,9 @@ Meteor.methods
 
                 concept_array = _.pluck(response.concepts, 'text')
                 lowered_concepts = concept_array.map (concept)-> concept.toLowerCase()
-                # Docs.update { _id: doc_id },
-                #     $set:
-                #         analyzed_text:response.analyzed_text
+                Docs.update { _id: doc_id },
+                    $set:
+                        body:response.analyzed_text
                 #         watson: response
                 #         watson_concepts: lowered_concepts
                 #         watson_keywords: lowered_keywords
@@ -83,4 +82,6 @@ Meteor.methods
                 Docs.update { _id: doc_id },
                     $addToSet:
                         tags:$each:lowered_keywords
+                final_doc = Docs.findOne doc_id
+                console.log 'all tags', final_doc.tags
         )
