@@ -20,6 +20,11 @@ img {
   height: 10px;
 }
 
+.body_view {
+  font-size: 150% !important;
+  line-height: 170% !important;
+}
+
 .step {
   border-radius: 20px !important;
 }

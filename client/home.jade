@@ -1,19 +1,24 @@
 template(name='home')
-    +cloud
+    .ui.center.aligned.basic.segment
+        +nav
+        +cloud
     each docs
-        .ui.header #{title}
-        |!{body}
-        each tags
-            .ui.label #{this}
-        a.ui.fluid.button(href="/m/post/#{_id}/view")
-            |view
-
+        .ui.center.aligned.header #{title}
+        .ui.text.container.body_view
+            |!{body}
+        //- each tags
+        //-     .ui.label #{this}
+        //- a.ui.fluid.button(href="/m/post/#{_id}/view")
+        //-     |view
+    .ui.center.aligned.basic.segment
+        +donate
 
 
 template(name='cloud')
     .ui.left.icon.input
         i.search.icon
-        +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
+        input#search(type='text')
+        //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
     if selected_tags
         #clear_tags.ui.active.icon.circular.large.button
             i.remove.icon
@@ -21,7 +26,7 @@ template(name='cloud')
             .unselect_tag.ui.active.circular.large.button
                 strong #{this}
     each all_tags
-        .ui.compact.circular.large.button.select_tag(class=cloud_tag_class) 
+        .ui.compact.large.button.select_tag(class=cloud_tag_class) 
             strong #{this.name}
 
 template(name='tag_result')

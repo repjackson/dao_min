@@ -6,9 +6,10 @@ if Meteor.isClient
 
     Template.home.helpers
         docs: ->
-            Docs.find {
-                # model:'post'
-            }, limit:1
+            doc_count = Docs.find().count()
+            if doc_count is 1
+                Docs.find {
+                }
     Template.cloud.helpers
         all_tags: ->
             doc_count = Docs.find().count()

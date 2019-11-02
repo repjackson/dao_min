@@ -32,18 +32,18 @@ Cloudinary.config
 #             # else
 
 
-SyncedCron.add({
-        name: 'class auto actions'
-        schedule: (parser) ->
-            parser.text 'every 1 week'
-        job: ->
-            Meteor.call 'checkout_students', (err, res)->
-    }
-)
+# SyncedCron.add({
+#         name: 'class auto actions'
+#         schedule: (parser) ->
+#             parser.text 'every 1 week'
+#         job: ->
+#             Meteor.call 'checkout_students', (err, res)->
+#     }
+# )
 
 
-if Meteor.isProduction
-    SyncedCron.start()
+# if Meteor.isProduction
+#     SyncedCron.start()
 Meteor.publish 'model_from_child_id', (child_id)->
     child = Docs.findOne child_id
     Docs.find
