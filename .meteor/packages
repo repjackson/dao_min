@@ -5,9 +5,7 @@
 # but you can also edit it by hand.
 
 meteor-base@1.4.0             # Packages every Meteor app needs to have
-iron:router@=1.0.13
 mongo@1.6.2                   # The database Meteor supports right now
-session@1.2.0                 # Client-side reactive dictionary for your app
 tracker@1.2.0                 # Meteor's client-side reactive programming library
 
 
@@ -20,23 +18,16 @@ mobile-experience@1.0.5
 
 blaze-html-templates
 dburles:collection-helpers
-accounts-password@1.5.1
 shell-server@0.4.0
 accounts-base@1.4.3
 momentjs:moment
-froala:editor-reactive@=2.4.2
-reactive-var@1.0.11
-raix:handlebar-helpers
 matb33:collection-hooks
 mizzao:autocomplete
 mquandalle:jade
 underscore@1.0.10
 coffeescript
 ecmascript@0.12.4
-reywood:publish-composite
 percolate:synced-cron
-flowkey:hotkeys
 modules@0.13.0
-lepozepo:cloudinary
 http
 mrgalaxy:stripe

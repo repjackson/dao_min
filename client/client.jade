@@ -2,40 +2,58 @@ head
     title dao
     meta(name='viewport', content='user-scalable=no, initial-scale=1.0, maximum-scale=1.0, width=device-width')
     meta(name='apple-mobile-web-app-capable', content='yes')
-    meta(name='apple-mobile-web-app-status-bar-style', content='white')
+    meta(name='apple-mobile-web-app-status-bar-style', content='black')
     meta(name="msapplication-TileColor" content="#da532c")
-    meta(name="theme-color" content="#ffffff")
+    meta(name="theme-color" content="#000000")
     link(rel='stylesheet' type='text/css' href='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.css')
     link(href="https://fonts.googleapis.com/css?family=Ubuntu:300,400&display=swap" rel="stylesheet")
-    link(rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png")
-    link(rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png")
-    link(rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png")
-    link(rel="manifest" href="/site.webmanifest")
-    link(rel="mask-icon" href="/safari-pinned-tab.svg" color="#000000")
 
     script(src='https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js')
     script(src='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js')
 
-    
-template(name='layout')
-    +yield
-
-template(name='mlayout')
-    +yield
+body 
+    +home
 
 
-template(name='verification_confirmation')
-    .ui.padded.grid 
-        .row 
-            .sixteen.wide.column 
-                h1.ui.center.aligned.header Thank you, your email has been verified.
-                .ui.center.aligned.header You may close the window. 
+template(name='home')
+    .ui.center.aligned.basic.segment
+        //- +nav
+        +cloud
+    each docs
+        .ui.center.aligned.header #{title}
+        .ui.text.container.body_view
+            |!{body}
+        //- each tags
+        //-     .ui.label #{this}
+        //- a.ui.fluid.button(href="/m/post/#{_id}/view")
+        //-     |view
+    .ui.center.aligned.basic.segment
+        +donate
+
+
+template(name='cloud')
+    .ui.left.icon.input
+        i.search.icon
+        input#search(type='text')
+        //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
+    if selected_tags
+        #clear_tags.ui.active.icon.large.button
+            i.remove.icon
+        each selected_tags
+            .unselect_tag.ui.active.large.button
+                strong #{this}
+    each all_tags
+        .ui.large.button.select_tag(class=cloud_tag_class) 
+            | #{this.name}
+
+template(name='tag_result')
+    .ui.label #{name}
 
 
 
-template(name='not_found')
-    .ui.basic.center.aligned.padded.segment
-        .ui.center.aligned.header page not found
-        a.ui.button(href="/") 
-            +i name='home' classes='ui inline mini image'
-            |home
+
+template(name='donate')
+    .ui.action.input
+        input.donate_amount(type='number' min='1' placeholder='donation amount')
+        .ui.icon.button.start_donation   
+            i.right.chevron.icon

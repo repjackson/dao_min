@@ -55,7 +55,7 @@ Meteor.methods
             amount: charge.amount
             currency: 'usd'
             source: charge.source
-            description: "mmm donation"
+            description: "dao donation"
             # destination: account.stripe.stripeId
         Stripe.charges.create chargeData, (error, result) ->
             if error
