@@ -3,7 +3,6 @@
 
 
 Docs.before.insert (userId, doc)->
-    doc._author_id = Meteor.userId()
     timestamp = Date.now()
     doc._timestamp = timestamp
     doc._timestamp_long = moment(timestamp).format("dddd, MMMM Do YYYY, h:mm:ss a")
@@ -25,102 +24,20 @@ Docs.before.insert (userId, doc)->
         # console.log date_array
         doc._timestamp_tags = date_array
 
-    doc._author_id = Meteor.userId()
-    if Meteor.user()
-        doc._author_username = Meteor.user().username
-
-    # doc.points = 0
-    # doc.downvoters = []
-    # doc.upvoters = []
     return
 
 
 
-# Docs.after.insert (userId, doc)->
-#     console.log doc.tags
-#     return
-
-# Docs.after.update ((userId, doc, fieldNames, modifier, options) ->
-#     doc.tag_count = doc.tags?.length
-#     # Meteor.call 'generate_authored_cloud'
-# ), fetchPrevious: true
 
 
 Docs.helpers
-    author: -> Meteor.users.findOne @_author_id
     when: -> moment(@_timestamp).fromNow()
-    ten_tags: -> if @tags then @tags[..10]
-    five_tags: -> if @tags then @tags[..4]
-    three_tags: -> if @tags then @tags[..2]
-    is_visible: -> @published in [0,1]
-    is_published: -> @published is 1
-    is_anonymous: -> @published is 0
-    is_private: -> @published is -1
-    from_user: ->
-        if @from_user_id
-            Meteor.users.findOne @from_user_id
-    to_user: ->
-        if @to_user_id
-            Meteor.users.findOne @to_user_id
-
-
-    upvoters: ->
-        if @upvoter_ids
-            upvoters = []
-            for upvoter_id in @upvoter_ids
-                upvoter = Meteor.users.findOne upvoter_id
-                upvoters.push upvoter
-            upvoters
-    downvoters: ->
-        if @downvoter_ids
-            downvoters = []
-            for downvoter_id in @downvoter_ids
-                downvoter = Meteor.users.findOne downvoter_id
-                downvoters.push downvoter
-            downvoters
-
-Meteor.methods
-    add_facet_filter: (delta_id, key, filter)->
-        if key is '_keys'
-            new_facet_ob = {
-                key:filter
-                filters:[]
-                res:[]
-            }
-            Docs.update { _id:delta_id },
-                $addToSet: facets: new_facet_ob
-        Docs.update { _id:delta_id, "facets.key":key},
-            $addToSet: "facets.$.filters": filter
-
-        Meteor.call 'fum', delta_id, (err,res)->
-
-
-    remove_facet_filter: (delta_id, key, filter)->
-        if key is '_keys'
-            Docs.update { _id:delta_id },
-                $pull:facets: {key:filter}
-        Docs.update { _id:delta_id, "facets.key":key},
-            $pull: "facets.$.filters": filter
-        Meteor.call 'fum', delta_id, (err,res)->
-
-
 
 if Meteor.isServer
     Docs.allow
-        insert: (userId, doc) ->
-            if doc.model is 'bug'
-                true
-            else
-                userId and doc._author_id is userId
-        update: (userId, doc) ->
-            if doc.model in ['calculator_doc','simulated_rental_item','healthclub_session']
-                true
-            else if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
-                true
-            else
-                doc._author_id is userId
-        # update: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
-        remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
+        insert: (userId, doc) -> true
+        update: (userId, doc) -> true
+        remove: (userId, doc) -> true
 
     Meteor.publish 'doc', (id)->
         doc = Docs.findOne id
@@ -130,19 +47,10 @@ if Meteor.isServer
         else if user
             Meteor.users.find id
     Meteor.publish 'docs', (selected_tags, filter)->
-        # user = Meteor.users.findOne @userId
         # console.log selected_tags
         # console.log filter
         self = @
         match = {}
-        if Meteor.user()
-            unless Meteor.user().roles and 'dev' in Meteor.user().roles
-                match.view_roles = $in:Meteor.user().roles
-        else
-            match.view_roles = $in:['public']
-
-        # if filter is 'shop'
-        #     match.active = true
         if selected_tags.length > 0 then match.tags = $all: selected_tags
         if filter then match.model = filter
 

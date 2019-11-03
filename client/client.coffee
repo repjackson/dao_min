@@ -1,16 +1,71 @@
 @selected_tags = new ReactiveArray []
+Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
+Template.registerHelper 'calculated_size', (metric) ->
+    # console.log metric
+    # console.log typeof parseFloat(@relevance)
+    # console.log typeof (@relevance*100).toFixed()
+    whole = parseInt(@["#{metric}"]*10)
+    # console.log whole
+
+    if whole is 2 then 'f2'
+    else if whole is 3 then 'f3'
+    else if whole is 4 then 'f4'
+    else if whole is 5 then 'f5'
+    else if whole is 6 then 'f6'
+    else if whole is 7 then 'f7'
+    else if whole is 8 then 'f8'
+    else if whole is 9 then 'f9'
+    else if whole is 10 then 'f10'
+
+
 
 Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags', selected_tags.array())
-    @autorun -> Meteor.subscribe 'me'
     @autorun -> Meteor.subscribe('facet_docs',selected_tags.array())
 
+
+Template.doc_card.onRendered ->
+    Meteor.setTimeout ->
+        $('.accordion').accordion()
+    , 1000
+Template.doc_card.helpers
+    is_image: ->
+        image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
+        image_result = image_check.test @url
+
+    is_url: ->
+        url_check = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
+        url_result = url_check.test @url
+
+    is_youtube: ->
+        @subreddit is 'youtube.com'
+        # youtube_check = /("^http:\/\/(?:www\.)?youtube.com\/watch\?(?=[^?]*v=\w+)(?:[^\s?]+)?$")/
+        # youtube_result = youtube_check.test @url
+
+Template.home.events
+    'click .import_subreddit': ->
+        subreddit = $('.subreddit').val()
+        Meteor.call 'pull_subreddit', subreddit
+    'click .import_site': ->
+        site = $('.site').val()
+        Meteor.call 'import_site', site
+    'click .toggle_dev': ->
+        Session.set('dev',!Session.get('dev'))
+    'click .delete_doc': ->
+        Docs.remove @_id
+Template.tag_label.events
+    'click .remove_tag': ->
+        console.log @valueOf()
+        console.log Template.parentData()
+        Docs.update Template.parentData()._id,
+            $pull: tags: @valueOf()
 Template.home.helpers
+    dev_mode: -> Session.get('dev')
     docs: ->
         doc_count = Docs.find().count()
-        if doc_count is 1
-            Docs.find {
-            }
+        # if doc_count is 1
+        Docs.find {
+        }
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
@@ -86,11 +141,6 @@ Template.donate.onCreated ->
                 if error then alert error.reason, 'danger'
                 else
                     alert 'thank you', 'success'
-                    # Docs.insert
-                    #     model:'donation'
-                    #     amount:donate_amount/100
-                    #     message:message
-                    #     receipt_email: email
 	)
 
 Template.donate.helpers

@@ -12,21 +12,21 @@ natural_language_understanding = new NaturalLanguageUnderstandingV1(
 Meteor.methods
     call_watson: (doc_id, key, mode) ->
         self = @
-        console.log doc_id
-        console.log key
-        console.log mode
+        # console.log doc_id
+        # console.log key
+        # console.log mode
         doc = Docs.findOne doc_id
         parameters =
             concepts:
                 limit:20
             features:
                 entities:
-                    emotion: false
-                    sentiment: false
+                    emotion: true
+                    sentiment: true
                     # limit: 2
                 keywords:
-                    emotion: false
-                    sentiment: false
+                    emotion: true
+                    sentiment: true
                     # limit: 2
                 concepts: {}
                 categories: {}
@@ -44,13 +44,14 @@ Meteor.methods
             when 'url'
                 parameters.url = doc["#{key}"]
                 parameters.return_analyzed_text = true
+                parameters.clean = true
 
         natural_language_understanding.analyze parameters, Meteor.bindEnvironment((err, response) ->
             if err then console.log err
             else
                 keyword_array = _.pluck(response.keywords, 'text')
                 lowered_keywords = keyword_array.map (keyword)-> keyword.toLowerCase()
-                # console.log 'categories',response.categories
+                console.log 'categories',response.categories
                 adding_tags = []
                 for category in response.categories
                     # console.log category.label.split('/')
@@ -61,17 +62,21 @@ Meteor.methods
                         tags:$each:adding_tags
 
                 for entity in response.entities
-                    Docs.update { _id: doc_id },
-                        $addToSet:
-                            # "#{entity.type}":entity.text
-                            tags:entity.text.toLowerCase()
+                    # console.log entity.type, entity.text
+                    if entity.type is 'Quantity'
+                        console.log('quantity', entity.text)
+                    else
+                        Docs.update { _id: doc_id },
+                            $addToSet:
+                                # "#{entity.type}":entity.text
+                                tags:entity.text.toLowerCase()
 
                 concept_array = _.pluck(response.concepts, 'text')
                 lowered_concepts = concept_array.map (concept)-> concept.toLowerCase()
                 Docs.update { _id: doc_id },
                     $set:
                         body:response.analyzed_text
-                #         watson: response
+                        watson: response
                 #         watson_concepts: lowered_concepts
                 #         watson_keywords: lowered_keywords
                         # doc_sentiment_score: response.sentiment.document.score
@@ -83,5 +88,6 @@ Meteor.methods
                     $addToSet:
                         tags:$each:lowered_keywords
                 final_doc = Docs.findOne doc_id
-                console.log 'all tags', final_doc.tags
+                # console.log 'all tags', final_doc.tags
+                console.log 'final doc', final_doc
         )

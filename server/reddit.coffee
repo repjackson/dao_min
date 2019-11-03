@@ -22,12 +22,13 @@ Meteor.methods
             existing_doc = Docs.findOne url:data.url
             if existing_doc
                 console.log 'skipping existing url', data.url
+                console.log 'existing doc', existing_doc
                 # Meteor.call 'get_reddit_post', existing_doc._id, data.id, (err,res)->
             unless existing_doc
-                console.log 'importing url', data.url
+                # console.log 'importing url', data.url
                 new_reddit_post_id = Docs.insert reddit_post
                 Meteor.call 'get_reddit_post', new_reddit_post_id, data.id, (err,res)->
-                    console.log 'get post res', res
+                    # console.log 'get post res', res
         )
 
     get_reddit_post: (doc_id, reddit_id)->

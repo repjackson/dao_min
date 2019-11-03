@@ -1,164 +1,25 @@
-# SyncedCron.add
-#     name: 'Update incident escalations'
-#     schedule: (parser) ->
-#         # parser is a later.parse object
-#         parser.text 'every 1 hour'
-#     job: ->
-#         Meteor.call 'update_escalation_statuses', (err,res)->
-#             # else
+SyncedCron.add({
+        name: 'random sub'
+        schedule: (parser) ->
+            parser.text 'every 10 minutes'
+        job: ->
+            Meteor.call 'pull_subreddit', 'wikipedia', (err, res)->
+    }
+)
 
 
-# SyncedCron.add({
-#         name: 'class auto actions'
-#         schedule: (parser) ->
-#             parser.text 'every 1 week'
-#         job: ->
-#             Meteor.call 'checkout_students', (err, res)->
-#     }
-# )
+if Meteor.isProduction
+    SyncedCron.start()
 
-
-# if Meteor.isProduction
-#     SyncedCron.start()
-Meteor.publish 'model_from_child_id', (child_id)->
-    child = Docs.findOne child_id
-    Docs.find
-        model:'model'
-        slug:child.type
-
-
-Meteor.publish 'model_fields_from_child_id', (child_id)->
-    child = Docs.findOne child_id
-    model = Docs.findOne
-        model:'model'
-        slug:child.type
-    Docs.find
-        model:'field'
-        parent_id:model._id
-
-Meteor.publish 'model_docs', (model,limit)->
-    if limit
-        Docs.find {
-            model: model
-        }, limit:limit
-    else
-        Docs.find
-            model: model
-
-Meteor.publish 'document_by_slug', (slug)->
-    Docs.find
-        model: 'document'
-        slug:slug
-
-Meteor.publish 'child_docs', (doc_id)->
-    Docs.find
-        parent_id:doc_id
-
-Meteor.publish 'all_classroom_docs', (doc_id)->
-    console.log 'running classroom docs', doc_id
-    Docs.find
-        classroom_id:doc_id
-
-
-Meteor.publish 'facet_doc', (tags)->
-    split_array = tags.split ','
-    Docs.find
-        tags: split_array
-
-
-Meteor.publish 'inline_doc', (slug)->
-    Docs.find
-        model:'inline_doc'
-        slug:slug
-
-
-Meteor.publish 'current_session', ->
-    Docs.find
-        model: 'healthclub_session'
-        current:true
-
-
-Meteor.publish 'user_from_username', (username)->
-    Meteor.users.find username:username
-
-Meteor.publish 'user_from_id', (user_id)->
-    Meteor.users.find user_id
-
-Meteor.publish 'author_from_doc_id', (doc_id)->
-    doc = Docs.findOne doc_id
-    Meteor.users.find user_id
-
-Meteor.publish 'page', (slug)->
-    Docs.find
-        model:'page'
-        slug:slug
-
-Meteor.publish 'page_children', (slug)->
-    page = Docs.findOne
-        model:'page'
-        slug:slug
-    Docs.find
-        parent_id:page._id
-
-
-
-Meteor.publish 'checkin_guests', (doc_id)->
-    session_document = Docs.findOne doc_id
-        # model:'healthclub_session'
-        # current:true
-    Docs.find
-        _id:$in:session_document.guest_ids
-
-
-Meteor.publish 'student', (guest_id)->
-    guest = Docs.findOne guest_id
-    Meteor.users.find
-        _id:guest.student_id
-
-
-
-Meteor.publish 'health_club_students', (username_query)->
-    existing_sessions =
-        Docs.find(
-            model:'healthclub_session'
-            active:true
-        ).fetch()
-    active_session_ids = []
-    for active_session in existing_sessions
-        active_session_ids.push active_session.user_id
-    Meteor.users.find({
-        # _id:$nin:active_session_ids
-        username: {$regex:"#{username_query}", $options: 'i'}
-        # healthclub_checkedin:$ne:true
-        roles:$in:['student','owner']
-        },{ limit:20 })
-
-
-
-
-Meteor.publish 'page_blocks', (slug)->
-    page = Docs.findOne
-        model:'page'
-        slug:slug
-    if page
-        Docs.find
-            parent_id:page._id
-
-
-Meteor.publish 'doc_by_id', (doc_id)->
-    Docs.find doc_id
-
-
-Meteor.publish 'doc_tags', (selected_tags)->
-    user = Meteor.users.findOne @userId
+Meteor.publish 'tags', (selected_tags, filter)->
+    # user = Meteor.users.finPdOne @userId
     # current_herd = user.profile.current_herd
 
     self = @
     match = {}
-
-    # selected_tags.push current_herd
-    match.tags = $all: selected_tags
-
+    # match.tags = $all: selected_tags
+    if selected_tags.length > 0 then match.tags = $all: selected_tags
+    # if filter then match.model = filter
     cloud = Docs.aggregate [
         { $match: match }
         { $project: tags: 1 }
@@ -166,14 +27,51 @@ Meteor.publish 'doc_tags', (selected_tags)->
         { $group: _id: '$tags', count: $sum: 1 }
         { $match: _id: $nin: selected_tags }
         { $sort: count: -1, _id: 1 }
-        { $limit: 50 }
+        { $limit: 42 }
         { $project: _id: 0, name: '$_id', count: 1 }
         ]
-    cloud.forEach (tag, i) ->
 
+    cloud.forEach (tag, i) ->
         self.added 'tags', Random.id(),
             name: tag.name
             count: tag.count
             index: i
 
     self.ready()
+
+
+
+
+Meteor.publish 'facet_docs', (selected_task_tags)->
+    # user = Meteor.users.findOne @userId
+    console.log selected_task_tags
+    # console.log filter
+    self = @
+    match = {}
+    if selected_task_tags.length > 0 then match.tags = $all: selected_task_tags
+    Docs.find match,
+        sort:_timestamp:-1
+        limit: 5
+
+
+Meteor.methods
+    pull_tag: (tag)->
+        tag_doc_count =
+            Docs.find(tags:$in:[tag]).count()
+        console.log 'tag doc count', tag_doc_count
+        Docs.update({tags:$in:[tag]}, {$pull:tags:tag}, {multi:true})
+
+    import_site: (site)->
+        existing_doc = Docs.findOne url:site
+        if existing_doc
+            console.log 'found existing doc', existing_doc
+        else
+            new_doc_id = Docs.insert
+                url: site
+            Meteor.call 'call_watson', new_doc_id, 'url', 'url'
+
+    delete_docs_tag: (tag)->
+        tag_doc_count =
+            Docs.find(tags:$in:[tag]).count()
+        console.log 'tag doc count', tag_doc_count
+        Docs.remove({tags:$in:[tag]})

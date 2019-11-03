@@ -5,28 +5,31 @@ body {
     font-family: 'Ubuntu', sans-serif !important;
     /* font-size: 110% !important; */
     /*line-height: 200% !important;*/
-    background: rgba(0,0,0,.8) !important;
-    filter: invert(.9) !important;
+    /* background: rgba(0,0,0,.7) !important; */
+    /* filter: invert(.9) !important; */
     /* background: rgba(250, 250, 250, .05) !important */
     /* background: #0e0e44 !important; */
 }
 
 /* .ui.image:not(.avatar), .label,  img:not(.avatar) { */
-img {
+/* img {
     filter: invert(1) !important;
-
-}
+} */
 
 .button{
-    margin: .3em !important;
+    margin: .2em !important;
 }
 .spacer {
   height: 10px;
 }
 
+.inline {
+  display: inline !important;
+}
+
 .body_view {
-  font-size: 150% !important;
-  line-height: 170% !important;
+  font-size: 130% !important;
+  line-height: 150% !important;
 }
 
 .uppercase {
@@ -81,13 +84,6 @@ img {
   .widescreen.monitor.hidden {
     display: none !important;
   }
-}
-#main {
-    /* margin-top:20px; */
-    min-height: 120vh;
-    height: 100%;
-    /* min-height: 500px; */
-    /* bottom: 0; */
 }
 .scrolling{
 	overflow-y:scroll;

@@ -31,3 +31,4 @@ percolate:synced-cron
 modules@0.13.0
 http
 mrgalaxy:stripe
+session
