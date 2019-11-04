@@ -1,0 +1,223 @@
+template(name='posts')
+    .ui.stackable.grid
+        .four.wide.column
+            .ui.inline.header 
+                i.posts.icon
+                |posts
+            .ui.icon.button.add_post 
+                i.plus.icon
+            div
+            +post_cloud
+        .twelve.wide.column
+            each posts
+                .ui.segment
+                    unless is_editing
+                        .ui.small.header #{title}
+                        each tags
+                            .ui.small.basic.label #{this}
+                        .ui.icon.circular.button.edit
+                            i.pencil.icon
+                        +author_info
+                        +voting
+                    else 
+                        +text_edit key='title' direct=true
+                        +array_edit key='tags' direct=true
+                        .ui.icon.circular.green.button.save
+                            i.checkmark.icon
+
+
+
+template(name='post_cloud')
+    .ui.hidden.divider
+    .ui.grey.small.header 
+        |targets    
+    if selected_target_id
+        with selected_target
+            .unselect_target.ui.active.circular.button
+                strong #{title}
+    else 
+        each targets
+            .ui.compact.circular.button.select_target 
+                strong #{title}
+    .spacer
+    .ui.grey.small.inline.header 
+        i.tags.icon
+        |tags    
+    if selected_post_tags
+        #clear_post_tags.ui.active.icon.circular.button
+            i.remove.icon
+        each selected_post_tags
+            .unselect_post_tag.ui.active.circular.button
+                strong #{this}
+    each all_post_tags
+        .ui.compact.circular.button.select_post_tag(class=cloud_tag_class) 
+            strong #{this.name}
+
+
+
+
+
+
+//- template(name='posts')
+//-     .ui.stackable.padded.grid
+//-         .row
+//-             .six.wide.column
+//-                 +i name='posts' classes='ui avatar image'
+//-                 .ui.inline.header posts
+//-                 .ui.icon.big.button.add_post
+//-                     i.plus.green.icon
+//-                 div
+//-                 +cloud filter='post'
+//-                 div
+//-                 .ui.large.icon.button.calculate_post_stats(title='calculate post stats')
+//-                     i.refresh.icon
+//-                 .ui.header 
+//-                     +i name='line chart' classes='ui avatar image'
+//-                     |post stats
+//-                 with post_stats_doc
+//-                     .ui.small.header work done
+//-                     .ui.small.header total #{total_count}
+//-                     .ui.small.header complete posts #{complete_count}
+//-                     .ui.small.header incomplete posts #{incomplete_count}
+//-                     .ui.small.header posts completed time
+//-                     .ui.small.header post estimated time
+//-                     .ui.small.header post monthly completion rate
+//-             .ten.wide.column.scrolling
+//-                 each my_posts
+//-                     +post_card_template
+
+
+template(name='post_card_template')
+    .ui.segment                    
+        .ui.inline.header #{title}
+            if complete
+                i.large.green.checkmark.icon
+        .ui.basic.segment
+            +html_view key='description' label='description' direct=true
+        each tags
+            .ui.basic.large.label #{this}
+        if is_admin
+            +boolean_edit key='complete' label='complete' direct=true
+        +boolean_view key='complete' label='complete' direct=true
+        div
+        +number_view key='estimated_minutes' label='estimated minutes' direct=true
+        if due_date
+            +date_view key='due_date' label='due date' direct=true
+        if due_time
+            +time_view key='due_time' label='due time' direct=true
+        div
+        +multi_user_view key='assigned_to_multiple' label='assigned to' direct=true
+        +multi_user_view key='related_people' label='related people' direct=true
+        div
+        a.ui.button(href="/post/#{_id}/view")
+            |view
+            i.chevron.right.icon
+        if can_edit
+            a.ui.button(href="/post/#{_id}/edit")
+                i.pencil.icon
+                |edit
+            +remove_button
+
+
+template(name='post_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column 
+                    .ui.header 
+                        i.pencil.icon
+                        |edit post
+                    a.ui.big.icon.fluid.button(href="/post/#{_id}/view" title='save')
+                        i.green.checkmark.icon
+                    +remove_button
+                    +array_edit key='tags' label='tags' icon='tags' direct=true
+                .twelve.wide.column 
+                    +text_edit key='title' label='title' icon='title' direct=true
+                    +html_edit key='description' label='description' icon='content' direct=true
+                    div
+                    +boolean_edit key='complete' label='complete' icon='checkmark' direct=true
+                    div
+                    +number_edit key='estimated_minutes' label='estimated minutes' icon='clock' direct=true
+                    //- +single_user_edit key='assigned_to' role_filter='user' label='assigned to' icon='user-male' direct=true
+                    +multi_user_edit key='assigned_to_multiple' role_filter='user' label='assigned to' direct=true
+                    +multi_user_edit key='related_people' label='related people' direct=true
+
+template(name='post_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column 
+                    a.ui.fluid.button(href="/posts")
+                        +i name='post' classes='ui avatar image'
+                        |posts
+                    .ui.header view post
+                    a.ui.big.icon.button(href="/post/#{_id}/edit")
+                        i.pencil.icon
+                    +voting_full
+                    +viewing
+                .twelve.wide.column 
+                    +text_view key='title' label='title' direct=true
+                    .full_body_view.scrolling
+                        |!{body}
+                    +array_view key='tags' label='tags' icon='tags' direct=true
+                    .ui.fluid.styled.accordion
+                        //- if body
+                        //-     .title 
+                        //-         i.grey.list.icon
+                        //-         |content 
+                        //-         i.dropdown.icon
+                        //-     .content
+                        if watson 
+                            .title 
+                                i.grey.line.chart.icon
+                                |analysis
+                                i.dropdown.icon
+                            .content
+                                +watson_view
+                        if reddit_data
+                            .title 
+                                i.grey.reddit.icon
+                                |reddit json
+                                i.dropdown.icon
+                            .content
+                                +jsonView json=reddit_data
+                        //- .ui.button.delete_doc
+                        //-     i.remove.icon
+                        //-     |delete
+                    +comments
+
+
+
+
+template(name='user_posts')
+    .ui.inline.header 
+        +i name='posts'
+        |posts
+    +goto_model slug='post'
+    .ui.icon.input
+        i.plus.icon
+        input.assign_post(type='text' placeholder='assign post...')
+    //- .ui.circular.button.view_complete(class=view_complete_class)
+    //-     |view completed
+    //- .ui.circular.button.view_incomplete(class=view_complete_class)
+    //-     |view incomplete
+    .ui.header assigned posts
+    each assigned_posts
+        +user_post_segment
+    .ui.header posts referenced in
+    each referenced_in_posts
+        +user_post_segment
+
+template(name='user_post_segment')
+    .ui.segment
+        a.ui.header(href="/post/#{_id}/view") #{body}
+        +boolean_edit key='complete' label='complete' direct=true true_icon='checkmark' false_icon='remove'
+        +voting
+        +author_info
+        +creation_info
+        if is_author
+            +remove_button
+    a.ui.icon.button(href="/post/#{_id}/view")
+        i.right.chevron.icon
+    a.ui.icon.button(href="/post/#{_id}/edit")
+        i.pencil.icon

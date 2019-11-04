@@ -44,10 +44,10 @@ template(name='nav')
                 if is_admin
                     //- a.icon.item(href="/grid")
                     //-     i.large.grey.th.icon
-                    a.icon.item(href="/grid" title='admin')
+                    a.icon.item(href="/admin" title='admin')
                         i.grey.shield.icon
                 unless logging_out
-                    a.ui.simple.dropdown.item(href="/user/#{currentUser.username}" class=user_nav_button_class)
+                    a.ui.simple.dropdown.item(href="/u/#{currentUser.username}" class=user_nav_button_class)
                         if currentUser.profile_image_id
                             img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
                         else
@@ -55,7 +55,7 @@ template(name='nav')
                         span.mobile.hidden #{currentUser.name} 
                         //- #{currentUser.credit}
                         .menu 
-                            a.item(href="/user/#{currentUser.username}") profile
+                            a.item(href="/u/#{currentUser.username}") profile
                             //- .item credits
                             //- .item debits
                             //- .item loans

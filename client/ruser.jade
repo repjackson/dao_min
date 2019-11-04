@@ -1,0 +1,46 @@
+template(name='ruser_view')
+    if current_ruser
+        with current_ruser
+            .ui.stackable.padded.grid
+                .row
+                    .four.wide.column 
+                        a.ui.fluid.button(href="/rusers")
+                            +i name='ruser' classes='ui avatar image'
+                            |rusers
+                        .ui.header view ruser
+                        a.ui.big.icon.button(href="/ruser/#{_id}/edit")
+                            i.pencil.icon
+                        +voting_full
+                        +viewing
+                    .twelve.wide.column 
+                        +text_view key='title' label='title' direct=true
+                        .full_body_view.scrolling
+                            |!{body}
+                        +array_view key='tags' label='tags' icon='tags' direct=true
+                        .ui.fluid.styled.accordion
+                            //- if body
+                            //-     .title 
+                            //-         i.grey.list.icon
+                            //-         |content 
+                            //-         i.dropdown.icon
+                            //-     .content
+                            if watson 
+                                .title 
+                                    i.grey.line.chart.icon
+                                    |analysis
+                                    i.dropdown.icon
+                                .content
+                                    +watson_view
+                            if reddit_data
+                                .title 
+                                    i.grey.reddit.icon
+                                    |reddit json
+                                    i.dropdown.icon
+                                .content
+                                    //- +jsonView json=reddit_data
+                            //- .ui.button.delete_doc
+                            //-     i.remove.icon
+                            //-     |delete
+                        //- +comments
+    else 
+        .ui.button.pull_user user

@@ -69,12 +69,128 @@ if Meteor.isServer
             Docs.find id
         else if user
             Meteor.users.find id
-    Meteor.publish 'docs', (selected_theme_tags, filter)->
-        # console.log selected_theme_tags
+    Meteor.publish 'docs', (selected_tags, filter)->
+        # console.log selected_tags
         # console.log filter
         self = @
         match = {}
-        if selected_theme_tags.length > 0 then match.tags = $all: selected_theme_tags
+        if selected_tags.length > 0 then match.tags = $all: selected_tags
         if filter then match.model = filter
 
         Docs.find match, sort:_timestamp:-1
+
+
+
+
+
+
+Meteor.methods
+    add_facet_filter: (delta_id, key, filter)->
+        if key is '_keys'
+            new_facet_ob = {
+                key:filter
+                filters:[]
+                res:[]
+            }
+            Docs.update { _id:delta_id },
+                $addToSet: facets: new_facet_ob
+        Docs.update { _id:delta_id, "facets.key":key},
+            $addToSet: "facets.$.filters": filter
+
+        Meteor.call 'fum', delta_id, (err,res)->
+
+
+    remove_facet_filter: (delta_id, key, filter)->
+        if key is '_keys'
+            Docs.update { _id:delta_id },
+                $pull:facets: {key:filter}
+        Docs.update { _id:delta_id, "facets.key":key},
+            $pull: "facets.$.filters": filter
+        Meteor.call 'fum', delta_id, (err,res)->
+
+
+
+    pin: (doc)->
+        if doc.pinned_ids and Meteor.userId() in doc.pinned_ids
+            Docs.update doc._id,
+                $pull: pinned_ids: Meteor.userId()
+                $inc: pinned_count: -1
+        else
+            Docs.update doc._id,
+                $addToSet: pinned_ids: Meteor.userId()
+                $inc: pinned_count: 1
+
+    subscribe: (doc)->
+        if doc.subscribed_ids and Meteor.userId() in doc.subscribed_ids
+            Docs.update doc._id,
+                $pull: subscribed_ids: Meteor.userId()
+                $inc: subscribed_count: -1
+        else
+            Docs.update doc._id,
+                $addToSet: subscribed_ids: Meteor.userId()
+                $inc: subscribed_count: 1
+
+
+    upvote: (doc)->
+        if Meteor.userId()
+            if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
+                Docs.update doc._id,
+                    $pull: downvoter_ids:Meteor.userId()
+                    $addToSet: upvoter_ids:Meteor.userId()
+                    $inc:
+                        points:2
+                        upvotes:1
+                        downvotes:-1
+            else if doc.upvoter_ids and Meteor.userId() in doc.upvoter_ids
+                Docs.update doc._id,
+                    $pull: upvoter_ids:Meteor.userId()
+                    $inc:
+                        points:-1
+                        upvotes:-1
+            else
+                Docs.update doc._id,
+                    $addToSet: upvoter_ids:Meteor.userId()
+                    $inc:
+                        upvotes:1
+                        points:1
+            Meteor.users.update doc._author_id,
+                $inc:karma:1
+        else
+            Docs.update doc._id,
+                $inc:
+                    anon_points:1
+                    anon_upvotes:1
+            Meteor.users.update doc._author_id,
+                $inc:anon_karma:1
+
+    downvote: (doc)->
+        if Meteor.userId()
+            if doc.upvoter_ids and Meteor.userId() in doc.upvoter_ids
+                Docs.update doc._id,
+                    $pull: upvoter_ids:Meteor.userId()
+                    $addToSet: downvoter_ids:Meteor.userId()
+                    $inc:
+                        points:-2
+                        downvotes:1
+                        upvotes:-1
+            else if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
+                Docs.update doc._id,
+                    $pull: downvoter_ids:Meteor.userId()
+                    $inc:
+                        points:1
+                        downvotes:-1
+            else
+                Docs.update doc._id,
+                    $addToSet: downvoter_ids:Meteor.userId()
+                    $inc:
+                        points:-1
+                        downvotes:1
+            Meteor.users.update doc._author_id,
+                $inc:karma:-1
+        else
+            Docs.update doc._id,
+                $inc:
+                    anon_points:-1
+                    anon_downvotes:1
+            Meteor.users.update doc._author_id,
+                $inc:anon_karma:-1

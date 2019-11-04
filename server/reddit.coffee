@@ -54,6 +54,40 @@ Meteor.methods
                 Docs.update doc_id,
                     $set: reddit_data: res.data.data.children[0].data
 
+    get_reddit_user: (rusername)->
+        HTTP.get "http://reddit.com/user/#{rusername}/about.json", (err,res)->
+            if err then console.error err
+            else
+                console.log res.data.data
+                ruser = Docs.findOne
+                    model:'ruser'
+                    rusername:rusername
+                unless ruser
+                    new_ruser_id = Docs.insert
+                        model:'ruser'
+                        rusername:rusername
+                    ruser = Docs.findOne new_ruser_id
+                Docs.update ruser._id,
+                    $set: reddit_data: res.data.data
+                # if res.data.data.children[0].data.selftext
+                #     console.log "self text", res.data.data.children[0].data.selftext
+                #     # Docs.update doc_id, {
+                #     #     $set: html: res.data.data.children[0].data.selftext
+                #     # }, ->
+                #     #     Meteor.call 'pull_site', doc_id, url
+                #         # console.log 'hi'
+                # if res.data.data.children[0].data.url
+                #     url = res.data.data.children[0].data.url
+                #     console.log "found url", url
+                #     Docs.update doc_id, {
+                #         $set:
+                #             reddit_url: url
+                #             url: url
+                #     }, ->
+                #         Meteor.call 'call_watson', doc_id, 'url', 'url'
+                # Docs.update doc_id,
+                #     $set: reddit_data: res.data.data.children[0].data
+
 
     get_listing_comments: (doc_id, subreddit, reddit_id)->
         console.log doc_id

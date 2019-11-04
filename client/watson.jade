@@ -25,7 +25,7 @@ template(name='doc_emotion')
     //     | emotion
     with watson.emotion.document.emotion
         +emotional_bars
-            
+    div
             
 template(name='call_watson')
     #call_watson.ui.basic.big.button 
@@ -60,23 +60,23 @@ template(name='keywords')
 
 
 template(name='emotional_bars')
-    span {{ to_percent sadness }}% sadness
+    .ui.basci.label {{ to_percent sadness }}% sadness
     //- .ui.blue.small.disabled.progress(data-percent=sadness_percent title="{{to_percent sadness}}% sadness")
     //-     .bar
     //-     //- .progress
-    span {{ to_percent joy }}% joy 
+    .ui.basci.label {{ to_percent joy }}% joy 
     //- .ui.blue.small.disabled.progress(data-percent=joy_percent title="{{to_percent joy}}% joy")
     //-     .bar
     //-     //- .progress
-    span {{ to_percent fear }}% fear
+    .ui.basci.label {{ to_percent fear }}% fear
     //- //- .progress
     //- .ui.small.disabled.progress(data-percent=fear_percent title="{{to_percent fear}}% fear")
     //-     .bar
-    span {{ to_percent disgust }}% disgust 
+    .ui.basci.label {{ to_percent disgust }}% disgust 
     //- .ui.yellow.small.disabled.progress(data-percent=disgust_percent title="{{to_percent disgust}}% disgust")
     //-     .bar
     //-         //- .progress
-    span {{ to_percent anger }}% anger 
+    .ui.basci.label {{ to_percent anger }}% anger 
     //- .ui.orange.small.disabled.progress(data-percent=anger_percent title="{{to_percent anger}}% anger")
     //-     .bar
     //-     //- .progress
@@ -121,7 +121,7 @@ template(name='concept_list')
 template(name='concepts')
     .ui.small.grey.inline.header 
         |#{watson.concepts.length} concepts
-    .large150
+    span.large150
         each watson.concepts
             .ui.basic.label(class="{{calculated_size 'relevance'}}" title="{{to_percent relevance}}% relevant")
                 a(href=dbpedia_resource target='_blank') #{text}
@@ -259,7 +259,7 @@ template(name='tone')
 
 template(name='watson_view')
     //- +tone
-    +doc_sentiment
+    //- +doc_sentiment
     +doc_emotion
     +concepts
     +categories

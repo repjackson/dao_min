@@ -1,117 +1,117 @@
 if Meteor.isClient
-    Router.route '/user/:username', (->
+    Router.route '/u/:username', (->
         @layout 'profile_layout'
         @render 'user_dashboard'
         ), name:'profile_layout'
-    Router.route '/user/:username/about', (->
+    Router.route '/u/:username/about', (->
         @layout 'profile_layout'
         @render 'user_about'
         ), name:'user_about'
-    Router.route '/user/:username/connections', (->
+    Router.route '/u/:username/connections', (->
         @layout 'profile_layout'
         @render 'user_connections'
         ), name:'user_connections'
-    Router.route '/user/:username/karma', (->
+    Router.route '/u/:username/karma', (->
         @layout 'profile_layout'
         @render 'user_karma'
         ), name:'user_karma'
-    Router.route '/user/:username/payment', (->
+    Router.route '/u/:username/payment', (->
         @layout 'profile_layout'
         @render 'user_payment'
         ), name:'user_payment'
-    Router.route '/user/:username/finance', (->
+    Router.route '/u/:username/finance', (->
         @layout 'profile_layout'
         @render 'user_finance'
         ), name:'user_finance'
-    Router.route '/user/:username/offers', (->
+    Router.route '/u/:username/offers', (->
         @layout 'profile_layout'
         @render 'user_offers'
         ), name:'user_offers'
-    Router.route '/user/:username/contact', (->
+    Router.route '/u/:username/contact', (->
         @layout 'profile_layout'
         @render 'user_contact'
         ), name:'user_contact'
-    Router.route '/user/:username/reports', (->
+    Router.route '/u/:username/reports', (->
         @layout 'profile_layout'
         @render 'user_reports'
         ), name:'user_reports'
-    Router.route '/user/:username/stats', (->
+    Router.route '/u/:username/stats', (->
         @layout 'profile_layout'
         @render 'user_stats'
         ), name:'user_stats'
-    Router.route '/user/:username/shop', (->
+    Router.route '/u/:username/shop', (->
         @layout 'profile_layout'
         @render 'user_shop'
         ), name:'user_shop'
-    Router.route '/user/:username/votes', (->
+    Router.route '/u/:username/votes', (->
         @layout 'profile_layout'
         @render 'user_votes'
         ), name:'user_votes'
-    Router.route '/user/:username/dashboard', (->
+    Router.route '/u/:username/dashboard', (->
         @layout 'profile_layout'
         @render 'user_dashboard'
         ), name:'user_dashboard'
-    Router.route '/user/:username/jobs', (->
+    Router.route '/u/:username/jobs', (->
         @layout 'profile_layout'
         @render 'user_jobs'
         ), name:'user_jobs'
-    Router.route '/user/:username/stock', (->
+    Router.route '/u/:username/stock', (->
         @layout 'profile_layout'
         @render 'user_stock'
         ), name:'user_stock'
-    Router.route '/user/:username/requests', (->
+    Router.route '/u/:username/requests', (->
         @layout 'profile_layout'
         @render 'user_requests'
         ), name:'user_requests'
-    Router.route '/user/:username/feed', (->
+    Router.route '/u/:username/feed', (->
         @layout 'profile_layout'
         @render 'user_feed'
         ), name:'user_feed'
-    Router.route '/user/:username/tags', (->
+    Router.route '/u/:username/tags', (->
         @layout 'profile_layout'
         @render 'user_tags'
         ), name:'user_tags'
-    Router.route '/user/:username/bids', (->
+    Router.route '/u/:username/bids', (->
         @layout 'profile_layout'
         @render 'user_bids'
         ), name:'user_bids'
-    Router.route '/user/:username/tasks', (->
+    Router.route '/u/:username/tasks', (->
         @layout 'profile_layout'
         @render 'user_tasks'
         ), name:'user_tasks'
-    Router.route '/user/:username/transactions', (->
+    Router.route '/u/:username/transactions', (->
         @layout 'profile_layout'
         @render 'user_transactions'
         ), name:'user_transactions'
-    Router.route '/user/:username/gallery', (->
+    Router.route '/u/:username/gallery', (->
         @layout 'profile_layout'
         @render 'user_gallery'
         ), name:'user_gallery'
-    Router.route '/user/:username/messages', (->
+    Router.route '/u/:username/messages', (->
         @layout 'profile_layout'
         @render 'user_messages'
         ), name:'user_messages'
-    Router.route '/user/:username/bookmarks', (->
+    Router.route '/u/:username/bookmarks', (->
         @layout 'profile_layout'
         @render 'user_bookmarks'
         ), name:'user_bookmarks'
-    Router.route '/user/:username/documents', (->
+    Router.route '/u/:username/documents', (->
         @layout 'profile_layout'
         @render 'user_documents'
         ), name:'user_documents'
-    Router.route '/user/:username/loans', (->
+    Router.route '/u/:username/loans', (->
         @layout 'profile_layout'
         @render 'user_loans'
         ), name:'user_loans'
-    Router.route '/user/:username/social', (->
+    Router.route '/u/:username/social', (->
         @layout 'profile_layout'
         @render 'user_social'
         ), name:'user_social'
-    Router.route '/user/:username/events', (->
+    Router.route '/u/:username/events', (->
         @layout 'profile_layout'
         @render 'user_events'
         ), name:'user_events'
-    Router.route '/user/:username/products', (->
+    Router.route '/u/:username/products', (->
         @layout 'profile_layout'
         @render 'user_products'
         ), name:'user_products'

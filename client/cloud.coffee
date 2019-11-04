@@ -1,13 +1,15 @@
 Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
-        selected_theme_tags.array()
+        selected_tags.array()
         selected_usernames.array()
         selected_subreddits.array()
+        'reddit'
         )
     @autorun -> Meteor.subscribe('facet_docs',
-        selected_theme_tags.array()
+        selected_tags.array()
         selected_usernames.array()
         selected_subreddits.array()
+        'reddit'
     )
 
 Template.cloud.helpers
@@ -20,7 +22,7 @@ Template.cloud.helpers
             when @index <= 12 then ''
             when @index <= 20 then 'small'
         return button_class
-    selected_theme_tags: -> selected_theme_tags.array()
+    selected_tags: -> selected_tags.array()
     settings: -> {
         position: 'bottom'
         limit: 10
@@ -56,9 +58,9 @@ Template.cloud.events
     'click .unselect_subreddit': -> selected_subreddits.remove @valueOf()
     'click #clear_subreddits': -> selected_subreddits.clear()
 
-    'click .select_tag': -> selected_theme_tags.push @name
-    'click .unselect_tag': -> selected_theme_tags.remove @valueOf()
-    'click #clear_tags': -> selected_theme_tags.clear()
+    'click .select_tag': -> selected_tags.push @name
+    'click .unselect_tag': -> selected_tags.remove @valueOf()
+    'click #clear_tags': -> selected_tags.clear()
 
     'keyup #search': (e,t)->
         e.preventDefault()
@@ -67,18 +69,18 @@ Template.cloud.events
             when 13 #enter
                 switch val
                     when 'clear'
-                        selected_theme_tags.clear()
+                        selected_tags.clear()
                         $('#search').val ''
                     else
                         unless val.length is 0
-                            selected_theme_tags.push val.toString()
+                            selected_tags.push val.toString()
                             $('#search').val ''
             when 8
                 if val.length is 0
-                    selected_theme_tags.pop()
+                    selected_tags.pop()
 
     'autocompleteselect #search': (event, template, doc) ->
-        selected_theme_tags.push doc.name
+        selected_tags.push doc.name
         $('#search').val ''
 
 

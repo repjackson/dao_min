@@ -7,7 +7,6 @@ template(name='admin_layout')
                 .ui.header 
                     i.shield.icon
                     |admin
-                .ui.small.header for mmm project managment
                 .ui.vertical.fluid.large.menu
                     a.item(href="/tasks")
                         i.tasks.icon
@@ -28,7 +27,6 @@ template(name='admin_layout')
                 .ui.list
                     each admins 
                         .item #{name}
-        
             .thirteen.wide.column
                 +yield
     +footer

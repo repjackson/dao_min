@@ -20,7 +20,7 @@ if Meteor.isClient
 
     Template.nav.onCreated ->
         @autorun -> Meteor.subscribe 'me'
-        @autorun -> Meteor.subscribe 'my_classrooms'
+        # @autorun -> Meteor.subscribe 'my_classrooms'
         @autorun -> Meteor.subscribe 'model_docs','alert'
         # @autorun -> Meteor.subscribe 'role_models'
         @autorun => Meteor.subscribe 'global_settings'

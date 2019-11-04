@@ -16,25 +16,6 @@ template(name='layout')
     +yield
 
 
-template(name='home')
-    .ui.padded.stackable.grid
-        .sixteen.wide.column
-            +cloud
-            //- if dev
-            each docs
-                +doc_card
-            .ui.fluid.input
-                input.subreddit(type='text' placeholder='import subreddit')
-                .ui.icon.button.import_subreddit
-                    i.reddit.icon
-            .ui.fluid.input
-                input.site(type='text' placeholder='import site')
-                .ui.icon.button.import_site
-                    i.globe.icon
-            //- else 
-            .ui.center.aligned.basic.segment
-                +donate
-
 template(name='mlayout')
     +yield
 
@@ -68,74 +49,6 @@ template(name='shortcut_modal')
                         .content #{action}
 
 
-template(name='doc_card')
-    .ui.fluid.segment.stackable.grid
-        .four.wide.column
-            with reddit_data
-                if thumbnail
-                    img.ui.centered.rounded.image(src=thumbnail)
-            .ui.small.grey.inline.header #{subreddit}
-            div
-            span(title='reddit upvotes')
-                i.thumbs.up.outline.icon 
-                |#{reddit_data.ups}
-            span(title='reddit downvotes')
-                i.thumbs.down.outline.icon 
-                |#{reddit_data.downs}
-            if reddit_data.author
-                a.ui.large.link.label(href="https://www.reddit.com/user/#{reddit_data.author}" target="_window" title='view reddit user info') 
-                    i.user.outline.icon
-                    |#{reddit_data.author}
-        .twelve.wide.column
-            a.ui.header.inline(href=url target='_window')
-                if title 
-                    |#{title}
-                else 
-                    |#{url}
-            .ui.icon.button.refresh_post(title='refresh post')
-                i.reddit.icon
-            div
-            if is_url
-                i.large.link.icon
-            if is_image
-                img.ui.large.centered.image(src=url)
-            if is_youtube
-                i.large.youtube.icon
-            .ui.fluid.styled.accordion
-                if body
-                    .title 
-                        i.grey.list.icon
-                        |content 
-                        i.dropdown.icon
-                    .content
-                        .body_view
-                            |!{body}
-                if watson 
-                    .title 
-                        i.grey.line.chart.icon
-                        |analysis
-                        i.dropdown.icon
-                    .content
-                        +watson_view
-                .title 
-                    i.grey.tags.icon
-                    |tags
-                    each five_tags
-                        .ui.small.basic.label #{this}
-                    i.dropdown.icon
-                .content
-                    each tags
-                        +tag_label
-                if reddit_data
-                    .title 
-                        i.grey.reddit.icon
-                        |reddit 
-                        i.dropdown.icon
-                    .content
-                        +jsonView json=reddit_data
-                //- .ui.button.delete_doc
-                //-     i.remove.icon
-                //-     |delete
 
 
 template(name='tag_label')
@@ -150,14 +63,14 @@ template(name='cloud')
         |tags
     .ui.left.icon.input
         i.search.icon
-        if selected_theme_tags
+        if selected_tags
             +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
         else
             input#search(type='text' autofocus='' autocomplete="off")
-    if selected_theme_tags
+    if selected_tags
         #clear_tags.ui.active.icon.circular.button
             i.remove.icon
-        each selected_theme_tags
+        each selected_tags
             .unselect_tag.ui.active.circular.button
                 strong #{this}
     each all_tags
