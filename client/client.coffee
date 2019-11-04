@@ -1,5 +1,7 @@
 @selected_tags = new ReactiveArray []
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
+Template.registerHelper 'ten_tags', () -> @tags[..10]
+Template.registerHelper 'five_tags', () -> @tags[..4]
 Template.registerHelper 'calculated_size', (metric) ->
     # console.log metric
     # console.log typeof parseFloat(@relevance)
@@ -28,6 +30,10 @@ Template.doc_card.onRendered ->
     Meteor.setTimeout ->
         $('.accordion').accordion()
     , 1000
+Template.doc_card.events
+    'click .refresh_post': ->
+        console.log @
+        Meteor.call 'get_reddit_post', @_id, @reddit_id
 Template.doc_card.helpers
     is_image: ->
         image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/

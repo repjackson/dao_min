@@ -1,0 +1,196 @@
+template(name='nav')
+    .ui.attached.borderless.topnav.menu
+        if is_loading
+            .item
+                i.large.loading.yin.yang.icon
+        else 
+            a.compact.icon.item(href='/' class="{{isActivePath '/'}}") 
+                i.large.yin.yang.icon
+        if currentUser
+            each my_subreddits
+                a.mobile.hidden.item(href="/subreddit/#{_id}/view")
+                    if image_id 
+                        img.ui.avatar.inline.image(src="{{c.url image_id width=100 height=100 gravity='face' crop='fill'}}")
+                    else 
+                        i.dashboard.icon
+                    |#{title}
+        .right.menu
+            unless currentUser
+                a.item(href='/login') 
+                    i.sign.in.grey.icon
+                    span.mobile.hidden log in
+                a.item(href='/register')
+                    i.user.plus.grey.icon
+                    span.mobile.hidden register
+            if currentUser
+                a.icon.large.item(href='/mail')
+                    i.envelope.outline.grey.icon
+                a.ui.simple.dropdown.item(href='/alerts')
+                    if unread_alert_count
+                        i.bell.yellow.icon
+                    else 
+                        i.bell.grey.outline.icon
+                    .menu 
+                        if unread_alert_count
+                            .item alert
+                            .item alert
+                            .item alert
+                            .item alert
+                        else
+                            .item no alerts
+                if is_dev
+                    a.icon.item.set_models(href="/m/model")
+                        i.grey.database.icon
+                if is_admin
+                    //- a.icon.item(href="/grid")
+                    //-     i.large.grey.th.icon
+                    a.icon.item(href="/grid" title='admin')
+                        i.grey.shield.icon
+                unless logging_out
+                    a.ui.simple.dropdown.item(href="/user/#{currentUser.username}" class=user_nav_button_class)
+                        if currentUser.profile_image_id
+                            img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
+                        else
+                            i.user.outline.icon
+                        span.mobile.hidden #{currentUser.name} 
+                        //- #{currentUser.credit}
+                        .menu 
+                            a.item(href="/user/#{currentUser.username}") profile
+                            //- .item credits
+                            //- .item debits
+                            //- .item loans
+                            //- .item hitng
+                            a#logout.item(href='#')
+                                |log out
+                                i.sign.out.grey.icon
+                if logging_out
+                    .item
+                        i.loading.circle.notch.icon
+
+
+template(name='user_footer')
+    .ui.stackable.secondary.padded.grid.segment.footer
+        .row
+            .four.wide.column
+                if is_admin
+                    a.ui.button(href='/admin' title='admin')
+                        i.shield.icon
+                        |admin
+                .ui.link.list
+                    a.item(href='/donate')
+                        | contact
+            .five.wide.column
+                +bug_reporter
+            .six.wide.column
+                +footer_chat
+                if is_admin
+                    with currentUser
+                        +role_switcher
+
+template(name='bug_reporter')
+    .ui.button.start_report
+        i.bug.icon
+        |report bug
+    if reporting_bug
+        with new_bug
+            |#{pathname}
+            +text_edit key='text' direct=true
+            .ui.green.large.icon.button.submit_report
+                i.checkmark.icon
+            .ui.small.icon.red.button.cancel_bug
+                i.remove.icon
+
+
+template(name='footer')
+    if currentUser 
+        +user_footer
+    else 
+        +public_footer
+        
+template(name='public_footer')
+    .ui.stackable.secondary.padded.grid.segment
+        .row
+            .four.wide.column
+                .ui.link.large.list
+                    a.item(href='/p/about')
+                        |About
+                    a.item(href="/p/terms") 
+                        |Terms of Service
+                    a.item(href='/p/privacy') 
+                        |Privacy Policy
+                    a.item(href='/team')
+                        | Team
+                    a.item(href='/team')
+                        | Our Work
+                    a.item(href='/contact')
+                        | Contact
+                        
+            .three.wide.column
+                +bug_reporter    
+            .six.wide.column
+                +footer_chat
+                unless currentUser
+                    a.ui.big.button(href='/login')
+                        i.sign.in.icon
+                        |login
+                .ui.grey.small.header 
+                    i.copyright.outline.icon
+                    | Mini Money Management 2019
+
+            
+                
+template(name='footer_chat')
+    .ui.grey.header 
+        +i name='chat' classes='ui inline mini image'
+        |chat
+    .ui.list.scroll
+        each chat_messages
+            .item(title="by #{author.name} #{when}")
+                if author
+                    img.ui.avatar.image(src="{{c.url author.image_id width=200 height=200 gravity='face' crop='fill'}}")
+                |#{text}
+                //- small #{when}
+                if is_author
+                    span
+                        i.remove.link.icon.remove_message
+    .ui.bottom.attached.fluid.icon.large.input
+        i.plus.blue.icon
+        input.new_footer_chat_message(type='text' placeholder='add message')
+
+
+
+
+
+template(name='my_latest_activity')
+    .ui.grey.header 
+        i.grey.rss.icon
+        |your activity
+    .ui.list
+        each my_latest_activity
+            .item 
+                img.ui.avatar.image(src="{{c.url author.image_id width=200 height=200 gravity='face' crop='fill'}}")
+                |#{text} #{body}
+                small #{when}
+
+
+
+template(name='role_switcher')
+    .ui.inline.center.aligned.small.header 
+        |#{username} role switcher
+    //- if is_eric
+    //-     +multi_doc key='roles' label='roles' ref_model='role' direct=true
+    //-     div
+        //- +user_array_element_toggle key='roles' value='dev' user=currentUser
+    //- if current_user
+    //-     with current_user
+    //- else if currentUser
+    //-     with currentUser
+    //- +multi_doc_edit key='roles' label='roles' ref_model='role' direct=true
+    //- if is_admin
+        //- +multi_doc_edit key='current_roles' label='current roles' ref_model='role' direct=true
+    //- +user_array_element_toggle key='current_roles' value='admin' user=currentUser
+    //- +user_array_element_toggle key='current_roles' value='student' user=currentUser
+    //- +user_array_element_toggle key='current_roles' value='staff' user=currentUser
+    +user_array_element_toggle key='roles' value='student' user=currentUser
+    +user_array_element_toggle key='roles' value='teacher' user=currentUser
+    +user_array_element_toggle key='roles' value='parent' user=currentUser

@@ -5,6 +5,8 @@
 # but you can also edit it by hand.
 
 meteor-base@1.4.0             # Packages every Meteor app needs to have
+iron:router@=1.0.13
+
 mongo@1.6.2                   # The database Meteor supports right now
 tracker@1.2.0                 # Meteor's client-side reactive programming library
 
@@ -15,7 +17,8 @@ meteorhacks:aggregate
 babrahams:constellation
 mobile-experience@1.0.5
 
-
+zimme:active-route
+accounts-password@1.5.1
 blaze-html-templates
 dburles:collection-helpers
 shell-server@0.4.0
@@ -32,3 +35,4 @@ modules@0.13.0
 http
 mrgalaxy:stripe
 session
+yasinuslu:json-view

@@ -27,6 +27,27 @@ Docs.before.insert (userId, doc)->
     return
 
 
+Meteor.users.helpers
+    name: ->
+        if @nickname
+            "#{@nickname}"
+        else if @first_name and @last_name
+            "#{@first_name} #{@last_name}"
+        else
+            "#{@username}"
+    is_current_student: ->
+        if @roles
+            if 'admin' in @roles
+                if 'student' in @current_roles then true else false
+            else
+                if 'student' in @roles then true else false
+
+    email_address: -> if @emails and @emails[0] then @emails[0].address
+    email_verified: -> if @emails and @emails[0] then @emails[0].verified
+    five_tags: -> if @tags then @tags[..4]
+    three_tags: -> if @tags then @tags[..2]
+    last_name_initial: -> if @last_name then @last_name.charAt 0
+
 
 
 

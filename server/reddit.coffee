@@ -10,7 +10,7 @@ Meteor.methods
             reddit_post =
                 reddit_id: data.id
                 url: data.url
-                subreddit: data.domain
+                domain: data.domain
                 comment_count: data.num_comments
                 permalink: data.permalink
                 title: data.title
@@ -35,24 +35,24 @@ Meteor.methods
         HTTP.get "http://reddit.com/by_id/t3_#{reddit_id}.json", (err,res)->
             if err then console.error err
             else
-                # if res.data.data.children[0].data.selftext
-                #     console.log res.data.data.children[0].data.selftext
-                #     Docs.update doc_id, {
-                #         $set: html: res.data.data.children[0].data.selftext
-                #     }, ->
-                #     #     Meteor.call 'pull_site', doc_id, url
-                #         # console.log 'hi'
+                if res.data.data.children[0].data.selftext
+                    console.log "self text", res.data.data.children[0].data.selftext
+                    # Docs.update doc_id, {
+                    #     $set: html: res.data.data.children[0].data.selftext
+                    # }, ->
+                    #     Meteor.call 'pull_site', doc_id, url
+                        # console.log 'hi'
                 if res.data.data.children[0].data.url
                     url = res.data.data.children[0].data.url
-                    console.log url
+                    console.log "found url", url
                     Docs.update doc_id, {
                         $set:
                             reddit_url: url
                             url: url
                     }, ->
                         Meteor.call 'call_watson', doc_id, 'url', 'url'
-                # Docs.update doc_id,
-                #     $set: reddit_data: res.data.data.children[0].data
+                Docs.update doc_id,
+                    $set: reddit_data: res.data.data.children[0].data
 
 
     get_listing_comments: (doc_id, subreddit, reddit_id)->
