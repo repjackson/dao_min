@@ -23,39 +23,6 @@ Template.registerHelper 'calculated_size', (metric) ->
 
 
 
-Template.cloud.onCreated ->
-    @autorun -> Meteor.subscribe('tags',
-        selected_theme_tags.array()
-        selected_usernames.array()
-        selected_subreddits.array()
-        )
-    @autorun -> Meteor.subscribe('facet_docs',
-        selected_theme_tags.array()
-        selected_usernames.array()
-        selected_subreddits.array()
-    )
-
-Template.doc_card.onRendered ->
-    Meteor.setTimeout ->
-        $('.accordion').accordion()
-    , 1000
-Template.doc_card.events
-    'click .refresh_post': ->
-        # console.log @
-        Meteor.call 'get_reddit_post', @_id, @reddit_id
-Template.doc_card.helpers
-    is_image: ->
-        image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
-        image_result = image_check.test @url
-
-    is_url: ->
-        url_check = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
-        url_result = url_check.test @url
-
-    is_youtube: ->
-        @subreddit is 'youtube.com'
-        # youtube_check = /("^http:\/\/(?:www\.)?youtube.com\/watch\?(?=[^?]*v=\w+)(?:[^\s?]+)?$")/
-        # youtube_result = youtube_check.test @url
 
 Template.home.events
     'click .import_subreddit': ->
@@ -81,76 +48,6 @@ Template.home.helpers
         # if doc_count is 1
         Docs.find {
         }
-Template.cloud.helpers
-    all_tags: ->
-        doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Tags.find { count: $lt: doc_count } else Tags.find({},{limit:100})
-    cloud_tag_class: ->
-        button_class = switch
-            when @index <= 5 then 'large'
-            when @index <= 12 then ''
-            when @index <= 20 then 'small'
-        return button_class
-    selected_theme_tags: -> selected_theme_tags.array()
-    settings: -> {
-        position: 'bottom'
-        limit: 10
-        rules: [
-            {
-                collection: Tags
-                field: 'name'
-                matchAll: true
-                template: Template.tag_result
-            }
-        ]
-    }
-
-
-    all_usernames: ->
-        doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Usernames.find { count: $lt: doc_count } else Usernames.find({},{limit:20})
-    selected_usernames: -> selected_usernames.array()
-
-
-    all_subreddits: ->
-        doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Subreddits.find { count: $lt: doc_count } else Subreddits.find({},{limit:20})
-    selected_subreddits: -> selected_subreddits.array()
-
-
-Template.cloud.events
-    'click .select_username': -> selected_usernames.push @name
-    'click .unselect_username': -> selected_usernames.remove @valueOf()
-    'click #clear_usernames': -> selected_usernames.clear()
-
-    'click .select_subreddit': -> selected_subreddits.push @name
-    'click .unselect_subreddit': -> selected_subreddits.remove @valueOf()
-    'click #clear_subreddits': -> selected_subreddits.clear()
-
-    'click .select_tag': -> selected_theme_tags.push @name
-    'click .unselect_tag': -> selected_theme_tags.remove @valueOf()
-    'click #clear_tags': -> selected_theme_tags.clear()
-
-    'keyup #search': (e,t)->
-        e.preventDefault()
-        val = $('#search').val().toLowerCase().trim()
-        switch e.which
-            when 13 #enter
-                switch val
-                    when 'clear'
-                        selected_theme_tags.clear()
-                        $('#search').val ''
-                    else
-                        unless val.length is 0
-                            selected_theme_tags.push val.toString()
-                            $('#search').val ''
-            when 8
-                if val.length is 0
-                    selected_theme_tags.pop()
-
-    'autocompleteselect #search': (event, template, doc) ->
-        selected_theme_tags.push doc.name
-        $('#search').val ''
 
 # Stripe.setPublishableKey Meteor.settings.public.stripe_publishable
 
@@ -197,3 +94,136 @@ Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->
     if Meteor.user() and Meteor.user().roles
         if 'dev' in Meteor.user().roles then true else false
+Template.registerHelper 'when', () -> moment(@_timestamp).fromNow()
+Template.registerHelper 'from_now', (input) -> moment(input).fromNow()
+Template.registerHelper 'cal_time', (input) -> moment(input).calendar()
+Template.registerHelper 'last_initial', (user) ->
+    @last_name[0]+'.'
+Template.registerHelper 'current_delta', () -> Docs.findOne model:'delta'
+Template.registerHelper 'author', () -> Meteor.users.findOne @_author_id
+Template.registerHelper 'fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        match = {}
+        # if Meteor.user()
+        #     match.view_roles = $in:Meteor.user().roles
+        match.model = 'field'
+        match.parent_id = model._id
+        # console.log model
+        cur = Docs.find match,
+            sort:rank:1
+        # console.log cur.fetch()
+        cur
+
+Template.registerHelper 'edit_fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        Docs.find {
+            model:'field'
+            parent_id:model._id
+            edit_roles:$in:Meteor.user().roles
+        }, sort:rank:1
+
+Template.registerHelper 'sortable_fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        Docs.find {
+            model:'field'
+            parent_id:model._id
+            sortable:true
+        }, sort:rank:1
+Template.registerHelper 'nl2br', (text)->
+    nl2br = (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br>' + '$2')
+    new Spacebars.SafeString(nl2br)
+
+
+Template.registerHelper 'loading_class', () ->
+    if Session.get 'loading' then 'disabled' else ''
+
+Template.registerHelper 'current_model', (input) ->
+    Docs.findOne
+        model:'model'
+        slug: Router.current().params.model_slug
+Template.registerHelper 'is_current_admin', () ->
+    if Meteor.user() and Meteor.user().roles
+        # if _.intersection(['dev','admin'], Meteor.user().roles) then true else false
+        if 'admin' in Meteor.user().current_roles then true else false
+Template.registerHelper 'is_admin', () ->
+    if Meteor.user() and Meteor.user().roles
+        # if _.intersection(['dev','admin'], Meteor.user().roles) then true else false
+        if 'admin' in Meteor.user().roles then true else false
+Template.registerHelper 'is_eric', () -> if Meteor.userId() and Meteor.userId() in ['exYMs7xwuJ9QZJZ33'] then true else false
+
+Template.registerHelper 'current_user', () ->  Meteor.users.findOne username:Router.current().params.username
+Template.registerHelper 'is_current_user', () ->
+    if Meteor.user().username is Router.current().params.username
+        true
+    else
+        if Meteor.user().roles and 'dev' in Meteor.user().roles
+            true
+        else
+            false
+Template.registerHelper 'view_template', -> "#{@field_type}_view"
+Template.registerHelper 'edit_template', -> "#{@field_type}_edit"
+Template.registerHelper 'is_model', -> @model is 'model'
+Template.registerHelper 'is_editing', () -> Session.equals 'editing_id', @_id
+Template.registerHelper 'editing_doc', () ->
+    Docs.findOne Session.get('editing_id')
+
+Template.registerHelper 'can_edit', () ->
+    if Meteor.user()
+        Meteor.userId() is @_author_id or 'admin' in Meteor.user().roles
+
+Template.registerHelper 'publish_when', () -> moment(@publish_date).fromNow()
+
+Template.registerHelper 'current_doc', ->
+    doc = Docs.findOne Router.current().params.doc_id
+    user = Meteor.users.findOne Router.current().params.doc_id
+    # console.log doc
+    # console.log user
+    if doc then doc else if user then user
+
+Template.registerHelper 'page_doc', ->
+    doc = Docs.findOne Router.current().params.doc_id
+    if doc then doc
+
+Template.registerHelper 'field_value', () ->
+    # console.log @
+    parent = Template.parentData()
+    parent5 = Template.parentData(5)
+    parent6 = Template.parentData(6)
+
+
+    if @direct
+        parent = Template.parentData()
+    else if parent5
+        if parent5._id
+            parent = Template.parentData(5)
+    else if parent6
+        if parent6._id
+            parent = Template.parentData(6)
+    if parent
+        parent["#{@key}"]
+
+
+Template.registerHelper 'sorted_field_values', () ->
+    # console.log @
+    parent = Template.parentData()
+    parent5 = Template.parentData(5)
+    parent6 = Template.parentData(6)
+
+
+    if @direct
+        parent = Template.parentData()
+    else if parent5._id
+        parent = Template.parentData(5)
+    else if parent6._id
+        parent = Template.parentData(6)
+    if parent
+        _.sortBy parent["#{@key}"], 'number'
