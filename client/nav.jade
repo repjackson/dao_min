@@ -4,8 +4,20 @@ template(name='nav')
             .item
                 i.large.loading.yin.yang.icon
         else 
-            a.compact.icon.item(href='/' class="{{isActivePath '/'}}") 
+            a.compact.icon.item(href='/m/reddit' class="{{isActivePath '/m/reddit'}}") 
                 i.large.yin.yang.icon
+        a.item(href='/stats') 
+            i.line.chart.grey.icon
+        //- a.item(href='/m/product' title='products') 
+        //-     i.shopping.cart.grey.icon
+        //- a.item(href='/m/service' title='services') 
+        //-     i.wrench.grey.icon
+        //- a.item(href='/m/business' title='businesses') 
+        //-     i.briefcase.grey.icon
+        //- a.item(href='/m/restaurant' title='food')
+        //-     i.food.grey.icon
+        a.item(href='/home' title='classic facet') 
+            i.diamond.grey.icon
         if currentUser
             each my_subreddits
                 a.mobile.hidden.item(href="/subreddit/#{_id}/view")
@@ -23,21 +35,21 @@ template(name='nav')
                     i.user.plus.grey.icon
                     span.mobile.hidden register
             if currentUser
-                a.icon.large.item(href='/mail')
-                    i.envelope.outline.grey.icon
-                a.ui.simple.dropdown.item(href='/alerts')
-                    if unread_alert_count
-                        i.bell.yellow.icon
-                    else 
-                        i.bell.grey.outline.icon
-                    .menu 
-                        if unread_alert_count
-                            .item alert
-                            .item alert
-                            .item alert
-                            .item alert
-                        else
-                            .item no alerts
+                //- a.icon.large.item(href='/mail')
+                //-     i.envelope.outline.grey.icon
+                //- a.ui.simple.dropdown.item(href='/alerts')
+                //-     if unread_alert_count
+                //-         i.bell.yellow.icon
+                //-     else 
+                //-         i.bell.grey.outline.icon
+                //-     .menu 
+                //-         if unread_alert_count
+                //-             .item alert
+                //-             .item alert
+                //-             .item alert
+                //-             .item alert
+                //-         else
+                //-             .item no alerts
                 if is_dev
                     a.icon.item.set_models(href="/m/model")
                         i.grey.database.icon

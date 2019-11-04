@@ -3,7 +3,10 @@ template(name='model_edit')
         .ui.stackable.padded.grid            
             .centered.row
                 .four.wide.column
-                    h1.ui.header edit model #{title}
+                    .ui.small.inline.grey.header edit model
+                    div
+                    .ui.inline.header #{title}
+                    div
                     +creation_info
                     div
                     a.ui.large.icon.button(href="/m/#{slug}")

@@ -27,8 +27,6 @@ Router.onBeforeAction(force_loggedin, {
     'subreddit_view'
     'user_view'
     'contact'
-    'school_view'
-    'parents'
     'donate'
     'shop'
     'donors'
@@ -42,8 +40,6 @@ Router.onBeforeAction(force_loggedin, {
 
 Router.route "/add_guest/:new_guest_id", -> @render 'add_guest'
 
-Router.route '/inbox', -> @render 'inbox'
-Router.route '/stats', -> @render 'stats'
 Router.route '/dashboard', -> @render 'dashboard'
 
 Router.route('enroll', {
@@ -103,10 +99,10 @@ Router.route '/download_rules_pdf/:username', (->
     ), name: 'download_rules_pdf'
 
 
-# Router.route '/', -> @redirect '/m/classroom'
+Router.route '/', -> @redirect '/m/reddit'
 # Router.route '/', -> @redirect "/user/#{Meteor.user().username}"
 # Router.route '/', -> @render 'home'
-Router.route '/', (->
+Router.route '/home', (->
     @layout 'layout'
     @render 'home'
     ), name:'home'

@@ -2,7 +2,7 @@ template(name='delta')
     .ui.stackable.padded.grid
         with current_model
             .row
-                .five.wide.column
+                .six.wide.column
                     if is_loading
                         .ui.inline.header.pulsing
                             //- img(src='https://loading.io/spinners/hive/index.hexagon-grid-loader.gif')
@@ -39,8 +39,8 @@ template(name='delta')
                     div
                     each sorted_facets
                         +facet
-                .eleven.wide.column
-                    .filter_row.ui.basic.segment(class=loading_class)
+                .ten.wide.column
+                    .filter_row(class=loading_class)
                         .ui.inline.small.grey.header(title='change sort direction')
                             |sort by
                         .ui.compact.small.menu
@@ -99,7 +99,7 @@ template(name='delta')
                             //- .column
                             if is_loading
                                 .ui.segment
-                                    .ui.placeholder
+                                    .ui.fluid.placeholder
                                         .line
                                         .line
                                         .line
@@ -184,7 +184,7 @@ template(name='facet')
                             if is_admin
                                 small #{cal_count} #{count}
                     else
-                        .selector.ui.compact.button.toggle_selection(class=toggle_value_class)
+                        .selector.ui.compact.small.button.toggle_selection(class=toggle_value_class)
                             strong [null]
                             //- small #{cal_count}
         //- .ui.hidden.divider

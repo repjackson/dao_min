@@ -20,24 +20,26 @@ template(name='home')
 template(name='doc_card')
     .ui.fluid.segment.stackable.grid
         .four.wide.column
-            with reddit_data
+            with rd
                 if thumbnail
                     img.ui.centered.rounded.image(src=thumbnail)
-            .ui.small.grey.inline.header #{subreddit}
+            .ui.small.grey.inline.center.aligned.header(title='domain') #{domain}
             div
             span(title='reddit upvotes')
                 i.thumbs.up.outline.icon 
-                |#{reddit_data.ups}
+                |#{rd.ups}
             span(title='reddit downvotes')
                 i.thumbs.down.outline.icon 
-                |#{reddit_data.downs}
-            if reddit_data.author
-                a.ui.large.link.label(href="https://www.reddit.com/user/#{reddit_data.author}" target="_window" title='view reddit user info') 
+                |#{rd.downs}
+            if rd.author
+                a.ui.large.link.label(href="https://www.reddit.com/user/#{rd.author}" target="_window" title='view reddit user info') 
                     i.user.outline.icon
-                    |#{reddit_data.author}
+                    |#{rd.author}
+            div added #{when}
             a.ui.fluid.button(href=url target="_window")
                 i.external.icon
                 |goto site
+            +voting
         .twelve.wide.column
             a.ui.header.inline(href="/post/#{_id}/view")
                 if title 
@@ -55,7 +57,7 @@ template(name='doc_card')
                 img.ui.large.centered.image(src=url)
             if is_youtube
                 i.large.youtube.icon
-            .body_view.smallscroll
+            .body_view.mediumscroll
                 |!{body}
             .ui.fluid.styled.accordion
                 //- if body
@@ -80,13 +82,13 @@ template(name='doc_card')
                 .content
                     each tags
                         +tag_label
-                if reddit_data
+                if rd
                     .title 
                         i.grey.reddit.icon
                         |reddit 
                         i.dropdown.icon
                     .content
-                        +jsonView json=reddit_data
+                        +jsonView json=rd
                 //- .ui.button.delete_doc
                 //-     i.remove.icon
                 //-     |delete

@@ -86,37 +86,37 @@ template(name='post_cloud')
 //-                 each my_posts
 //-                     +post_card_template
 
-
-template(name='post_card_template')
-    .ui.segment                    
-        .ui.inline.header #{title}
-            if complete
-                i.large.green.checkmark.icon
-        .ui.basic.segment
-            +html_view key='description' label='description' direct=true
-        each tags
-            .ui.basic.large.label #{this}
-        if is_admin
-            +boolean_edit key='complete' label='complete' direct=true
-        +boolean_view key='complete' label='complete' direct=true
-        div
-        +number_view key='estimated_minutes' label='estimated minutes' direct=true
-        if due_date
-            +date_view key='due_date' label='due date' direct=true
-        if due_time
-            +time_view key='due_time' label='due time' direct=true
-        div
-        +multi_user_view key='assigned_to_multiple' label='assigned to' direct=true
-        +multi_user_view key='related_people' label='related people' direct=true
-        div
-        a.ui.button(href="/post/#{_id}/view")
-            |view
-            i.chevron.right.icon
-        if can_edit
-            a.ui.button(href="/post/#{_id}/edit")
-                i.pencil.icon
-                |edit
-            +remove_button
+//- 
+//- template(name='post_card_template')
+//-     .ui.segment                    
+//-         .ui.inline.header #{title}
+//-             if complete
+//-                 i.large.green.checkmark.icon
+//-         .ui.basic.segment
+//-             +html_view key='description' label='description' direct=true
+//-         each tags
+//-             .ui.basic.large.label #{this}
+//-         if is_admin
+//-             +boolean_edit key='complete' label='complete' direct=true
+//-         +boolean_view key='complete' label='complete' direct=true
+//-         div
+//-         +number_view key='estimated_minutes' label='estimated minutes' direct=true
+//-         if due_date
+//-             +date_view key='due_date' label='due date' direct=true
+//-         if due_time
+//-             +time_view key='due_time' label='due time' direct=true
+//-         div
+//-         +multi_user_view key='assigned_to_multiple' label='assigned to' direct=true
+//-         +multi_user_view key='related_people' label='related people' direct=true
+//-         div
+//-         a.ui.button(href="/post/#{_id}/view")
+//-             |view
+//-             i.chevron.right.icon
+//-         if can_edit
+//-             a.ui.button(href="/post/#{_id}/edit")
+//-                 i.pencil.icon
+//-                 |edit
+//-             +remove_button
 
 
 template(name='post_edit')

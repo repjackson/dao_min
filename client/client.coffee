@@ -28,6 +28,10 @@ Template.home.events
     'click .import_subreddit': ->
         subreddit = $('.subreddit').val()
         Meteor.call 'pull_subreddit', subreddit
+    'keyup .subreddit': (e,t)->
+        if e.which is 13
+            subreddit = $('.subreddit').val()
+            Meteor.call 'pull_subreddit', subreddit
     'click .import_site': ->
         site = $('.site').val()
         Meteor.call 'import_site', site
@@ -51,43 +55,6 @@ Template.home.helpers
 
 # Stripe.setPublishableKey Meteor.settings.public.stripe_publishable
 
-Template.donate.onCreated ->
-    # @autorun => Meteor.subscribe 'model_docs', 'donation'
-    if Meteor.isDevelopment
-        pub_key = Meteor.settings.public.stripe_test_publishable
-    else if Meteor.isProduction
-        pub_key = Meteor.settings.public.stripe_live_publishable
-    Template.instance().checkout = StripeCheckout.configure(
-        key: pub_key
-        # image: 'https://res.cloudinary.com/facet/image/upload/c_fill,g_face,h_300,w_300/mmmlogo.png'
-        locale: 'auto'
-        # zipCode: true
-        token: (token) ->
-            donate_amount = parseInt $('.donate_amount').val()*100
-            charge =
-                amount: donate_amount
-                currency: 'usd'
-                source: token.id
-                description: token.description
-            Meteor.call 'donate', charge, (error, response) =>
-                if error then alert error.reason, 'danger'
-                else
-                    alert 'thank you', 'success'
-	)
-
-Template.donate.helpers
-    donations: ->
-        Docs.find {
-            model:'donation'
-        }, _timestamp:1
-Template.donate.events
-    'click .start_donation': ->
-        donation_amount = parseInt $('.donate_amount').val()*100
-        Template.instance().checkout.open
-            name: 'dao donation'
-            # email:Meteor.user().emails[0].address
-            # description: 'mmm donation'
-            amount: donation_amount
 
 
 Template.registerHelper 'dev', -> Meteor.isDevelopment
@@ -141,10 +108,34 @@ Template.registerHelper 'sortable_fields', () ->
 Template.registerHelper 'nl2br', (text)->
     nl2br = (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br>' + '$2')
     new Spacebars.SafeString(nl2br)
+Template.registerHelper 'upvote_class', () ->
+    if Meteor.userId()
+        if @upvoter_ids and Meteor.userId() in @upvoter_ids then 'green' else 'outline'
+    else ''
+Template.registerHelper 'downvote_class', () ->
+    if Meteor.userId()
+        if @downvoter_ids and Meteor.userId() in @downvoter_ids then 'red' else 'outline'
+    else ''
+
+Template.registerHelper 'current_month', () -> moment(Date.now()).format("MMMM")
+Template.registerHelper 'current_day', () -> moment(Date.now()).format("DD")
 
 
 Template.registerHelper 'loading_class', () ->
     if Session.get 'loading' then 'disabled' else ''
+
+
+Template.registerHelper 'invert_class', -> if Session.equals('dark_mode',true) then 'invert' else ''
+Template.registerHelper 'display_mode', -> Session.get('display_mode',true)
+Template.registerHelper 'is_loading', -> Session.get 'loading'
+Template.registerHelper 'dev', -> Meteor.isDevelopment
+Template.registerHelper 'is_author', -> @_author_id is Meteor.userId()
+Template.registerHelper 'is_handler', -> @handler_username is Meteor.user().username
+Template.registerHelper 'is_teacher', -> @teacher_username is Meteor.user().username
+Template.registerHelper 'is_grandparent_author', ->
+    grandparent = Template.parentData(2)
+    grandparent._author_id is Meteor.userId()
+
 
 Template.registerHelper 'current_model', (input) ->
     Docs.findOne

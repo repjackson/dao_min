@@ -15,13 +15,16 @@ body {
 img {
     filter: invert(1) !important;
 }
+i.green.icon, i.red.icon{
+    filter: invert(1) !important;
+}
 
 .button{
     margin: .2em !important;
 }
 
 .ui.button:not(.circular){
-    border-radius: 10px !important;
+    border-radius: 7px !important;
 }
 
 .label{
@@ -111,7 +114,7 @@ img {
 .scrolling{
 	overflow-y:scroll;
 	overflow-x:hidden;
-	max-height:101vh;
+	max-height:151vh;
 	/*max-height:85vh;*/
 	/* padding-top: 1em; */
 	/*padding-left: 1em;*/

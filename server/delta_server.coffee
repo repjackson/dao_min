@@ -154,7 +154,7 @@ Meteor.methods
         # delta = Docs.findOne delta_id
 
     agg: (query, key, collection)->
-        limit=42
+        limit=20
         options = { explain:false }
         pipe =  [
             { $match: query }
