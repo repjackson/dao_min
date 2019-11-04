@@ -1,5 +1,7 @@
 @Docs = new Meteor.Collection 'docs'
 @Tags = new Meteor.Collection 'tags'
+@Usernames = new Meteor.Collection 'usernames'
+@Subreddits = new Meteor.Collection 'subreddits'
 
 
 Docs.before.insert (userId, doc)->
@@ -56,9 +58,9 @@ Docs.helpers
 
 if Meteor.isServer
     Docs.allow
-        insert: (userId, doc) -> true
-        update: (userId, doc) -> true
-        remove: (userId, doc) -> true
+        insert: (userId, doc) -> userId
+        update: (userId, doc) -> userId is @_author_id
+        remove: (userId, doc) -> userId is @_author_id
 
     Meteor.publish 'doc', (id)->
         doc = Docs.findOne id
@@ -67,12 +69,12 @@ if Meteor.isServer
             Docs.find id
         else if user
             Meteor.users.find id
-    Meteor.publish 'docs', (selected_tags, filter)->
-        # console.log selected_tags
+    Meteor.publish 'docs', (selected_theme_tags, filter)->
+        # console.log selected_theme_tags
         # console.log filter
         self = @
         match = {}
-        if selected_tags.length > 0 then match.tags = $all: selected_tags
+        if selected_theme_tags.length > 0 then match.tags = $all: selected_theme_tags
         if filter then match.model = filter
 
         Docs.find match, sort:_timestamp:-1

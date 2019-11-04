@@ -144,22 +144,61 @@ template(name='tag_label')
 
 
 template(name='cloud')
+    div
+    .ui.inline.small.header 
+        i.tag.icon
+        |tags
     .ui.left.icon.input
         i.search.icon
-        if selected_tags
+        if selected_theme_tags
             +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
         else
             input#search(type='text' autofocus='' autocomplete="off")
-    if selected_tags
+    if selected_theme_tags
         #clear_tags.ui.active.icon.circular.button
             i.remove.icon
-        each selected_tags
+        each selected_theme_tags
             .unselect_tag.ui.active.circular.button
                 strong #{this}
     each all_tags
         .ui.compact.circular.button.select_tag(class=cloud_tag_class) 
             | #{this.name}
+            small #{this.count}
+    div
+    .ui.small.inline.header
+        i.user.icon.icon
+        |subreddits
+    .ui.left.icon.input
+        i.search.icon
+        +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
+    if selected_subreddits
+        each selected_subreddits
+            .unselect_subreddit.ui.active.circular.button
+                strong #{this}
+    each all_subreddits
+        .ui.compact.circular.button.select_subreddit
+            | #{this.name}
+            small #{this.count}
 
+    //- .ui.header
+    //-     i.user.icon.icon
+    //-     |usernames
+    //- .ui.left.icon.input
+    //-     i.search.icon
+    //-     if selected_usernames
+    //-         +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
+    //-     else
+    //-         input#search(type='text' autofocus='' autocomplete="off")
+    //- if selected_usernames
+    //-     #clear_tags.ui.active.icon.circular.button
+    //-         i.remove.icon
+    //-     each selected_usernames
+    //-         .unselect_username.ui.active.circular.button
+    //-             strong #{this}
+    //- each all_usernames
+    //-     .ui.compact.circular.button.select_username
+    //-         | #{this.name}
+    //- 
 template(name='tag_result')
     .ui.label #{name}
 

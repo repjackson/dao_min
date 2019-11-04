@@ -1,6 +1,6 @@
 # if Meteor.isClient
 #     Template.cloud.onCreated ->
-#         @autorun -> Meteor.subscribe('tags', selected_tags.array(), Template.currentData().filter)
+#         @autorun -> Meteor.subscribe('tags', selected_theme_tags.array(), Template.currentData().filter)
 #         @autorun -> Meteor.subscribe 'me'
 #
 #     Template.cloud.helpers
@@ -13,7 +13,7 @@
 #                 when @index <= 12 then ''
 #                 when @index <= 20 then 'small'
 #             return button_class
-#         selected_tags: -> selected_tags.array()
+#         selected_theme_tags: -> selected_theme_tags.array()
 #         settings: -> {
 #             position: 'bottom'
 #             limit: 10
@@ -29,9 +29,9 @@
 #
 #
 #     Template.cloud.events
-#         'click .select_tag': -> selected_tags.push @name
-#         'click .unselect_tag': -> selected_tags.remove @valueOf()
-#         'click #clear_tags': -> selected_tags.clear()
+#         'click .select_tag': -> selected_theme_tags.push @name
+#         'click .unselect_tag': -> selected_theme_tags.remove @valueOf()
+#         'click #clear_tags': -> selected_theme_tags.clear()
 #
 #         'keyup #search': (e,t)->
 #             e.preventDefault()
@@ -40,23 +40,23 @@
 #                 when 13 #enter
 #                     switch val
 #                         when 'clear'
-#                             selected_tags.clear()
+#                             selected_theme_tags.clear()
 #                             $('#search').val ''
 #                         else
 #                             unless val.length is 0
-#                                 selected_tags.push val.toString()
+#                                 selected_theme_tags.push val.toString()
 #                                 $('#search').val ''
 #                 when 8
 #                     if val.length is 0
-#                         selected_tags.pop()
+#                         selected_theme_tags.pop()
 #
 #         'autocompleteselect #search': (event, template, doc) ->
-#             selected_tags.push doc.name
+#             selected_theme_tags.push doc.name
 #             $('#search').val ''
 #
 #
 # if Meteor.isServer
-#     Meteor.publish 'tags', (selected_tags, filter)->
+#     Meteor.publish 'tags', (selected_theme_tags, filter)->
 #         # user = Meteor.users.finPdOne @userId
 #         # current_herd = user.profile.current_herd
 #
@@ -68,9 +68,9 @@
 #         else
 #             match.view_roles = $in:['public']
 #
-#         # selected_tags.push current_herd
+#         # selected_theme_tags.push current_herd
 #
-#         if selected_tags.length > 0 then match.tags = $all: selected_tags
+#         if selected_theme_tags.length > 0 then match.tags = $all: selected_theme_tags
 #         if filter then match.model = filter
 #         if filter and filter is 'shop'
 #             match.active = true
@@ -79,7 +79,7 @@
 #             { $project: tags: 1 }
 #             { $unwind: "$tags" }
 #             { $group: _id: '$tags', count: $sum: 1 }
-#             { $match: _id: $nin: selected_tags }
+#             { $match: _id: $nin: selected_theme_tags }
 #             { $sort: count: -1, _id: 1 }
 #             { $limit: 42 }
 #             { $project: _id: 0, name: '$_id', count: 1 }

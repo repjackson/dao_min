@@ -1,4 +1,6 @@
-@selected_tags = new ReactiveArray []
+@selected_theme_tags = new ReactiveArray []
+@selected_usernames = new ReactiveArray []
+@selected_subreddits = new ReactiveArray []
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]
@@ -22,9 +24,16 @@ Template.registerHelper 'calculated_size', (metric) ->
 
 
 Template.cloud.onCreated ->
-    @autorun -> Meteor.subscribe('tags', selected_tags.array())
-    @autorun -> Meteor.subscribe('facet_docs',selected_tags.array())
-
+    @autorun -> Meteor.subscribe('tags',
+        selected_theme_tags.array()
+        selected_usernames.array()
+        selected_subreddits.array()
+        )
+    @autorun -> Meteor.subscribe('facet_docs',
+        selected_theme_tags.array()
+        selected_usernames.array()
+        selected_subreddits.array()
+    )
 
 Template.doc_card.onRendered ->
     Meteor.setTimeout ->
@@ -32,7 +41,7 @@ Template.doc_card.onRendered ->
     , 1000
 Template.doc_card.events
     'click .refresh_post': ->
-        console.log @
+        # console.log @
         Meteor.call 'get_reddit_post', @_id, @reddit_id
 Template.doc_card.helpers
     is_image: ->
@@ -82,7 +91,7 @@ Template.cloud.helpers
             when @index <= 12 then ''
             when @index <= 20 then 'small'
         return button_class
-    selected_tags: -> selected_tags.array()
+    selected_theme_tags: -> selected_theme_tags.array()
     settings: -> {
         position: 'bottom'
         limit: 10
@@ -97,10 +106,30 @@ Template.cloud.helpers
     }
 
 
+    all_usernames: ->
+        doc_count = Docs.find().count()
+        if 0 < doc_count < 3 then Usernames.find { count: $lt: doc_count } else Usernames.find({},{limit:20})
+    selected_usernames: -> selected_usernames.array()
+
+
+    all_subreddits: ->
+        doc_count = Docs.find().count()
+        if 0 < doc_count < 3 then Subreddits.find { count: $lt: doc_count } else Subreddits.find({},{limit:20})
+    selected_subreddits: -> selected_subreddits.array()
+
+
 Template.cloud.events
-    'click .select_tag': -> selected_tags.push @name
-    'click .unselect_tag': -> selected_tags.remove @valueOf()
-    'click #clear_tags': -> selected_tags.clear()
+    'click .select_username': -> selected_usernames.push @name
+    'click .unselect_username': -> selected_usernames.remove @valueOf()
+    'click #clear_usernames': -> selected_usernames.clear()
+
+    'click .select_subreddit': -> selected_subreddits.push @name
+    'click .unselect_subreddit': -> selected_subreddits.remove @valueOf()
+    'click #clear_subreddits': -> selected_subreddits.clear()
+
+    'click .select_tag': -> selected_theme_tags.push @name
+    'click .unselect_tag': -> selected_theme_tags.remove @valueOf()
+    'click #clear_tags': -> selected_theme_tags.clear()
 
     'keyup #search': (e,t)->
         e.preventDefault()
@@ -109,18 +138,18 @@ Template.cloud.events
             when 13 #enter
                 switch val
                     when 'clear'
-                        selected_tags.clear()
+                        selected_theme_tags.clear()
                         $('#search').val ''
                     else
                         unless val.length is 0
-                            selected_tags.push val.toString()
+                            selected_theme_tags.push val.toString()
                             $('#search').val ''
             when 8
                 if val.length is 0
-                    selected_tags.pop()
+                    selected_theme_tags.pop()
 
     'autocompleteselect #search': (event, template, doc) ->
-        selected_tags.push doc.name
+        selected_theme_tags.push doc.name
         $('#search').val ''
 
 # Stripe.setPublishableKey Meteor.settings.public.stripe_publishable
