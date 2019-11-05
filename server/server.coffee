@@ -34,20 +34,27 @@ Docs.allow
 
 
 SyncedCron.add({
-        name: 'random sub'
-        schedule: (parser) ->
-            parser.text 'every 10 minutes'
-        job: ->
-            Meteor.call 'pull_subreddit', 'wikipedia', (err, res)->
-            Meteor.call 'pull_subreddit', 'usnews', (err, res)->
-            Meteor.call 'pull_subreddit', 'worldnews', (err, res)->
-            Meteor.call 'pull_subreddit', 'news', (err, res)->
-            Meteor.call 'pull_subreddit', 'business', (err, res)->
-            Meteor.call 'pull_subreddit', 'finance', (err, res)->
-            Meteor.call 'pull_subreddit', 'investing', (err, res)->
-            Meteor.call 'pull_subreddit', 'businessnews', (err, res)->
-            Meteor.call 'pull_subreddit', 'cooking', (err, res)->
-            Meteor.call 'pull_subreddit', 'food', (err, res)->
+    name: 'random sub'
+    schedule: (parser) ->
+        parser.text 'every 2 hours'
+    job: ->
+        Meteor.call 'pull_subreddit', 'wikipedia', (err, res)->
+    }
+)
+SyncedCron.add({
+    name: 'random sub'
+    schedule: (parser) ->
+        parser.text 'every 120 minutes'
+    job: ->
+        Meteor.call 'pull_subreddit', 'usnews', (err, res)->
+        Meteor.call 'pull_subreddit', 'worldnews', (err, res)->
+        Meteor.call 'pull_subreddit', 'news', (err, res)->
+        Meteor.call 'pull_subreddit', 'business', (err, res)->
+        Meteor.call 'pull_subreddit', 'finance', (err, res)->
+        Meteor.call 'pull_subreddit', 'investing', (err, res)->
+        Meteor.call 'pull_subreddit', 'businessnews', (err, res)->
+        Meteor.call 'pull_subreddit', 'cooking', (err, res)->
+        Meteor.call 'pull_subreddit', 'food', (err, res)->
     }
 )
 

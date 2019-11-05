@@ -14,39 +14,8 @@ template(name='cloud')
             .unselect_tag.ui.active.compact.button
                 strong #{this}
     each all_tags
-        .ui.compact.button.select_tag(class=cloud_tag_class title=count) 
+        .ui.compact.large.button.select_tag(class=cloud_tag_class title=count) 
             | #{this.name}
             if is_admin
                 small #{this.count}
-    div
-    i.users.large.grey.icon(title='subreddits')
-    .ui.left.icon.transparent.input
-        i.search.icon
-        +inputAutocomplete settings=subreddit_settings id="search_subreddits" class="" autofocus='' autocomplete="off" 
-    if selected_subreddits
-        each selected_subreddits
-            .unselect_subreddit.ui.active.compact.button
-                strong #{this}
-    each all_subreddits
-        .ui.compact.button.select_subreddit(title=count)
-            | #{this.name}
-            if is_admin
-                small #{this.count}
-    .spacer
-    i.user.grey.outline.large.icon(title='authors')
-    .ui.left.icon.transparent.input
-        i.search.icon
-        if selected_authors
-            +inputAutocomplete settings=author_settings id="search_authors" class="" autofocus='' autocomplete="off" 
-        else
-            input#search_authors(type='text' autofocus='' autocomplete="off")
-    if selected_authors
-        //- #clear_tags.ui.active.icon.button
-        //-     i.remove.icon
-        each selected_authors
-            .unselect_author.ui.active.button
-                strong #{this}
-    each all_authors
-        .ui.compact.button.select_author(title=count)
-            | #{this.name}
     

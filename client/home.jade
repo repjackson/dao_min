@@ -1,89 +1,98 @@
 template(name='home')
     .ui.padded.stackable.grid
-        .eight.wide.right.aligned.column
+        .sixteen.wide.column
+            a.compact.icon.ui.button(href='/' class="{{isActivePath '/'}}") 
+                i.large.yin.yang.icon
+            unless currentUser
+                a.ui.button(href='/login') 
+                    span.mobile.hidden log in
+                a.ui.button(href='/register')
+                    span.mobile.hidden register
+            if currentUser
+                unless logging_out
+                    a.ui.button(href="/u/#{currentUser.username}" class=user_nav_button_class)
+                        if currentUser.profile_image_id
+                            img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
+                        else
+                            i.user.outline.icon
+                        | #{currentUser.username} 
+                    a#logout.ui.icon.button(href='#')
+                        if logging_out
+                            i.loading.circle.notch.icon
+                        else 
+                            i.sign.out.grey.icon
+            
+            |view
+            .ui.compact.button.set_upvoted(class=upvoted_class)
+                |upvoted 
+            .ui.compact.button.set_downvoted(class=downvoted_class)
+                |downvoted 
+            .ui.compact.button.set_unvoted(class=unvoted_class)
+                |unvoted 
             +cloud
-        .eight.wide.column
             each docs
                 +doc_card
             .ui.fluid.transparent.input
                 input.subreddit(type='text' placeholder='import subreddit')
                 .ui.icon.button.import_subreddit
                     i.reddit.icon
-            //- .ui.fluid.input
-            //-     input.site(type='text' placeholder='import site')
-            //-     .ui.icon.button.import_site
-            //-         i.globe.icon
+                //- .ui.fluid.input
+                //-     input.site(type='text' placeholder='import site')
+                //-     .ui.icon.button.import_site
+                //-         i.globe.icon
             .ui.center.aligned.basic.segment
                 +donate
 
 
 
 template(name='doc_card')
-    .ui.fluid.basic.segment
-        //- with rd
-        //-     if thumbnail
-        //-         img.ui.centered.rounded.image(src=thumbnail)
-        a.ui.grey.header.inline(href=url target='_window')
-            if title 
-                |#{title}
-            else 
-                |#{url}
-        .ui.small.grey.inline.header(title='domain') #{domain}
-        if is_image 
-            img.ui.fluid.image(src=url)
-        .spacer
-        .body_view.mediumscroll
-            |!{body}
-        .ui.icon.transparent.fluid.large.input 
-            i.tag.icon 
-            input.add_tag(type='text' placeholder='add tag')
-        .ui.fluid.accordion
-            //- if watson 
-            //-     .title 
-            //-         i.grey.line.chart.icon
-            //-         |analysis
-            //-         i.dropdown.icon
-            //-     .content
-            //-         +watson_view
-            .title 
-                i.grey.tags.icon
-                each five_tags
-                    .ui.label #{this}
-                i.dropdown.icon
-            .content
-                each tags
-                    +tag_label
-            if dev
-                .ui.icon.button.delete_doc
-                    i.remove.icon
-                if rd
-                    .title 
-                        i.grey.reddit.icon
-                        i.dropdown.icon
-                    .content
-                        +jsonView json=rd
-        span(title='reddit upvotes')
-            i.chevron.up.grey.icon 
-            |#{rd.ups}
-        span(title='reddit downvotes')
-            i.chevron.down.grey.icon 
-            |#{rd.downs}
-        .ui.label(title='subreddit')
-            i.users.icon 
-            |#{subreddit}
-        if rd.author
-            //- a.ui.large.link.label(href="https://www.reddit.com/user/#{rd.author}" target="_window" title='view reddit user info') 
-            .ui.large.label
-                i.user.outline.icon
-                |#{rd.author}
-        //- +voting
-        //- if is_admin
-        .ui.icon.button.refresh_post(title='refresh post')
-            i.reddit.icon
-        | #{when}
+    .ui.fluid.basic.segment.stackable.grid
+        .centered.row
+            .sixteen.wide.center.aligned.column
+                a.ui.grey.large.center.aligned.header(href=url target='_window' title='view site')
+                    if title 
+                        |#{title}
+                    else 
+                        |#{url}
+        .row
+            .ten.wide.column.mediumscroll
+                //- with rd
+                //-     if thumbnail
+                //-         img.ui.centered.rounded.image(src=thumbnail)
+                //- .ui.small.grey.inline.header(title='domain') #{domain}
+                if is_image 
+                    img.ui.large.centered.rounded.image(src=url)
+                .spacer
+                .body_view
+                    |!{body}
+            .six.wide.column
+                .ui.icon.fluid.large.input 
+                    i.tag.icon 
+                    input.add_tag(type='text' placeholder='add tag')
+                .mediumscroll
+                    each tags
+                        +tag_label
+                if dev
+                    if currentUser
+                        .ui.icon.button.delete_doc
+                            i.remove.icon
+                //-     if rd
+                //-         .title 
+                //-             i.grey.reddit.icon
+                //-             i.dropdown.icon
+                //-         .content
+                //-             +jsonView json=rd
+                .ui.basic.center.aligned.segment
+                    .ui.big.icon.button.vote_up
+                        i.thumbs.up.big.icon(class=vote_up_icon_class)
+                    .ui.big.icon.button.vote_down
+                        i.thumbs.down.big.icon(class=vote_down_icon_class)
+                .ui.icon.button.refresh_post(title='refresh post')
+                    i.reddit.icon
+                //- | #{when}
 
 template(name='tag_label')
-    .ui.label.remove_tag #{this}
+    .ui.large.label.remove_tag #{this}
 
 
 

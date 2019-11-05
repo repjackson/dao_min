@@ -19,6 +19,10 @@ i.green.icon, i.red.icon{
     filter: invert(1) !important;
 }
 
+.ui.green.button, .ui.red.button{
+    filter: invert(1) !important;
+}
+
 .button{
     margin: .2em !important;
 }
@@ -57,9 +61,9 @@ i.green.icon, i.red.icon{
 }
 
 .body_view {
-  font-size: 120% !important;
+  font-size: 130% !important;
   color: grey !important;
-  line-height: 180% !important;
+  line-height: 200% !important;
 }
 
 .full_body_view {

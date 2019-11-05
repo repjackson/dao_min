@@ -1,6 +1,6 @@
 if Meteor.isClient
     Router.route '/register', (->
-        @layout 'mlayout'
+        @layout 'layout'
         @render 'register'
         ), name:'register'
 
@@ -53,7 +53,7 @@ if Meteor.isClient
                         #     Session.set 'enter_mode', 'register'
                         #     Session.set 'username', "#{username}"
                     else
-                        Router.go "/user/#{username}/"
+                        Router.go "/"
                         # Meteor.call 'generate_trans_types', new_classroom_id, ->
             # else
             #     Meteor.loginWithPassword username, password, (err,res)=>
