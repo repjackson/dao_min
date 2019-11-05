@@ -5,6 +5,9 @@ Meteor.methods
         console.log 'tag doc count', tag_doc_count
         Docs.update({tags:$in:[tag]}, {$pull:tags:tag}, {multi:true})
 
+    remove_subreddit: (subreddit)->
+        Docs.remove({subreddit:subreddit})
+
     import_site: (site)->
         existing_doc = Docs.findOne url:site
         if existing_doc

@@ -5,8 +5,8 @@ body {
     font-family: 'Ubuntu', sans-serif !important;
     /* font-size: 110% !important; */
     /*line-height: 200% !important;*/
-    background: rgba(0,0,0,.86) !important;
-    filter: invert(.9) !important;
+    background: rgba(0,0,0,.83) !important;
+    filter: invert(.83) !important;
     /* background: rgba(250, 250, 250, .05) !important */
     /* background: #0e0e44 !important; */
 }

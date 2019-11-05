@@ -5,7 +5,7 @@ Template.doc_card.onRendered ->
 Template.tag_label.events
     'click .remove_tag': ->
         console.log @
-        if Meteor.isDevelopment
+        if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
             Meteor.call 'remove_tag', Template.parentData()._id, @valueOf()
 
 Template.doc_card.events
@@ -18,6 +18,10 @@ Template.doc_card.events
     'click .refresh_post': ->
         # console.log @
         Meteor.call 'get_reddit_post', @_id, @reddit_id
+
+    'click .get_comments': ->
+        # console.log @
+        Meteor.call 'get_listing_comments', @_id, @reddit_id
 
     'click .vote_up': ->
         if Meteor.user()
@@ -66,13 +70,19 @@ Template.home.events
 
 
 
+Template.home.events
+    'click .add_doc':->
+        Session.set('adding_doc', true)
 Template.home.helpers
+    adding_doc: -> Session.get('adding_doc')
     upvoted_class: -> if Session.equals('vote_mode', 'upvoted') then 'active' else 'tertiary'
     downvoted_class: -> if Session.equals('vote_mode', 'downvoted') then 'active' else 'tertiary'
     unvoted_class: -> if Session.equals('vote_mode', 'unvoted') then 'active' else 'tertiary'
     dev_mode: -> Session.get('dev')
     docs: ->
         doc_count = Docs.find().count()
-        # if doc_count is 1
-        Docs.find {
-        }, limit:1
+        if Meteor.user() and 'admin' in Meteor.user().roles
+                Docs.find {}
+        else
+            if doc_count is 1
+                Docs.find {}

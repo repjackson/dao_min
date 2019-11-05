@@ -63,11 +63,24 @@ Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->
     if Meteor.user() and Meteor.user().roles
         if 'dev' in Meteor.user().roles then true else false
+Template.registerHelper 'is_admin', () ->
+    if Meteor.user() and Meteor.user().roles
+        if 'admin' in Meteor.user().roles then true else false
 Template.registerHelper 'when', () -> moment(@_timestamp).fromNow()
 Template.registerHelper 'from_now', (input) -> moment(input).fromNow()
 Template.registerHelper 'cal_time', (input) -> moment(input).calendar()
 Template.registerHelper 'current_delta', () -> Docs.findOne model:'delta'
 Template.registerHelper 'author', () -> Meteor.users.findOne @_author_id
+Template.registerHelper 'decode', (input)->
+    doc = new DOMParser().parseFromString(input, "text/html");
+    doc.documentElement.textContent;
+
+Template.registerHelper 'decoded_html', (input)->
+    console.log @
+    console.log @html
+    doc = new DOMParser().parseFromString(@html, "text/html");
+    doc.documentElement.textContent;
+
 Template.registerHelper 'nl2br', (text)->
     nl2br = (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br>' + '$2')
     new Spacebars.SafeString(nl2br)
@@ -91,3 +104,91 @@ Template.registerHelper 'calculated_size', (metric) ->
     else if whole is 8 then 'f8'
     else if whole is 9 then 'f9'
     else if whole is 10 then 'f10'
+
+
+
+
+Template.html_edit.events
+    'blur .froala-container': (e,t)->
+        html = t.$('div.froala-reactive-meteorized-override').froalaEditor('html.get', true)
+        if @direct
+            parent = Template.parentData()
+        else
+            parent = Template.parentData(5)
+        doc = Docs.findOne parent._id
+        user = Meteor.users.findOne parent._id
+        if doc
+            Docs.update parent._id,
+                $set:"#{@key}":html
+        else if user
+            Meteor.users.update parent._id,
+                $set:"#{@key}":html
+
+
+Template.html_edit.helpers
+    getFEContext: ->
+        if @direct
+            parent = Template.parentData()
+        else
+            parent = Template.parentData(5)
+        # @current_doc = Docs.findOne Router.current().params.doc_id
+        # @current_doc = Docs.findOne @_id
+        self = @
+        {
+            _value: parent["#{@key}"]
+            _keepMarkers: true
+            _className: 'froala-reactive-meteorized-override'
+            toolbarInline: false
+            initOnClick: false
+            toolbarButtons:
+                [
+                  'fullscreen'
+                  'bold'
+                  'italic'
+                  'underline'
+                  'strikeThrough'
+                #   'subscript'
+                #   'superscript'
+                  '|'
+                #   'fontFamily'
+                  'fontSize'
+                  'color'
+                #   'inlineStyle'
+                #   'paragraphStyle'
+                  '|'
+                  'paragraphFormat'
+                  'align'
+                  'formatOL'
+                  'formatUL'
+                  'outdent'
+                  'indent'
+                  'quote'
+                #   '-'
+                  'insertLink'
+                #   'insertImage'
+                #   'insertVideo'
+                #   'embedly'
+                #   'insertFile'
+                  'insertTable'
+                #   '|'
+                  'emoticons'
+                #   'specialCharacters'
+                #   'insertHR'
+                  'selectAll'
+                  'clearFormatting'
+                  '|'
+                #   'print'
+                #   'spellChecker'
+                #   'help'
+                  'html'
+                #   '|'
+                  'undo'
+                  'redo'
+                ]
+            # toolbarButtonsMD: ['bold', 'italic', 'underline']
+            # toolbarButtonsSM: ['bold', 'italic', 'underline']
+            toolbarButtonsXS: ['bold', 'italic', 'underline']
+            imageInsertButtons: ['imageBack', '|', 'imageByURL']
+            tabSpaces: false
+            height: 200
+        }

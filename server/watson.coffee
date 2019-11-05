@@ -30,11 +30,11 @@ Meteor.methods
                     # limit: 2
                 concepts: {}
                 categories: {}
-                emotion: {}
+                # emotion: {}
                 # metadata: {}
                 # relations: {}
                 # semantic_roles: {}
-                sentiment: {}
+                # sentiment: {}
 
         switch mode
             when 'html'

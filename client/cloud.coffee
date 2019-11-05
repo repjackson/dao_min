@@ -53,9 +53,9 @@ Template.cloud.events
                         unless val.length is 0
                             selected_tags.push val.toString()
                             $('#tag_search').val ''
-            when 8
-                if val.length is 0
-                    selected_tags.pop()
+            # when 8
+            #     if val.length is 0
+            #         selected_tags.pop()
     'autocompleteselect #tag_search': (event, template, doc) ->
         selected_tags.push doc.name
         $('#tag_search').val ''

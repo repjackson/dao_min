@@ -3,7 +3,10 @@ template(name='register')
         .centered.row
             .ten.wide.column
                 .ui.center.aligned.basic.segment
-                    .ui.inline.header registration
+                    a.ui.large.icon.button(href='/')
+                        i.yin.yang.icon
+    
+                    .ui.header registration
                 if message
                     h4.ui.center.aligned.header #{message}
                 .ui.small.inline.header 
@@ -32,7 +35,7 @@ template(name='register')
                         |register '#{username}'
                 else
                     .ui.small.header username "#{username}" found
-                    a.ui.basic.fluid.button(href='/login') 
+                    a.ui.large.fluid.button(href='/login') 
                         |login
                         
                         

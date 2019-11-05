@@ -38,25 +38,33 @@ SyncedCron.add({
     schedule: (parser) ->
         parser.text 'every 2 hours'
     job: ->
-        Meteor.call 'pull_subreddit', 'wikipedia', (err, res)->
+        Meteor.call 'pull_subreddit', 'recipes', (err, res)->
     }
 )
 SyncedCron.add({
     name: 'random sub'
     schedule: (parser) ->
-        parser.text 'every 120 minutes'
+        parser.text 'every 1 hours'
     job: ->
-        Meteor.call 'pull_subreddit', 'usnews', (err, res)->
-        Meteor.call 'pull_subreddit', 'worldnews', (err, res)->
-        Meteor.call 'pull_subreddit', 'news', (err, res)->
-        Meteor.call 'pull_subreddit', 'business', (err, res)->
-        Meteor.call 'pull_subreddit', 'finance', (err, res)->
-        Meteor.call 'pull_subreddit', 'investing', (err, res)->
-        Meteor.call 'pull_subreddit', 'businessnews', (err, res)->
-        Meteor.call 'pull_subreddit', 'cooking', (err, res)->
-        Meteor.call 'pull_subreddit', 'food', (err, res)->
+        Meteor.call 'pull_subreddit', 'Whatsinmycupboard', (err, res)->
     }
 )
+# SyncedCron.add({
+#     name: 'random sub'
+#     schedule: (parser) ->
+#         parser.text 'every 120 minutes'
+#     job: ->
+#         Meteor.call 'pull_subreddit', 'usnews', (err, res)->
+#         Meteor.call 'pull_subreddit', 'worldnews', (err, res)->
+#         Meteor.call 'pull_subreddit', 'news', (err, res)->
+#         Meteor.call 'pull_subreddit', 'business', (err, res)->
+#         Meteor.call 'pull_subreddit', 'finance', (err, res)->
+#         Meteor.call 'pull_subreddit', 'investing', (err, res)->
+#         Meteor.call 'pull_subreddit', 'businessnews', (err, res)->
+#         Meteor.call 'pull_subreddit', 'cooking', (err, res)->
+#         Meteor.call 'pull_subreddit', 'food', (err, res)->
+#     }
+# )
 
 
 if Meteor.isProduction

@@ -16,7 +16,7 @@ Meteor.publish 'tags', (
     else if vote_mode is 'downvoted'
         match.downvoter_ids = $in: [Meteor.userId()]
 
-    if filter then match.model = filter
+    # if filter then match.model = filter
 
     cloud = Docs.aggregate [
         { $match: match }
@@ -54,10 +54,10 @@ Meteor.publish 'facet_docs', (
     else if vote_mode is 'downvoted'
         match.downvoter_ids = $in: [Meteor.userId()]
 
-    if filter then match.model = filter
+    # if filter then match.model = filter
     if selected_tags.length > 0 then match.tags = $all: selected_tags
     Docs.find match,
         sort:
-            points: -1
             _timestamp:-1
+            # points: -1
         limit: 5
