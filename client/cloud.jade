@@ -1,58 +1,52 @@
 template(name='cloud')
     div
-    .ui.inline.small.header 
-        i.tag.icon
-        |tags
-    .ui.left.icon.input
+    i.tag.large.grey.icon(title='themes')
+    .ui.left.icon.transparent.input
         i.search.icon
         if selected_tags
-            +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
+            +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
         else
-            input#search(type='text' autofocus='' autocomplete="off")
+            input#tag_search(type='text' autofocus='' autocomplete="off")
     if selected_tags
-        #clear_tags.ui.active.icon.circular.button
-            i.remove.icon
+        //- #clear_tags.ui.active.icon.compact.button
+        //-     i.remove.icon
         each selected_tags
-            .unselect_tag.ui.active.circular.button
+            .unselect_tag.ui.active.compact.button
                 strong #{this}
     each all_tags
-        .ui.compact.circular.button.select_tag(class=cloud_tag_class) 
+        .ui.compact.button.select_tag(class=cloud_tag_class title=count) 
             | #{this.name}
             if is_admin
                 small #{this.count}
     div
-    .ui.small.inline.header
-        i.user.icon.icon
-        |subreddits
-    .ui.left.icon.input
+    i.users.large.grey.icon(title='subreddits')
+    .ui.left.icon.transparent.input
         i.search.icon
-        +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
+        +inputAutocomplete settings=subreddit_settings id="search_subreddits" class="" autofocus='' autocomplete="off" 
     if selected_subreddits
         each selected_subreddits
-            .unselect_subreddit.ui.active.circular.button
+            .unselect_subreddit.ui.active.compact.button
                 strong #{this}
     each all_subreddits
-        .ui.compact.circular.button.select_subreddit
+        .ui.compact.button.select_subreddit(title=count)
             | #{this.name}
             if is_admin
                 small #{this.count}
-
-    //- .ui.header
-    //-     i.user.icon.icon
-    //-     |usernames
-    //- .ui.left.icon.input
-    //-     i.search.icon
-    //-     if selected_usernames
-    //-         +inputAutocomplete settings=settings id="search" class="" autofocus='' autocomplete="off" 
-    //-     else
-    //-         input#search(type='text' autofocus='' autocomplete="off")
-    //- if selected_usernames
-    //-     #clear_tags.ui.active.icon.circular.button
-    //-         i.remove.icon
-    //-     each selected_usernames
-    //-         .unselect_username.ui.active.circular.button
-    //-             strong #{this}
-    //- each all_usernames
-    //-     .ui.compact.circular.button.select_username
-    //-         | #{this.name}
-    //- 
+    .spacer
+    i.user.grey.outline.large.icon(title='authors')
+    .ui.left.icon.transparent.input
+        i.search.icon
+        if selected_authors
+            +inputAutocomplete settings=author_settings id="search_authors" class="" autofocus='' autocomplete="off" 
+        else
+            input#search_authors(type='text' autofocus='' autocomplete="off")
+    if selected_authors
+        //- #clear_tags.ui.active.icon.button
+        //-     i.remove.icon
+        each selected_authors
+            .unselect_author.ui.active.button
+                strong #{this}
+    each all_authors
+        .ui.compact.button.select_author(title=count)
+            | #{this.name}
+    

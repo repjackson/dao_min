@@ -12,20 +12,9 @@ head
     script(src='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js')
 
 template(name='layout')
-    +nav
+    //- if in_dev
+    //-     +nav
     +yield
-
-
-template(name='mlayout')
-    +yield
-
-
-template(name='verification_confirmation')
-    .ui.padded.grid 
-        .row 
-            .sixteen.wide.column 
-                h1.ui.center.aligned.header your email has been verified
-
 
 
 template(name='not_found')
@@ -37,22 +26,6 @@ template(name='not_found')
             |home
 
 
-
-template(name='shortcut_modal')
-    .ui.shortcut.modal
-        .ui.header keyboard shortcuts
-        .content
-            .ui.large.list
-                each shortcuts
-                    .item 
-                        .header #{combo}
-                        .content #{action}
-
-
-
-
-template(name='tag_label')
-    .ui.small.basic.label.remove_tag #{this}
 
 
 

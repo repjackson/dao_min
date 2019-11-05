@@ -5,7 +5,7 @@ body {
     font-family: 'Ubuntu', sans-serif !important;
     /* font-size: 110% !important; */
     /*line-height: 200% !important;*/
-    background: rgba(0,0,0,.85) !important;
+    background: rgba(0,0,0,.86) !important;
     filter: invert(.9) !important;
     /* background: rgba(250, 250, 250, .05) !important */
     /* background: #0e0e44 !important; */
@@ -24,11 +24,20 @@ i.green.icon, i.red.icon{
 }
 
 .ui.button:not(.circular){
+    border-radius: 10px !important;
+}
+
+.ui.segment:not(.circular){
     border-radius: 7px !important;
 }
 
 .label{
     border-radius: 7px !important;
+    margin: .2em !important;
+}
+
+.-autocomplete-container {
+    margin-top: 10px !important;
 }
 
 
@@ -49,7 +58,8 @@ i.green.icon, i.red.icon{
 
 .body_view {
   font-size: 120% !important;
-  line-height: 150% !important;
+  color: grey !important;
+  line-height: 180% !important;
 }
 
 .full_body_view {
@@ -114,9 +124,18 @@ i.green.icon, i.red.icon{
 .scrolling{
 	overflow-y:scroll;
 	overflow-x:hidden;
-	max-height:151vh;
+	max-height:101vh;
 	/*max-height:85vh;*/
 	/* padding-top: 1em; */
+	/*padding-left: 1em;*/
+}
+.mediumscroll{
+	overflow-y:scroll;
+	overflow-x:hidden;
+	max-height:500px;
+	/*max-height:85vh;*/
+	padding-top: 1em;
+	margin-top: .5em;
 	/*padding-left: 1em;*/
 }
 .smallscroll{
@@ -134,3 +153,51 @@ i.green.icon, i.red.icon{
 	padding-top: 1em;
 	/*padding-left: 1em;*/
 }
+
+
+
+.f13 {
+  font-size: 400% !important;
+  line-height: 120% !important;
+  margin-bottom: 10px !important; }
+.f13 {
+  font-size: 300% !important;
+  line-height: 120% !important;
+  margin-bottom: 10px !important; }
+.f11 {
+  font-size: 250% !important;
+  line-height: 120% !important;
+  margin-bottom: 10px !important; }
+.f10 {
+  font-size: 200% !important;
+  line-height: 120% !important;
+  margin-bottom: 10px !important; }
+.f9 {
+  font-size: 180% !important;
+  line-height: 120% !important;
+  margin-bottom: 5px !important; }
+.f8 {
+  font-size: 160% !important;
+  line-height: 160% !important; }
+.f7 {
+  font-size: 140% !important;
+  line-height: 140% !important; }
+.f6 {
+  font-size: 120% !important;
+  line-height: 120% !important; }
+.f5 {
+  font-size: 110% !important;
+  line-height: 110% !important; }
+.f4 {
+  font-size: 100% !important;
+  line-height: 100% !important; }
+.f3 {
+  font-size: 90% !important;
+  line-height: 90% !important; }
+.f2 {
+  font-size: 70% !important;
+  line-height: 70% !important; }
+.f1 {
+  font-size: 50% !important;
+  line-height: 50% !important; }
+.f0 { display:none; }

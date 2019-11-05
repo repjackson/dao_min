@@ -99,10 +99,10 @@ Router.route '/download_rules_pdf/:username', (->
     ), name: 'download_rules_pdf'
 
 
-Router.route '/', -> @redirect '/m/reddit'
+# Router.route '/', -> @redirect '/home'
 # Router.route '/', -> @redirect "/user/#{Meteor.user().username}"
 # Router.route '/', -> @render 'home'
-Router.route '/home', (->
+Router.route '/', (->
     @layout 'layout'
     @render 'home'
     ), name:'home'

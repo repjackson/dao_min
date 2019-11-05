@@ -19,3 +19,11 @@ Meteor.methods
             Docs.find(tags:$in:[tag]).count()
         console.log 'tag doc count', tag_doc_count
         Docs.remove({tags:$in:[tag]})
+
+    add_tag: (doc_id, tag)->
+        Docs.update doc_id,
+            $addToSet:tags:tag
+
+    remove_tag: (doc_id, tag)->
+        Docs.update doc_id,
+            $pull: tags: tag

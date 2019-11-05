@@ -1,6 +1,6 @@
 Meteor.publish 'tags', (
     selected_tags
-    selected_usernames=[]
+    selected_authors=[]
     selected_subreddits
     filter
     )->
@@ -9,7 +9,7 @@ Meteor.publish 'tags', (
     match = {}
     # match.tags = $all: selected_tags
     if selected_tags.length > 0 then match.tags = $all: selected_tags
-    # if selected_usernames.length > 0 then match.subreddit = $all: selected_usernames
+    if selected_authors.length > 0 then match.subreddit = $all: selected_authors
     if selected_subreddits.length > 0 then match.subreddit = $all: selected_subreddits
 
     if filter then match.model = filter
@@ -46,22 +46,22 @@ Meteor.publish 'tags', (
             count: subreddit.count
             index: i
 
-    # username_cloud = Docs.aggregate [
-    #     { $match: match }
-    #     { $project: subreddit: 1 }
-    #     { $unwind: "$subreddit" }
-    #     { $group: _id: '$subreddit', count: $sum: 1 }
-    #     { $match: _id: $nin: selected_tags }
-    #     { $sort: count: -1, _id: 1 }
-    #     { $limit: 42 }
-    #     { $project: _id: 0, name: '$_id', count: 1 }
-    #     ]
-    # username_cloud.forEach (username, i) ->
-    #     self.added 'usernames', Random.id(),
-    #         name: username.name
-    #         count: username.count
-    #         index: i
-    #
+    author_cloud = Docs.aggregate [
+        { $match: match }
+        { $project: author: 1 }
+        { $unwind: "$author" }
+        { $group: _id: '$author', count: $sum: 1 }
+        { $match: _id: $nin: selected_tags }
+        { $sort: count: -1, _id: 1 }
+        { $limit: 42 }
+        { $project: _id: 0, name: '$_id', count: 1 }
+        ]
+    author_cloud.forEach (author, i) ->
+        self.added 'authors', Random.id(),
+            name: author.name
+            count: author.count
+            index: i
+
     self.ready()
 
 
@@ -69,16 +69,15 @@ Meteor.publish 'tags', (
 
 Meteor.publish 'facet_docs', (
         selected_tags
-        selected_usernames=[]
+        selected_authors=[]
         selected_subreddits
         filter
     )->
     self = @
     match = {}
-    if selected_tags.length > 0 then match.tags = $all: selected_tags
-    # if selected_usernames.length > 0 then match.subreddit = $all: selected_usernames
     if filter then match.model = filter
-
+    if selected_tags.length > 0 then match.tags = $all: selected_tags
+    if selected_authors.length > 0 then match.author = $all: selected_authors
     if selected_subreddits.length > 0 then match.subreddit = $all: selected_subreddits
     Docs.find match,
         sort:_timestamp:-1

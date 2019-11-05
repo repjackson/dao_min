@@ -21,8 +21,9 @@ Meteor.methods
             # # console.log reddit_post
             existing_doc = Docs.findOne url:data.url
             if existing_doc
-                console.log 'skipping existing url', data.url
-                console.log 'existing doc', existing_doc
+                if Meteor.isDevelopment
+                    console.log 'skipping existing url', data.url
+                    console.log 'existing doc', existing_doc
                 # Meteor.call 'get_reddit_post', existing_doc._id, data.id, (err,res)->
             unless existing_doc
                 # console.log 'importing url', data.url
@@ -37,7 +38,8 @@ Meteor.methods
             else
                 rd = res.data.data.children[0].data
                 if rd.selftext
-                    console.log "self text", rd.selftext
+                    if Meteor.isDevelopment
+                        console.log "self text", rd.selftext
                     Docs.update doc_id, {
                         $set: body: rd.selftext
                     }, ->
@@ -45,13 +47,14 @@ Meteor.methods
                         # console.log 'hi'
                 if rd.url
                     url = rd.url
-                    console.log "found url", url
+                    if Meteor.isDevelopment
+                        console.log "found url", url
                     Docs.update doc_id, {
                         $set:
                             reddit_url: url
                             url: url
                     }, ->
-                        # Meteor.call 'call_watson', doc_id, 'url', 'url'
+                        Meteor.call 'call_watson', doc_id, 'url', 'url'
                 Docs.update doc_id,
                     $set:
                         rd: rd

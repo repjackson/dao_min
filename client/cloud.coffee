@@ -1,13 +1,13 @@
 Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
-        selected_usernames.array()
+        selected_authors.array()
         selected_subreddits.array()
         'reddit'
         )
     @autorun -> Meteor.subscribe('facet_docs',
         selected_tags.array()
-        selected_usernames.array()
+        selected_authors.array()
         selected_subreddits.array()
         'reddit'
     )
@@ -15,7 +15,7 @@ Template.cloud.onCreated ->
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Tags.find { count: $lt: doc_count } else Tags.find({},{limit:100})
+        if 0 < doc_count < 3 then Tags.find { count: $lt: doc_count } else Tags.find({},{limit:42})
     cloud_tag_class: ->
         button_class = switch
             when @index <= 5 then 'large'
@@ -23,7 +23,7 @@ Template.cloud.helpers
             when @index <= 20 then 'small'
         return button_class
     selected_tags: -> selected_tags.array()
-    settings: -> {
+    tag_settings: -> {
         position: 'bottom'
         limit: 10
         rules: [
@@ -35,12 +35,36 @@ Template.cloud.helpers
             }
         ]
     }
+    subreddit_settings: -> {
+        position: 'bottom'
+        limit: 10
+        rules: [
+            {
+                collection: Subreddits
+                field: 'name'
+                matchAll: true
+                template: Template.tag_result
+            }
+        ]
+    }
+    author_settings: -> {
+        position: 'bottom'
+        limit: 10
+        rules: [
+            {
+                collection: Authors
+                field: 'name'
+                matchAll: true
+                template: Template.tag_result
+            }
+        ]
+    }
 
 
-    all_usernames: ->
+    all_authors: ->
         doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Usernames.find { count: $lt: doc_count } else Usernames.find({},{limit:20})
-    selected_usernames: -> selected_usernames.array()
+        if 0 < doc_count < 3 then Authors.find { count: $lt: doc_count } else Authors.find({},{limit:20})
+    selected_authors: -> selected_authors.array()
 
 
     all_subreddits: ->
@@ -50,9 +74,9 @@ Template.cloud.helpers
 
 
 Template.cloud.events
-    'click .select_username': -> selected_usernames.push @name
-    'click .unselect_username': -> selected_usernames.remove @valueOf()
-    'click #clear_usernames': -> selected_usernames.clear()
+    'click .select_author': -> selected_authors.push @name
+    'click .unselect_author': -> selected_authors.remove @valueOf()
+    'click #clear_authors': -> selected_authors.clear()
 
     'click .select_subreddit': -> selected_subreddits.push @name
     'click .unselect_subreddit': -> selected_subreddits.remove @valueOf()
@@ -62,47 +86,66 @@ Template.cloud.events
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
 
-    'keyup #search': (e,t)->
+    'keyup #tag_search': (e,t)->
         e.preventDefault()
-        val = $('#search').val().toLowerCase().trim()
+        val = $('#tag_search').val().toLowerCase().trim()
         switch e.which
             when 13 #enter
                 switch val
                     when 'clear'
                         selected_tags.clear()
-                        $('#search').val ''
+                        $('#tag_search').val ''
                     else
                         unless val.length is 0
                             selected_tags.push val.toString()
-                            $('#search').val ''
+                            $('#tag_search').val ''
             when 8
                 if val.length is 0
                     selected_tags.pop()
-
-    'autocompleteselect #search': (event, template, doc) ->
+    'autocompleteselect #tag_search': (event, template, doc) ->
         selected_tags.push doc.name
-        $('#search').val ''
+        $('#tag_search').val ''
 
 
 
-Template.doc_card.onRendered ->
-    Meteor.setTimeout ->
-        $('.accordion').accordion()
-    , 1000
-Template.doc_card.events
-    'click .refresh_post': ->
-        # console.log @
-        Meteor.call 'get_reddit_post', @_id, @reddit_id
-Template.doc_card.helpers
-    is_image: ->
-        image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
-        image_result = image_check.test @url
+    'keyup #subreddit_search': (e,t)->
+        e.preventDefault()
+        val = $('#subreddit_search').val().toLowerCase().trim()
+        switch e.which
+            when 13 #enter
+                switch val
+                    when 'clear'
+                        selected_subreddits.clear()
+                        $('#subreddit_search').val ''
+                    else
+                        unless val.length is 0
+                            selected_subreddits.push val.toString()
+                            $('#subreddit_search').val ''
+            when 8
+                if val.length is 0
+                    selected_subreddits.pop()
+    'autocompleteselect #subreddit_search': (event, template, doc) ->
+        selected_subreddits.push doc.name
+        $('#subreddit_search').val ''
 
-    is_url: ->
-        url_check = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
-        url_result = url_check.test @url
 
-    is_youtube: ->
-        @subreddit is 'youtube.com'
-        # youtube_check = /("^http:\/\/(?:www\.)?youtube.com\/watch\?(?=[^?]*v=\w+)(?:[^\s?]+)?$")/
-        # youtube_result = youtube_check.test @url
+
+    'keyup #author_search': (e,t)->
+        e.preventDefault()
+        val = $('#author_search').val().toLowerCase().trim()
+        switch e.which
+            when 13 #enter
+                switch val
+                    when 'clear'
+                        selected_authors.clear()
+                        $('#author_search').val ''
+                    else
+                        unless val.length is 0
+                            selected_authors.push val.toString()
+                            $('#author_search').val ''
+            when 8
+                if val.length is 0
+                    selected_authors.pop()
+    'autocompleteselect #author_search': (event, template, doc) ->
+        selected_authors.push doc.name
+        $('#author_search').val ''

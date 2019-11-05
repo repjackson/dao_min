@@ -28,7 +28,7 @@ template(name='doc_emotion')
     div
             
 template(name='call_watson')
-    #call_watson.ui.basic.big.button 
+    #call_watson.ui.big.button 
         i.chess.knight.icon
         |analyze
 
@@ -44,7 +44,7 @@ template(name='keywords')
     .ui.small.grey.inline.header 
         |#{watson.keywords.length} keywords
     each watson.keywords
-        .ui.basic.label #{text}
+        .ui.label #{text}
     //- .ui.four.column.stackable.grid
             //- .ui.column
             //-     span(class="{{calculated_size 'relevance'}}" title="{{ to_percent relevance }}% relevant") #{text}
@@ -88,7 +88,7 @@ template(name='entities')
     .ui.grey.inline.header 
         |#{watson.entities.length} entities
     each watson.entities
-        .ui.basic.label 
+        .ui.label 
             small #{type}:
             strong #{text}
     //- .ui.four.column.stackable.grid
@@ -105,7 +105,7 @@ template(name='keyword_list')
     .ui.small.grey.header 
         |#{watson_keywords.length} keywords
     each watson_keywords
-        .ui.large.basic.label #{this}
+        .ui.large.label #{this}
         //- span(class="{{calculated_size 'relevance'}}") #{this}
 
 
@@ -114,7 +114,7 @@ template(name='concept_list')
     .ui.small.grey.inline.header 
         |#{watson_concepts.length} concepts
     each watson_concepts
-        .ui.large.basic.label #{this}
+        .ui.large.label #{this}
 
 
 
@@ -123,7 +123,7 @@ template(name='concepts')
         |#{watson.concepts.length} concepts
     span.large150
         each watson.concepts
-            .ui.basic.label(class="{{calculated_size 'relevance'}}" title="{{to_percent relevance}}% relevant")
+            .ui.label(class="{{calculated_size 'relevance'}}" title="{{to_percent relevance}}% relevant")
                 a(href=dbpedia_resource target='_blank') #{text}
 
 

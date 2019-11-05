@@ -1,94 +1,97 @@
 template(name='home')
     .ui.padded.stackable.grid
-        .sixteen.wide.column
+        .eight.wide.right.aligned.column
             +cloud
+        .eight.wide.column
             each docs
                 +doc_card
-            .ui.fluid.input
+            .ui.fluid.transparent.input
                 input.subreddit(type='text' placeholder='import subreddit')
                 .ui.icon.button.import_subreddit
                     i.reddit.icon
-            .ui.fluid.input
-                input.site(type='text' placeholder='import site')
-                .ui.icon.button.import_site
-                    i.globe.icon
+            //- .ui.fluid.input
+            //-     input.site(type='text' placeholder='import site')
+            //-     .ui.icon.button.import_site
+            //-         i.globe.icon
             .ui.center.aligned.basic.segment
                 +donate
 
 
 
 template(name='doc_card')
-    .ui.fluid.segment.stackable.grid
-        .four.wide.column
-            with rd
-                if thumbnail
-                    img.ui.centered.rounded.image(src=thumbnail)
-            .ui.small.grey.inline.center.aligned.header(title='domain') #{domain}
-            div
-            span(title='reddit upvotes')
-                i.thumbs.up.outline.icon 
-                |#{rd.ups}
-            span(title='reddit downvotes')
-                i.thumbs.down.outline.icon 
-                |#{rd.downs}
-            if rd.author
-                a.ui.large.link.label(href="https://www.reddit.com/user/#{rd.author}" target="_window" title='view reddit user info') 
-                    i.user.outline.icon
-                    |#{rd.author}
-            div added #{when}
-            a.ui.fluid.button(href=url target="_window")
-                i.external.icon
-                |goto site
-            +voting
-        .twelve.wide.column
-            a.ui.header.inline(href="/post/#{_id}/view")
-                if title 
-                    |#{title}
-                else 
-                    |#{url}
-            a.ui.icon.button(href=url target='_window')
-                i.external.icon
-            .ui.icon.button.refresh_post(title='refresh post')
-                i.reddit.icon
-            div
-            if is_url
-                i.large.link.icon
-            if is_image
-                img.ui.large.centered.image(src=url)
-            if is_youtube
-                i.large.youtube.icon
-            .body_view.mediumscroll
-                |!{body}
-            .ui.fluid.styled.accordion
-                //- if body
-                //-     .title 
-                //-         i.grey.list.icon
-                //-         |content 
-                //-         i.dropdown.icon
-                //-     .content
-                if watson 
-                    .title 
-                        i.grey.line.chart.icon
-                        |analysis
-                        i.dropdown.icon
-                    .content
-                        +watson_view
-                .title 
-                    i.grey.tags.icon
-                    |tags
-                    each five_tags
-                        .ui.small.basic.label #{this}
-                    i.dropdown.icon
-                .content
-                    each tags
-                        +tag_label
+    .ui.fluid.basic.segment
+        //- with rd
+        //-     if thumbnail
+        //-         img.ui.centered.rounded.image(src=thumbnail)
+        a.ui.grey.header.inline(href=url target='_window')
+            if title 
+                |#{title}
+            else 
+                |#{url}
+        .ui.small.grey.inline.header(title='domain') #{domain}
+        if is_image 
+            img.ui.fluid.image(src=url)
+        .spacer
+        .body_view.mediumscroll
+            |!{body}
+        .ui.icon.transparent.fluid.large.input 
+            i.tag.icon 
+            input.add_tag(type='text' placeholder='add tag')
+        .ui.fluid.accordion
+            //- if watson 
+            //-     .title 
+            //-         i.grey.line.chart.icon
+            //-         |analysis
+            //-         i.dropdown.icon
+            //-     .content
+            //-         +watson_view
+            .title 
+                i.grey.tags.icon
+                each five_tags
+                    .ui.label #{this}
+                i.dropdown.icon
+            .content
+                each tags
+                    +tag_label
+            if dev
+                .ui.icon.button.delete_doc
+                    i.remove.icon
                 if rd
                     .title 
                         i.grey.reddit.icon
-                        |reddit 
                         i.dropdown.icon
                     .content
                         +jsonView json=rd
-                //- .ui.button.delete_doc
-                //-     i.remove.icon
-                //-     |delete
+        span(title='reddit upvotes')
+            i.chevron.up.grey.icon 
+            |#{rd.ups}
+        span(title='reddit downvotes')
+            i.chevron.down.grey.icon 
+            |#{rd.downs}
+        .ui.label(title='subreddit')
+            i.users.icon 
+            |#{subreddit}
+        if rd.author
+            //- a.ui.large.link.label(href="https://www.reddit.com/user/#{rd.author}" target="_window" title='view reddit user info') 
+            .ui.large.label
+                i.user.outline.icon
+                |#{rd.author}
+        //- +voting
+        //- if is_admin
+        .ui.icon.button.refresh_post(title='refresh post')
+            i.reddit.icon
+        | #{when}
+
+template(name='tag_label')
+    .ui.label.remove_tag #{this}
+
+
+
+
+template(name='donate')
+    .ui.grid 
+        .row
+            .three.wide.column
+                .ui.right.icon.transparent.input(title='donate')
+                    input.donate_amount(type='number' min='1' placeholder='donate')
+                    i.right.chevron.link.icon.start_donation   

@@ -21,12 +21,12 @@ Meteor.methods
                 limit:20
             features:
                 entities:
-                    emotion: true
-                    sentiment: true
+                    emotion: false
+                    sentiment: false
                     # limit: 2
                 keywords:
-                    emotion: true
-                    sentiment: true
+                    emotion: false
+                    sentiment: false
                     # limit: 2
                 concepts: {}
                 categories: {}
@@ -51,7 +51,8 @@ Meteor.methods
             else
                 keyword_array = _.pluck(response.keywords, 'text')
                 lowered_keywords = keyword_array.map (keyword)-> keyword.toLowerCase()
-                console.log 'categories',response.categories
+                if Meteor.isDevelopment
+                    console.log 'categories',response.categories
                 adding_tags = []
                 for category in response.categories
                     # console.log category.label.split('/')
@@ -64,7 +65,8 @@ Meteor.methods
                 for entity in response.entities
                     # console.log entity.type, entity.text
                     if entity.type is 'Quantity'
-                        console.log('quantity', entity.text)
+                        if Meteor.isDevelopment
+                            console.log('quantity', entity.text)
                     else
                         Docs.update { _id: doc_id },
                             $addToSet:
@@ -76,7 +78,7 @@ Meteor.methods
                 Docs.update { _id: doc_id },
                     $set:
                         body:response.analyzed_text
-                        watson: response
+                        # watson: response
                 #         watson_concepts: lowered_concepts
                 #         watson_keywords: lowered_keywords
                         # doc_sentiment_score: response.sentiment.document.score
@@ -89,5 +91,6 @@ Meteor.methods
                         tags:$each:lowered_keywords
                 final_doc = Docs.findOne doc_id
                 # console.log 'all tags', final_doc.tags
-                console.log 'final doc', final_doc
+                if Meteor.isDevelopment
+                    console.log 'final doc', final_doc
         )
