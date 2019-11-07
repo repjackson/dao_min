@@ -12,7 +12,6 @@ head
     script(src='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js')
 
 template(name='layout')
-    +nav
     +yield
 
 
@@ -23,32 +22,6 @@ template(name='not_found')
             i.home.icon
             //- +i name='home' classes='ui inline mini image'
             |home
-template(name='html_edit')
-    .ui.form
-        .field
-            label 
-                if icon
-                    +ismall name=icon classes='ui middle aligned image'
-                if title
-                    |#{title}
-                else if label
-                    |#{label}
-                else if key
-                    |#{key}
-                else
-                    |#{this}
-    .froala-container
-        +froalaReactive getFEContext
-    //- if is_dev
-    //- +call_watson mode='html' key=key
-    //- div
-    //- //- +tone mode='html'
-    //- if watson
-    //-     +watson_view
-        
-        
-
-
 
 
 template(name='tag_result')

@@ -78,7 +78,7 @@ Meteor.methods
             image_result = image_check.test data.url
             if image_result
                 console.log 'found image'
-            if data.domain in ['youtu.be','youtube.com']
+            if data.domain in ['youtu.be','youtube.com', 'i.redd.it','i.imgur.com']
                 console.log 'found youtube'
             else
                 # # console.log reddit_post

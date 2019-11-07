@@ -30,3 +30,57 @@ Meteor.methods
     remove_tag: (doc_id, tag)->
         Docs.update doc_id,
             $pull: tags: tag
+
+    calc_tag_count: (doc_id)->
+        if doc_id
+            doc = Docs.findOne doc_id
+            if doc.tags
+                doc_tag_count = doc.tags.length
+                Docs.update doc_id,
+                    $set:tag_count:doc_tag_count
+                console.log 'updated doc', doc.title, 'with', doc_tag_count, 'tags'
+        else
+            uncounted_count = Docs.find({
+                tag_count:$exists:false
+                skip_watson: $ne:true
+                }).count()
+            console.log uncounted_count, 'uncounted docs'
+            uncounted = Docs.find({
+                tag_count:$exists:false
+                skip_watson: $ne:true
+            }, {limit:10})
+            for doc in uncounted.fetch()
+                if doc.skip_watson
+                    console.log 'skipping flagged doc', doc.title
+                if doc.tags
+                    doc_tag_count = doc.tags.length
+                    Docs.update doc._id,
+                        $set:tag_count:doc_tag_count
+                    # console.log 'updated doc', doc.title, 'with', doc_tag_count, 'tags'
+                else
+                    console.log 'no tags', doc.title, 'checking for image'
+                    image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
+                    image_result = image_check.test doc.url
+                    if image_result
+                        console.log 'found image'
+                        Docs.remove doc._id
+                        console.log 'deleted doc with image', doc.title, doc.url
+                    else
+                        console.log 'found non image, sending to watson', doc.url
+                        Meteor.call 'call_watson', doc._id, 'url', 'url'
+
+            console.log 'done'
+    tag_untagged: ->
+        untagged = Docs.find({tags:$exists:false}, {limit:3})
+        # console.log untagged.count()
+        for doc in untagged.fetch()
+            image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
+            image_result = image_check.test doc.url
+            if image_result
+                console.log 'found image'
+                Docs.remove doc._id
+                console.log 'deleted doc with image', doc.title, doc.url
+            else
+                console.log 'found non image', doc.url
+                # console.log doc
+                # Meteor.call 'call_watson', doc._id, 'url', 'url'

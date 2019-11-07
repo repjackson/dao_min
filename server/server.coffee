@@ -14,6 +14,8 @@ Meteor.users.allow
             true
         # if userId and doc._id == userId
         #     true
+Meteor.publish 'me', ->
+    Meteor.users.find Meteor.userId()
 
 
 Docs.allow

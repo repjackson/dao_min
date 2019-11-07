@@ -16,7 +16,7 @@
 			"password": "OzX5px2EtWGt"
 		},
 		"language": {
-			"apikey": "wfHNSJGDfXwL3kzctjyFc1A42915AI7skje35rVxvA9t",
+			"apikey": "bGeuKkXERCnjHpiP4jbchp1hr6ZROlPLgDiNwrKsWCmH",
 			"iam_apikey_description": "Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:natural-language-understanding:us-south:a/f18c8f41459468045d98bcffc36f39d4:16a0e5c6-0fa1-4618-9b24-511e02143ab0::",
 			"iam_apikey_name": "auto-generated-apikey-9618be9d-9ba7-4fb3-9fa2-f887746fb110",
 			"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",

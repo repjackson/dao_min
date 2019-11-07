@@ -1,119 +1,89 @@
 template(name='home')
-    .ui.center.aligned.basic.segment
-        //- a.compact.icon.ui.button(href='/' class="{{isActivePath '/'}}") 
-        //- unless currentUser
-        //-     a.ui.icon.button(href='/login' title='sign in') 
-        //-         i.sign.in.alternate.icon
-        //-         //- span.mobile.hidden log in
-        //-     a.ui.icon.button(href='/register' title='register')
-        //-         i.user.plus.icon
-        //- if currentUser
-        //-     unless logging_out
-        //-         .ui.circular.large.icon.button.add_doc 
-        //-             i.plus.icon
-        //-         .ui.label
-        //-             if currentUser.profile_image_id
-        //-                 img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
-        //-             else
-        //-                 i.user.outline.icon
-        //-             | #{currentUser.username} 
-        //-         a#logout.ui.icon.button(href='#')
-        //-             if logging_out
-        //-                 i.loading.circle.notch.icon
-        //-             else 
-        //-                 i.sign.out.grey.icon
-        //- if adding_doc 
-        //-     +add_doc 
-        //- else 
-            //- |view:
-            //- .ui.button.set_upvoted(class=upvoted_class title='view upvoted')
-            //-     //- i.thumbs.up.large.icon
-            //-     |upvoted    
-            //- .ui.button.set_downvoted(class=downvoted_class title='view downvoted')
-            //-     //- i.thumbs.down.large.icon
-            //-     |downvoted    
-            //- .ui.button.set_unvoted(class=unvoted_class title='view unvoted')
-            //-     //- i.question.large.icon
-            //-     |unvoted
-            //- div    
-        +cloud
-    .sixteen.wide.column
-        each docs
-            +doc_card
-        .ui.fluid.transparent.input
-            input.subreddit(type='text' placeholder='import subreddit')
-            .ui.icon.button.import_subreddit
-                i.reddit.icon
-        .ui.fluid.transparent.input
-            input.site(type='text' placeholder='import site')
-            .ui.icon.button.import_site
-                i.globe.icon
-        .ui.center.aligned.basic.segment
-            +donate
-
-
-template(name='add_doc')
-    .ui.header adding doc
+    .ui.stackable.grid
+        //- .ui.center.aligned.basic.segment
+        .sixteen.wide.center.aligned.column
+            +cloud
+        .sixteen.wide.column
+            //- .ui.fluid.transparent.large.input
+            //-     input.subreddit(type='text' placeholder='learn word')
+                //- .ui.icon.button.import_subreddit
+                //-     i.yin.yang.icon
+            .ui.container
+                each docs
+                    +doc_card
+        
+        //- .eight.wide.column.scrolling
+            //- .ui.fluid.transparent.input
+            //-     input.site(type='text' placeholder='import site')
+            //-     .ui.icon.button.import_site
+            //-         i.globe.icon
+        .centered.row
+            .ui.center.aligned.ten.wide.column
+                +donate
 
 
 template(name='doc_card')
-    .ui.basic.segment
-        .ui.container
-            a.ui.grey.large.center.aligned.header(href=url target='_window' title='view site')
-                //- if thumbnail.length
-                //-     img.ui.centered.rounded.image(src=thumbnail)
-                if title 
-                    |#{title}
-                else 
-                    |#{url}
-            //- with rd
-            //-     if thumbnail
-            //-         img.ui.centered.rounded.image(src=thumbnail)
-            //- .ui.small.grey.inline.header(title='domain') #{domain}
-            if is_image 
-                img.ui.large.centered.rounded.image(src=url)
-            .ui.small.grey.inline.header(title='domain') #{domain}
-            .spacer
-            .body_view
-                if html
-                    |!{decoded_html}
-                else 
-                    |!{body}
-            if is_admin
-                each tags
-                    +tag_label
-                .ui.icon.button.delete_doc
-                    i.remove.icon
-                .ui.accordion 
-                    .title json reddit 
-                    .content 
-                        +jsonView json=rd
-            .ui.icon.button.refresh_post(title='refresh post')
-                i.reddit.icon
+    a.ui.inverted.center.aligned.large.header(href=url target='_window' title='view site')
+        //- if thumbnail.length
+        //-     img.ui.centered.rounded.image(src=thumbnail)
+        if title 
+            |#{title}
+        else 
+            |#{url}
+    //- with rd
+    //-     if thumbnail
+    //-         img.ui.centered.rounded.image(src=thumbnail)
+    //- .ui.small.grey.inline.header(title='domain') #{domain}
+    if is_image 
+        img.ui.large.centered.rounded.image(src=url)
+    //- .ui.small.grey.inline.header(title='domain') #{domain}
+    .spacer
+    .body_view
+        if html
+            |!{decoded_html}
+        else 
+            |!{body}
+    .ui.transparent.icon.fluid.large.input 
+        //- i.tag.icon
+        input.add_tag(type='text' placeholder='+ tag')
+    if is_admin
+        each tags
+            +tag_label
+        .ui.icon.button.delete_doc
+            i.remove.icon
+        .ui.accordion 
+            .title json reddit 
+            .content 
+                +jsonView json=rd
+        .ui.icon.button.refresh_post(title='refresh post')
+            i.reddit.icon
     //-             //- | #{when}
 
 template(name='tag_label')
-    .ui.large.label.remove_tag #{this}
+    .ui.large.basic.label.remove_tag #{this}
 
 
 template(name='cloud')
-    div
-    i.big.grey.yin.yang.icon
+    .spacer
+    //- i.big.grey.yin.yang.icon
 
-    .ui.left.icon.transparent.input
+    .ui.left.icon.transparent.inverted.huge.input
         i.search.icon
-        if selected_tags
-            +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
-        else
-            input#tag_search(type='text' autofocus='' autocomplete="off")
+        //- if selected_tags
+        //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
+        //- else
+        input#tag_search(type='text' autofocus='' autocomplete="off")
+    .spacer
+    div
     if selected_tags
-        #clear_tags.ui.active.icon.compact.big.button
+        #clear_tags.ui.grey.icon.large.compact.circular.button
             i.remove.icon
         each selected_tags
-            .unselect_tag.ui.active.compact.big.button
+            .unselect_tag.ui.grey.large.circular.compact.button
                 strong #{this}
     each all_tags
-        .ui.compact.large.white.button.select_tag(class=cloud_tag_class title=count) 
+        //- .ui.inverted.grey.compact.basic.large.circular.button.select_tag(class=cloud_tag_class title=count) 
+        .ui.inverted.grey.compact.basic.large.circular.button.select_tag(class=cloud_tag_class title=count) 
             | #{this.name}
             if is_admin
                 small #{this.count}
@@ -121,9 +91,6 @@ template(name='cloud')
 
 
 template(name='donate')
-    .ui.grid 
-        .row
-            .three.wide.column
-                .ui.right.icon.transparent.input(title='donate')
-                    input.donate_amount(type='number' min='1' placeholder='donate')
-                    i.right.chevron.link.icon.start_donation   
+    .ui.right.icon.inverted.transparent.input(title='donate')
+        input.donate_amount(type='number' min='1' placeholder='donate')
+        i.right.chevron.link.icon.start_donation   

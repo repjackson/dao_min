@@ -4,9 +4,9 @@ body {
     /* font-family: 'Ubuntu+Mono', sans-serif !important; */
     font-family: 'Ubuntu', sans-serif !important;
     /* font-size: 110% !important; */
-    /*line-height: 200% !important;*/
-    background: rgba(0,0,0,.83) !important;
-    filter: invert(.83) !important;
+    /* line-height: 200% !important; */
+    background: rgba(0,0,0,.85) !important;
+    filter: invert(.1) !important;
     /* background: rgba(250, 250, 250, .05) !important */
     /* background: #0e0e44 !important; */
 }
@@ -23,12 +23,23 @@ i.green.icon, i.red.icon{
     filter: invert(1) !important;
 }
 
+.button {
+    transition: all 1s !important;
+    font-family: 'Ubuntu', sans-serif !important;
+
+}
+
+
+
 .button{
     margin: .2em !important;
 }
 
 .ui.button:not(.circular){
     border-radius: 10px !important;
+    border-width: 1px !important;
+    border-style: dotted !important;
+    border-color: rgba(0,0,0,.9) !important;
 }
 
 .ui.segment:not(.circular){
@@ -61,16 +72,11 @@ i.green.icon, i.red.icon{
 }
 
 .body_view {
-  font-size: 130% !important;
-  color: grey !important;
-  line-height: 200% !important;
+  font-size: 120% !important;
+  color: darkgrey !important;
+  line-height: 180% !important;
 }
 
-.full_body_view {
-  font-size: 130% !important;
-  line-height: 170% !important;
-  margin: 1em !important;
-}
 
 .uppercase {
   text-transform: uppercase;

@@ -1,3 +1,68 @@
+Template.home.onCreated ->
+    @autorun => Meteor.subscribe 'me'
+
+
+
+Template.cloud.onCreated ->
+    @autorun -> Meteor.subscribe('tags',
+        selected_tags.array()
+        'reddit'
+        Session.get('vote_mode')
+        )
+    @autorun -> Meteor.subscribe('facet_docs',
+        selected_tags.array()
+        'reddit'
+        Session.get('vote_mode')
+    )
+
+Template.cloud.helpers
+    all_tags: ->
+        doc_count = Docs.find().count()
+        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:42}) else Tags.find({},{limit:42})
+    cloud_tag_class: ->
+        button_class = switch
+            when @index <= 5 then 'large'
+            when @index <= 12 then ''
+            when @index <= 20 then 'small'
+        return button_class
+    selected_tags: -> selected_tags.array()
+    tag_settings: -> {
+        position: 'bottom'
+        limit: 10
+        rules: [
+            {
+                collection: Tags
+                field: 'name'
+                matchAll: true
+                template: Template.tag_result
+            }
+        ]
+    }
+
+
+Template.cloud.events
+    'click .select_tag': -> selected_tags.push @name
+    'click .unselect_tag': -> selected_tags.remove @valueOf()
+    'click #clear_tags': -> selected_tags.clear()
+
+    'keyup #tag_search': (e,t)->
+        e.preventDefault()
+        val = $('#tag_search').val().toLowerCase().trim()
+        switch e.which
+            when 13 #enter
+                unless val.length is 0
+                    selected_tags.push val.toString()
+                    $('#tag_search').val ''
+                    Meteor.call 'pull_subreddit', val.toString()
+            # when 8
+            #     if val.length is 0
+            #         selected_tags.pop()
+    'autocompleteselect #tag_search': (event, template, doc) ->
+        selected_tags.push doc.name
+        $('#tag_search').val ''
+
+
+
 Template.doc_card.onRendered ->
     Meteor.setTimeout ->
         $('.accordion').accordion()
@@ -23,23 +88,8 @@ Template.doc_card.events
         # console.log @
         Meteor.call 'get_listing_comments', @_id, @reddit_id
 
-    'click .vote_up': ->
-        if Meteor.user()
-            Meteor.call 'upvote', @
-        else
-            Router.go "/login"
-
-    'click .vote_down': ->
-        if Meteor.user()
-            Meteor.call 'downvote', @
-        else
-            Router.go "/login"
 
 Template.doc_card.helpers
-    vote_up_icon_class: ->
-        if @upvoter_ids and Meteor.userId() in @upvoter_ids then 'green' else 'outline'
-    vote_down_icon_class: ->
-        if @downvoter_ids and Meteor.userId() in @downvoter_ids then 'red' else 'outline'
     is_image: ->
         image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
         image_result = image_check.test @url
@@ -51,38 +101,12 @@ Template.doc_card.helpers
         # youtube_check = /("^http:\/\/(?:www\.)?youtube.com\/watch\?(?=[^?]*v=\w+)(?:[^\s?]+)?$")/
         # youtube_result = youtube_check.test @url
 
-Template.home.events
-    'click .set_upvoted': ->
-        if Meteor.user()
-            Session.set 'vote_mode', 'upvoted'
-        else
-            Router.go "/login"
-    'click .set_downvoted': ->
-        if Meteor.user()
-            Session.set 'vote_mode', 'downvoted'
-        else
-            Router.go "/login"
-    'click .set_unvoted': ->
-        if Meteor.user()
-            Session.set 'vote_mode', 'unvoted'
-        else
-            Router.go "/login"
-
-
-
-Template.home.events
-    'click .add_doc':->
-        Session.set('adding_doc', true)
 Template.home.helpers
-    adding_doc: -> Session.get('adding_doc')
-    upvoted_class: -> if Session.equals('vote_mode', 'upvoted') then 'active' else 'tertiary'
-    downvoted_class: -> if Session.equals('vote_mode', 'downvoted') then 'active' else 'tertiary'
-    unvoted_class: -> if Session.equals('vote_mode', 'unvoted') then 'active' else 'tertiary'
-    dev_mode: -> Session.get('dev')
     docs: ->
         doc_count = Docs.find().count()
         if Meteor.user() and 'admin' in Meteor.user().roles
-                Docs.find {}
+            Docs.find {}
         else
-            if doc_count is 1
-                Docs.find {}
+            # if doc_count is 1
+            Docs.find {},
+                limit:1
