@@ -71,10 +71,14 @@ i.green.icon, i.red.icon{
     border-radius: 10px !important
 }
 
+.cloud {
+    text-align: center !important;
+}
+
 .body_view {
-  font-size: 120% !important;
+  font-size: 150% !important;
   color: darkgrey !important;
-  line-height: 180% !important;
+  line-height: 200% !important;
 }
 
 

@@ -1,0 +1,7 @@
+template(name='subs')
+    .ui.inverted.segment 
+        .ui.input 
+            input.add_subreddit(type='text')
+        each subreddits 
+            .ui.compact.labled.icon.black.button #{title}
+                i.remove.icon

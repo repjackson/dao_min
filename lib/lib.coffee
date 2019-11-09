@@ -2,6 +2,7 @@
 @Tags = new Meteor.Collection 'tags'
 @Authors = new Meteor.Collection 'authors'
 @Subreddits = new Meteor.Collection 'subreddits'
+@blacklist = new Meteor.Collection 'blacklist'
 
 
 Docs.before.insert (userId, doc)->

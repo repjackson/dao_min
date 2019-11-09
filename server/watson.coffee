@@ -19,6 +19,7 @@ Meteor.methods
         if doc.skip_watson is true
             console.log 'skipping flagged doc', doc.title
         else
+            console.log 'analyzing', doc.title, 'tags', doc.tags
             parameters =
                 concepts:
                     limit:20
@@ -52,15 +53,16 @@ Meteor.methods
             natural_language_understanding.analyze parameters, Meteor.bindEnvironment((err, response) ->
                 if err
                     # console.log 'watson error for', parameters.url
-                    # console.log err
-                    Docs.update doc_id,
-                        $set:skip_watson:true
-                    console.log 'error, flaggged doc for future skip', parameters.url
+                    console.log err
+                    # Docs.update doc_id,
+                    #     $set:skip_watson:true
+                    # console.log 'error, flaggged doc for future skip', parameters.url
                 else
+                    console.log 'adding watson info', doc.title
                     keyword_array = _.pluck(response.keywords, 'text')
                     lowered_keywords = keyword_array.map (keyword)-> keyword.toLowerCase()
-                    # if Meteor.isDevelopment
-                    #     console.log 'categories',response.categories
+                    if Meteor.isDevelopment
+                        console.log 'categories',response.categories
                     adding_tags = []
                     if response.categories
                         for category in response.categories
@@ -101,5 +103,5 @@ Meteor.methods
                     final_doc = Docs.findOne doc_id
                     # console.log 'all tags', final_doc.tags
                     if Meteor.isDevelopment
-                        console.log 'final doc', final_doc.tags
+                        console.log 'final doc tag', final_doc.title, final_doc.tags.length, 'length'
             )

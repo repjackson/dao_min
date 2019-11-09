@@ -14,7 +14,7 @@ Meteor.publish 'tags', (
         { $group: _id: '$tags', count: $sum: 1 }
         { $match: _id: $nin: selected_tags }
         { $sort: count: -1, _id: 1 }
-        { $limit: 200 }
+        { $limit: 42 }
         { $project: _id: 0, name: '$_id', count: 1 }
         ]
     cloud.forEach (tag, i) ->
@@ -34,6 +34,8 @@ Meteor.publish 'facet_docs', (
     self = @
     match = {}
     if selected_tags.length > 0 then match.tags = $all: selected_tags
+    count = Docs.find(match).count()
+    console.log 'count', count
     Docs.find match,
         sort:
             _timestamp:-1

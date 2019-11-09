@@ -1,54 +1,70 @@
 template(name='home')
-    .ui.stackable.grid
-        //- .ui.center.aligned.basic.segment
-        .sixteen.wide.center.aligned.column
-            +cloud
-        .sixteen.wide.column
-            //- .ui.fluid.transparent.large.input
-            //-     input.subreddit(type='text' placeholder='learn word')
-                //- .ui.icon.button.import_subreddit
-                //-     i.yin.yang.icon
-            .ui.container
-                each docs
-                    +doc_card
-        
-        //- .eight.wide.column.scrolling
-            //- .ui.fluid.transparent.input
-            //-     input.site(type='text' placeholder='import site')
-            //-     .ui.icon.button.import_site
-            //-         i.globe.icon
+    //- .ui.stackable.grid
+    //-     .sixteen.wide.center.aligned.column
+    +cloud
+    //- .sixteen.wide.column
+    each docs
+        +doc_card
+    if is_pro
         .centered.row
             .ui.center.aligned.ten.wide.column
                 +donate
 
 
+template(name='cloud')
+    .cloud
+        .spacer
+        //- i.big.grey.yin.yang.icon
+
+        .ui.left.icon.transparent.inverted.huge.input
+            i.search.icon
+            //- if selected_tags
+            //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
+            //- else
+            input#tag_search(type='text' autofocus='' autocomplete="off")
+        .mobile.only.spacer
+        if selected_tags
+            //- #clear_tags.ui.white.icon.compact.circular.large.button
+            //-     i.remove.icon
+            each selected_tags
+                .unselect_tag.ui.white.circular.compact.button
+                    .ui.header #{this}
+        each all_tags
+            .ui.black.compact.circular.button.select_tag(title=count) 
+                .ui.grey.inverted.header #{this.name}
+                    if is_admin
+                        small #{this.count}
+                
+
+
+
+
 template(name='doc_card')
-    a.ui.inverted.center.aligned.large.header(href=url target='_window' title='view site')
-        //- if thumbnail.length
-        //-     img.ui.centered.rounded.image(src=thumbnail)
-        if title 
-            |#{title}
-        else 
-            |#{url}
-    //- with rd
-    //-     if thumbnail
-    //-         img.ui.centered.rounded.image(src=thumbnail)
-    //- .ui.small.grey.inline.header(title='domain') #{domain}
-    if is_image 
-        img.ui.large.centered.rounded.image(src=url)
-    //- .ui.small.grey.inline.header(title='domain') #{domain}
-    .spacer
-    .body_view
-        if html
-            |!{decoded_html}
-        else 
-            |!{body}
-    .ui.transparent.icon.fluid.large.input 
-        //- i.tag.icon
-        input.add_tag(type='text' placeholder='+ tag')
+    .ui.basic.segment
+        a.ui.inverted.center.aligned.large.header(href=url target='_window' title='view site')
+            //- if thumbnail.length
+            //-     img.ui.centered.rounded.image(src=thumbnail)
+            if title 
+                |#{title}
+            else 
+                |#{url}
+        //- with rd
+        //-     if thumbnail
+        //-         img.ui.centered.rounded.image(src=thumbnail)
+        if is_image 
+            img.ui.large.centered.rounded.image(src=url)
+        span.body_view
+            if html
+                |!{decoded_html}
+            else 
+                |!{body}
     if is_admin
+        .ui.transparent.icon.inverted.big.input 
+            input.add_tag(type='text' placeholder='+ tag')
         each tags
             +tag_label
+        .ui.inverted.inline.header(title='domain') #{domain}
+        .ui.inverted.header #{when}
         .ui.icon.button.delete_doc
             i.remove.icon
         .ui.accordion 
@@ -60,34 +76,10 @@ template(name='doc_card')
     //-             //- | #{when}
 
 template(name='tag_label')
-    .ui.large.basic.label.remove_tag #{this}
+    .ui.black.compact.button.remove_tag #{this}
 
 
-template(name='cloud')
-    .spacer
-    //- i.big.grey.yin.yang.icon
-
-    .ui.left.icon.transparent.inverted.huge.input
-        i.search.icon
-        //- if selected_tags
-        //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
-        //- else
-        input#tag_search(type='text' autofocus='' autocomplete="off")
-    .spacer
-    div
-    if selected_tags
-        #clear_tags.ui.grey.icon.large.compact.circular.button
-            i.remove.icon
-        each selected_tags
-            .unselect_tag.ui.grey.large.circular.compact.button
-                strong #{this}
-    each all_tags
-        //- .ui.inverted.grey.compact.basic.large.circular.button.select_tag(class=cloud_tag_class title=count) 
-        .ui.inverted.grey.compact.basic.large.circular.button.select_tag(class=cloud_tag_class title=count) 
-            | #{this.name}
-            if is_admin
-                small #{this.count}
-    
+        
 
 
 template(name='donate')

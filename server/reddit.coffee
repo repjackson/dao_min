@@ -1,62 +1,12 @@
 Meteor.methods
-    pull_food_reddits: ->
-        food_list = [
-            'appetizers'
-            'asianeats'
-            'BBQ'
-            'bento'
-            'BreakfastFood'
-            'burgers'
-            'cakewin'
-            'Canning'
-            'cereal'
-            'charcuterie'
-            'Cheese'
-            'chinesefood'
-            'cider'
-            'condiments'
-            'crepes'
-            'curry'
-            'culinaryplating'
-            'cookingforbeginners'
-            'cookingwithcondiments'
-            'doener'
-            'eatwraps'
-            'energydrinks'
-            'fastfood'
-            'fishtew'
-            'fried'
-            'GifRecipes'
-            'grease'
-            'honey'
-            'hot_dog'
-            'icecreamery'
-            'irish_food'
-            'JapaneseFood'
-            'jello'
-            'KoreanFood'
-            'meat'
-            'pasta'
-            'PeanutButter'
-            'pizza'
-            'ramen'
-            'seafood'
-            'spicy'
-            'steak'
-            'sushi'
-            'sushiroll'
-            'veg'
-            'veganfood'
-            'vegetarian'
-            'Vitamix'
-        ]
+    pull_subreddits: ->
+        subs = Subreddits.find().fetch()
+        for sub in subs
+            # console.log 'pulling subreddit', sub.title
+            Meteor.call 'pull_subreddit', sub.title
 
-        for food in food_list
-            Meteor.setTimeout ->
-                Meteor.call 'pull_subreddit', food
-            , 10000
-            # console.log food
     pull_subreddit: (subreddit)->
+        console.log 'pulling subreddit', subreddit
         response = HTTP.get("http://reddit.com/r/#{subreddit}.json")
         # return response.content
 
@@ -77,9 +27,11 @@ Meteor.methods
             image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
             image_result = image_check.test data.url
             if image_result
-                console.log 'found image'
+                if Meteor.isDevelopment
+                    console.log 'skipping image'
             if data.domain in ['youtu.be','youtube.com', 'i.redd.it','i.imgur.com']
-                console.log 'found youtube'
+                if Meteor.isDevelopment
+                    console.log 'skipping youtube'
             else
                 # # console.log reddit_post
                 existing_doc = Docs.findOne url:data.url

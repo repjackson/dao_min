@@ -20,14 +20,9 @@ Meteor.publish 'me', ->
 
 Docs.allow
     insert: (userId, doc) ->
-        if doc.model is 'bug'
-            true
-        else
-            userId and doc._author_id is userId
+        userId and doc._author_id is userId
     update: (userId, doc) ->
-        if doc.model in ['test']
-            true
-        else if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+        if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
             true
         else
             doc._author_id is userId
@@ -35,20 +30,28 @@ Docs.allow
     remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
 
 
+Subreddits.allow
+    insert: (userId, doc) -> true
+    update: (userId, doc) -> true
+    remove: (userId, doc) -> true
+
+
 SyncedCron.add({
-    name: 'random sub'
+    name: 'refresh_subs'
     schedule: (parser) ->
-        parser.text 'every 2 hours'
+        parser.text 'every 20 mins'
+        # parser.text 'every 30 mins hours'
     job: ->
-        Meteor.call 'pull_subreddit', 'recipes', (err, res)->
+        Meteor.call 'pull_subreddits', (err, res)->
     }
 )
 SyncedCron.add({
-    name: 'random sub'
+    name: 'clean_tags'
     schedule: (parser) ->
-        parser.text 'every 1 hours'
+        parser.text 'every 1 hour'
+        # parser.text 'every 30 mins hours'
     job: ->
-        Meteor.call 'pull_subreddit', 'Whatsinmycupboard', (err, res)->
+        Meteor.call 'clean_tags', (err, res)->
     }
 )
 # SyncedCron.add({
@@ -71,3 +74,7 @@ SyncedCron.add({
 
 if Meteor.isProduction
     SyncedCron.start()
+
+
+Meteor.publish 'subreddits', ->
+    Subreddits.find()

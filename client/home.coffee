@@ -3,28 +3,29 @@ Template.home.onCreated ->
 
 
 
+
+
 Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
         'reddit'
-        Session.get('vote_mode')
         )
     @autorun -> Meteor.subscribe('facet_docs',
         selected_tags.array()
         'reddit'
-        Session.get('vote_mode')
     )
 
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
         if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:42}) else Tags.find({},{limit:42})
-    cloud_tag_class: ->
-        button_class = switch
-            when @index <= 5 then 'large'
-            when @index <= 12 then ''
-            when @index <= 20 then 'small'
-        return button_class
+    tag_class: ->
+        # button_class = switch
+        #     when @index <= 5 then 'large'
+        #     when @index <= 12 then ''
+        #     when @index <= 20 then 'small'
+        # return button_class
+        if @name in selected_tags.array() then 'white' else 'black'
     selected_tags: -> selected_tags.array()
     tag_settings: -> {
         position: 'bottom'
@@ -41,7 +42,10 @@ Template.cloud.helpers
 
 
 Template.cloud.events
-    'click .select_tag': -> selected_tags.push @name
+    'click .select_tag': ->
+        selected_tags.push @name
+        state = { 'page_id': 1}
+        history.pushState(state, 'hi')
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
 
@@ -53,7 +57,7 @@ Template.cloud.events
                 unless val.length is 0
                     selected_tags.push val.toString()
                     $('#tag_search').val ''
-                    Meteor.call 'pull_subreddit', val.toString()
+                    Meteor.call 'check_subreddit', val.toString()
             # when 8
             #     if val.length is 0
             #         selected_tags.pop()
@@ -70,7 +74,8 @@ Template.doc_card.onRendered ->
 Template.tag_label.events
     'click .remove_tag': ->
         console.log @
-        if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+        # if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+        if confirm "remove #{@valueOf()} tag?"
             Meteor.call 'remove_tag', Template.parentData()._id, @valueOf()
 
 Template.doc_card.events
