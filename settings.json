@@ -18,7 +18,7 @@
 			"url": "https://gateway-syd.watsonplatform.net/natural-language-understanding/api"
 		},
 		"visual": {
-			"apikey": "dKgeK3U6JYQn235P2f4y1JchqFROfW9ZwlhGe_5ffRA-",
+			"apikey": "3YW5jdrTdkr_-YKocTpxMl1MHyqEWf-BUio8yqO50oFJ",
 			"iam_apikey_description": "Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:watson-vision-combined:us-south:a/f18c8f41459468045d98bcffc36f39d4:a215dc07-48ca-41f5-be89-6e311afcb7e6::",
 			"iam_apikey_name": "auto-generated-apikey-63bf28e3-6093-4072-98e5-f9a64e795d39",
 			"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",

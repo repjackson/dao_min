@@ -18,7 +18,7 @@ Meteor.methods
                 reddit_id: data.id
                 url: data.url
                 domain: data.domain
-                comment_count: data.num_comments
+                # comment_count: data.num_comments
                 permalink: data.permalink
                 title: data.title
                 # selftext: false
@@ -53,42 +53,48 @@ Meteor.methods
             else
                 rd = res.data.data.children[0].data
                 if rd.selftext
-                    # if Meteor.isDevelopment
-                    #     console.log "self text", rd.selftext
-                    Docs.update doc_id, {
-                        $set: body: rd.selftext
-                    }, ->
-                    #     Meteor.call 'pull_site', doc_id, url
-                        # console.log 'hi'
+                    unless rd.is_video
+                        # if Meteor.isDevelopment
+                        #     console.log "self text", rd.selftext
+                        Docs.update doc_id, {
+                            $set: body: rd.selftext
+                        }, ->
+                        #     Meteor.call 'pull_site', doc_id, url
+                            # console.log 'hi'
                 if rd.selftext_html
-                    Docs.update doc_id, {
-                        $set: html: rd.selftext_html
-                    }, ->
-                    #     Meteor.call 'pull_site', doc_id, url
-                        # console.log 'hi'
+                    unless rd.is_video
+                        Docs.update doc_id, {
+                            $set: html: rd.selftext_html
+                        }, ->
+                        #     Meteor.call 'pull_site', doc_id, url
+                            # console.log 'hi'
                 if rd.url
-                    url = rd.url
-                    # if Meteor.isDevelopment
-                    #     console.log "found url", url
-                    Docs.update doc_id, {
-                        $set:
-                            reddit_url: url
-                            url: url
-                    }, ->
-                        Meteor.call 'call_watson', doc_id, 'url', 'url'
+                    unless rd.is_video
+                        url = rd.url
+                        # if Meteor.isDevelopment
+                        #     console.log "found url", url
+                        Docs.update doc_id, {
+                            $set:
+                                reddit_url: url
+                                url: url
+                        }, ->
+                            Meteor.call 'call_watson', doc_id, 'url', 'url'
 
                 update_ob = {}
 
                 Docs.update doc_id,
                     $set:
-                        rd: rd
+                        # rd: rd
                         thumbnail: rd.thumbnail
                         subreddit: rd.subreddit
                         author: rd.author
                         is_video: rd.is_video
-                        ups: rd.ups
-                        downs: rd.downs
+                        # ups: rd.ups
+                        # downs: rd.downs
                         over_18: rd.over_18
+
+
+
     get_reddit_user: (rusername)->
         HTTP.get "http://reddit.com/user/#{rusername}/about.json", (err,res)->
             if err then console.error err

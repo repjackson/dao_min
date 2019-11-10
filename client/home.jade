@@ -24,8 +24,8 @@ template(name='cloud')
             input#tag_search(type='text' autofocus='' autocomplete="off")
         .mobile.only.spacer
         if selected_tags
-            //- #clear_tags.ui.white.icon.compact.circular.large.button
-            //-     i.remove.icon
+            #clear_tags.ui.white.icon.compact.circular.large.button
+                i.remove.icon
             each selected_tags
                 .unselect_tag.ui.white.circular.compact.button
                     .ui.header #{this}
@@ -53,11 +53,12 @@ template(name='doc_card')
         //-         img.ui.centered.rounded.image(src=thumbnail)
         if is_image 
             img.ui.large.centered.rounded.image(src=url)
-        span.body_view
-            if html
-                |!{decoded_html}
-            else 
-                |!{body}
+        unless is_admin
+            span.body_view
+                if html
+                    |!{decoded_html}
+                else 
+                    |!{body}
     if is_admin
         .ui.transparent.icon.inverted.big.input 
             input.add_tag(type='text' placeholder='+ tag')
@@ -67,16 +68,12 @@ template(name='doc_card')
         .ui.inverted.header #{when}
         .ui.icon.button.delete_doc
             i.remove.icon
-        .ui.accordion 
-            .title json reddit 
-            .content 
-                +jsonView json=rd
         .ui.icon.button.refresh_post(title='refresh post')
             i.reddit.icon
     //-             //- | #{when}
 
 template(name='tag_label')
-    .ui.black.compact.button.remove_tag #{this}
+    .ui.black.small.compact.button.remove_tag #{this}
 
 
         

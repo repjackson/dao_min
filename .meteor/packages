@@ -28,11 +28,10 @@ mizzao:autocomplete
 mquandalle:jade
 underscore@1.0.10
 coffeescript
-ecmascript@0.12.4
+ecmascript
 percolate:synced-cron
 modules@0.13.0
 http
 mrgalaxy:stripe
 session
-yasinuslu:json-view
 flowkey:hotkeys

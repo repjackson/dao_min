@@ -67,16 +67,17 @@ Meteor.methods
         else
             uncounted_count = Docs.find({
                 tag_count:$exists:false
-                skip_watson: $ne:true
+                # skip_watson: $ne:true
                 }).count()
             console.log uncounted_count, 'uncounted docs'
             uncounted = Docs.find({
                 tag_count:$exists:false
-                skip_watson: $ne:true
-            }, {limit:1000})
+                # skip_watson: $ne:true
+            }, {limit:10})
             for doc in uncounted.fetch()
-                if doc.skip_watson
-                    console.log 'skipping flagged doc', doc.title
+                # if doc.skip_watson
+                #     console.log 'skipping flagged doc', doc.title
+
                 if doc.tags
                     doc_tag_count = doc.tags.length
                     Docs.update doc._id,
