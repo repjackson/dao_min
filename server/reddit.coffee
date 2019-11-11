@@ -23,6 +23,7 @@ Meteor.methods
                 title: data.title
                 # selftext: false
                 # thumbnail: false
+                tags:[data.domain.toLowerCase()]
                 model:'reddit'
             image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
             image_result = image_check.test data.url
@@ -92,6 +93,8 @@ Meteor.methods
                         # ups: rd.ups
                         # downs: rd.downs
                         over_18: rd.over_18
+                    $addToSet:
+                        tags: $each: [rd.subreddit.toLowerCase(), rd.author.toLowerCase()]
 
 
 

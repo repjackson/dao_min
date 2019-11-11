@@ -1,6 +1,4 @@
 @selected_tags = new ReactiveArray []
-@selected_authors = new ReactiveArray []
-@selected_subreddits = new ReactiveArray []
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]

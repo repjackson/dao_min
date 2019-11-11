@@ -18,7 +18,7 @@ Template.cloud.onCreated ->
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:42}) else Tags.find({},{limit:42})
+        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:100}) else Tags.find({},{limit:100})
     tag_class: ->
         # button_class = switch
         #     when @index <= 5 then 'large'
@@ -72,6 +72,12 @@ Template.doc_card.onRendered ->
         $('.accordion').accordion()
     , 1000
 Template.tag_label.events
+    'click .add_tag': ->
+        # console.log @valueOf()
+        selected_tags.push @valueOf()
+        state = { 'page_id': 1}
+        history.pushState(state, 'hi')
+
     'click .remove_tag': ->
         console.log @
         # if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
@@ -112,6 +118,6 @@ Template.home.helpers
         if Meteor.user() and 'admin' in Meteor.user().roles
             Docs.find {}
         else
-            # if doc_count is 1
-            Docs.find {},
-                limit:1
+            if doc_count is 1
+                Docs.find {},
+                    limit:1

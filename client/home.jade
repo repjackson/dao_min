@@ -24,13 +24,13 @@ template(name='cloud')
             input#tag_search(type='text' autofocus='' autocomplete="off")
         .mobile.only.spacer
         if selected_tags
-            #clear_tags.ui.white.icon.compact.circular.large.button
+            #clear_tags.ui.white.icon.large.compact.button
                 i.remove.icon
             each selected_tags
-                .unselect_tag.ui.white.circular.compact.button
+                .unselect_tag.ui.white.compact.button
                     .ui.header #{this}
         each all_tags
-            .ui.black.compact.circular.button.select_tag(title=count) 
+            .ui.black.compact.button.select_tag(title=count) 
                 .ui.grey.inverted.header #{this.name}
                     if is_admin
                         small #{this.count}
@@ -54,16 +54,16 @@ template(name='doc_card')
         if is_image 
             img.ui.large.centered.rounded.image(src=url)
         unless is_admin
-            span.body_view
+            .body_view
                 if html
                     |!{decoded_html}
                 else 
                     |!{body}
-    if is_admin
         .ui.transparent.icon.inverted.big.input 
             input.add_tag(type='text' placeholder='+ tag')
         each tags
             +tag_label
+    if is_admin
         .ui.inverted.inline.header(title='domain') #{domain}
         .ui.inverted.header #{when}
         .ui.icon.button.delete_doc
@@ -73,7 +73,9 @@ template(name='doc_card')
     //-             //- | #{when}
 
 template(name='tag_label')
-    .ui.black.small.compact.button.remove_tag #{this}
+    .ui.black.labeled.icon.compact.button
+        i.minus.icon.remove_tag(title='remove tag')
+        span.add_tag(title='select tag') #{this}
 
 
         
