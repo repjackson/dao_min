@@ -23,21 +23,21 @@ template(name='login')
                 .ui.fluid.large.input(class=login_class)
                     input.password(type='password')
                 //- if username
-                if logging_in
-                    .ui.fluid.big.button.enter(title="login #{username}" class=enter_class)
-                        i.sign.in.alternate.icon
-                        //- +i name='internal' classes='ui mini inline image'
-                        |login
-                        strong #{username}
-                        //- i.right.chevron.icon
-                else
-                    if username
-                        .ui.center.aligned.basic.segment
-                            .ui.header no '#{username}' user
-                            a.ui.button(href='/choose_persona')
-                                i.user.plus.icon
-                                //- +i name='enter-2' classes='ui mini inline image'                    
-                                | register
+                //- if logging_in
+                .ui.fluid.big.button.enter(title="login #{username}" class=enter_class)
+                    i.sign.in.alternate.icon
+                    //- +i name='internal' classes='ui mini inline image'
+                    |login
+                    strong #{username}
+                    //- i.right.chevron.icon
+                //- else
+                //-     if username
+                //-         .ui.center.aligned.basic.segment
+                //-             .ui.header no '#{username}' user
+                //-             a.ui.button(href='/choose_persona')
+                //-                 i.user.plus.icon
+                //-                 //- +i name='enter-2' classes='ui mini inline image'                    
+                //-                 | register
                 .ui.center.aligned.basic.segment    
                     //- a.ui.button(href='/forgot_password')
                     //-     //- +i name='forgot-password' classes='ui mini inline image'                    

@@ -69,7 +69,8 @@ Meteor.methods
                 adding_tags = []
                 if response.categories
                     for category in response.categories
-                        # console.log category.label.split('/')
+                        console.log category.label.split('/')[1..]
+                        console.log category.label.split('/')
                         for tag in category.label.split('/')
                             if tag.length > 0 then adding_tags.push tag
                 Docs.update { _id: doc_id },

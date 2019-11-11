@@ -10,20 +10,12 @@
 		"cloudinary_key": "754714459692734",
 		"cloudinary_secret": "rPPXD3rZM_GCjODvh0T70XeDCSw",
 		"language": {
-			"apikey": "UVywVc2558MYx1DiVq5Kdk22BOBbr1UdCMx7qSKgXuYM",
+			"apikey": "pVzBd2tOZjZzRyo0xSZp2XLxcPBtXitenNDHP6uFbfiA",
 			"iam_apikey_description": "Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:natural-language-understanding:us-south:a/f18c8f41459468045d98bcffc36f39d4:16a0e5c6-0fa1-4618-9b24-511e02143ab0::",
 			"iam_apikey_name": "auto-generated-apikey-9618be9d-9ba7-4fb3-9fa2-f887746fb110",
 			"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",
 			"iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a/f18c8f41459468045d98bcffc36f39d4::serviceid:ServiceId-cf75d1ab-91b0-4f1f-a21b-986412a8b311",
-			"url": "https://gateway-syd.watsonplatform.net/natural-language-understanding/api"
-		},
-		"visual": {
-			"apikey": "3YW5jdrTdkr_-YKocTpxMl1MHyqEWf-BUio8yqO50oFJ",
-			"iam_apikey_description": "Auto generated apikey during resource-key operation for Instance - crn:v1:bluemix:public:watson-vision-combined:us-south:a/f18c8f41459468045d98bcffc36f39d4:a215dc07-48ca-41f5-be89-6e311afcb7e6::",
-			"iam_apikey_name": "auto-generated-apikey-63bf28e3-6093-4072-98e5-f9a64e795d39",
-			"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-			"iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a/f18c8f41459468045d98bcffc36f39d4::serviceid:ServiceId-e5742746-dd68-40fa-8962-f66d0f136a65",
-			"url": "https://gateway.watsonplatform.net/visual-recognition/api"
+			"url": "https://gateway.watsonplatform.net/natural-language-understanding/api"
 		}
 	},
 	"galaxy.meteor.com": {

@@ -95,6 +95,53 @@ Meteor.methods
                         over_18: rd.over_18
                     $addToSet:
                         tags: $each: [rd.subreddit.toLowerCase(), rd.author.toLowerCase()]
+                console.log Docs.findOne(doc_id)
+
+
+    search_author_posts: (author)->
+        HTTP.get "https://www.reddit.com/search.json?q=author:#{author}", (err,res)->
+            if err then console.error err
+            else
+                console.log res.data.data
+                if res.data.data.dist > 0
+                    # console.log res.data.data.children[0]
+                    _.each(res.data.data.children, (item)->
+                        data = item.data
+                        len = 200
+                        # console.log item.data
+                        reddit_post =
+                            reddit_id: data.id
+                            url: data.url
+                            domain: data.domain
+                            # comment_count: data.num_comments
+                            permalink: data.permalink
+                            title: data.title
+                            # selftext: false
+                            # thumbnail: false
+                            tags:[data.domain.toLowerCase()]
+                            model:'reddit'
+                        image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
+                        image_result = image_check.test data.url
+                        if image_result
+                            if Meteor.isDevelopment
+                                console.log 'skipping image'
+                        if data.domain in ['youtu.be','youtube.com', 'i.redd.it','i.imgur.com']
+                            if Meteor.isDevelopment
+                                console.log 'skipping youtube'
+                        else
+                            # # console.log reddit_post
+                            existing_doc = Docs.findOne url:data.url
+                            if existing_doc
+                                if Meteor.isDevelopment
+                                    console.log 'skipping existing url', data.url
+                                    # console.log 'existing doc', existing_doc
+                                # Meteor.call 'get_reddit_post', existing_doc._id, data.id, (err,res)->
+                            unless existing_doc
+                                # console.log 'importing url', data.url
+                                new_reddit_post_id = Docs.insert reddit_post
+                                Meteor.call 'get_reddit_post', new_reddit_post_id, data.id, (err,res)->
+                                    # console.log 'get post res', res
+                    )
 
 
 
@@ -103,36 +150,43 @@ Meteor.methods
             if err then console.error err
             else
                 # console.log res.data.data
-                ruser = Docs.findOne
-                    model:'ruser'
-                    rusername:rusername
-                unless ruser
-                    new_ruser_id = Docs.insert
-                        model:'ruser'
-                        rusername:rusername
-                    ruser = Docs.findOne new_ruser_id
-                Docs.update ruser._id,
-                    $set: reddit_data: res.data.data
-                # if res.data.data.children[0].data.selftext
-                #     console.log "self text", res.data.data.children[0].data.selftext
-                #     # Docs.update doc_id, {
-                #     #     $set: html: res.data.data.children[0].data.selftext
-                #     # }, ->
-                #     #     Meteor.call 'pull_site', doc_id, url
-                #         # console.log 'hi'
-                # if res.data.data.children[0].data.url
-                #     url = res.data.data.children[0].data.url
-                #     console.log "found url", url
-                #     Docs.update doc_id, {
-                #         $set:
-                #             reddit_url: url
-                #             url: url
-                #     }, ->
-                #         Meteor.call 'call_watson', doc_id, 'url', 'url'
-                # Docs.update doc_id,
-                #     $set: reddit_data: res.data.data.children[0].data
+                # ruser = Docs.findOne
+                #     model:'ruser'
+                #     rusername:rusername
+                # unless ruser
+                #     new_ruser_id = Docs.insert
+                #         model:'ruser'
+                #         rusername:rusername
+                #     ruser = Docs.findOne new_ruser_id
+                # Docs.update ruser._id,
+                #     $set: reddit_data: res.data.data
+                if res.data.data.children[0].data.selftext
+                    console.log "self text", res.data.data.children[0].data.selftext
+                    # Docs.update doc_id, {
+                    #     $set: html: res.data.data.children[0].data.selftext
+                    # }, ->
+                    #     Meteor.call 'pull_site', doc_id, url
+                        # console.log 'hi'
+                if res.data.data.children[0].data.url
+                    url = res.data.data.children[0].data.url
+                    console.log "found url", url
+                    Docs.update doc_id, {
+                        $set:
+                            reddit_url: url
+                            url: url
+                    }, ->
+                        Meteor.call 'call_watson', doc_id, 'url', 'url'
+                Docs.update doc_id,
+                    $set: reddit_data: res.data.data.children[0].data
 
 
+    subreddit_autocomplete: (query)->
+        console.log 'searching subreddit', query
+        HTTP.get "https://www.reddit.com/api/subreddit_autocomplete.json?query=#{query}", (err,res)->
+            if err then console.error err
+            else
+                console.log res
+                # res = res.data.data.children
     get_listing_comments: (doc_id, subreddit, reddit_id)->
         console.log doc_id
         console.log subreddit

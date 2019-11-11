@@ -15,11 +15,13 @@ Meteor.methods
                 if err
                     console.log "no sub found error", sub
                 else
-                    Subreddits.insert
-                        title:sub
-                    console.log 'success, added sub to list', sub
-                    Meteor.call 'pull_subreddit', sub
-
+                    if res.data.dist > 1
+                        Subreddits.insert
+                            title:sub
+                        console.log 'success, added sub to list', sub
+                        Meteor.call 'pull_subreddit', sub
+                    else
+                        console.log 'dist not enough'
             )
         # return response.content
 

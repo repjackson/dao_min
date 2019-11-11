@@ -58,6 +58,8 @@ Template.cloud.events
                     selected_tags.push val.toString()
                     $('#tag_search').val ''
                     Meteor.call 'check_subreddit', val.toString()
+                    Meteor.call 'search_author_posts', val.toString()
+
             # when 8
             #     if val.length is 0
             #         selected_tags.pop()
