@@ -46,8 +46,22 @@ Template.cloud.events
         selected_tags.push @name
         state = { 'page_id': 1}
         history.pushState(state, 'hi')
+        Meteor.call 'search_reddit', @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
+
+    'keyup #search': (e,t)->
+        e.preventDefault()
+        val = $('#search').val().toLowerCase().trim()
+        switch e.which
+            when 13 #enter
+                unless val.length is 0
+                    selected_tags.push val.toString()
+                    $('#search').val ''
+                    Meteor.call 'search_reddit', val.toString()
+                    # Meteor.call 'check_subreddit', val.toString()
+                    # Meteor.call 'search_author_posts', val.toString()
+
 
     'keyup #tag_search': (e,t)->
         e.preventDefault()
@@ -59,7 +73,6 @@ Template.cloud.events
                     $('#tag_search').val ''
                     Meteor.call 'check_subreddit', val.toString()
                     Meteor.call 'search_author_posts', val.toString()
-
             # when 8
             #     if val.length is 0
             #         selected_tags.pop()
@@ -79,6 +92,8 @@ Template.tag_label.events
         selected_tags.push @valueOf()
         state = { 'page_id': 1}
         history.pushState(state, 'hi')
+        Meteor.call 'search_reddit', @valueOf()
+
 
     'click .remove_tag': ->
         console.log @
@@ -89,7 +104,7 @@ Template.tag_label.events
 Template.doc_card.events
     'keyup .add_tag': (e,t)->
         if e.which is 13
-            new_tag = $('.add_tag').val()
+            new_tag = $(e.currentTarget).closest('.add_tag').val()
             Meteor.call 'add_tag', @_id, new_tag, ->
                 $('.add_tag').val('')
 
@@ -103,9 +118,28 @@ Template.doc_card.events
 
 
 Template.doc_card.helpers
+    thumbnail_self: ->
+        @thumbnail is 'self'
+            # if @thumbnail is not 'self'
+            #     true
+            # else
+            #     false
+    video: ->
+        if @is_video then true
+        else
+            if @domain is 'v.redd.it'
+                true
+            else
+                false
     is_image: ->
+        is_image = false
         image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
         image_result = image_check.test @url
+        if image_result
+            is_image = true
+        if @domain is 'gfycat.com'
+            is_image = true
+        is_image
     is_url: ->
         url_check = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
         url_result = url_check.test @url
@@ -120,6 +154,6 @@ Template.home.helpers
         if Meteor.user() and 'admin' in Meteor.user().roles
             Docs.find {}
         else
-            if doc_count is 1
-                Docs.find {},
-                    limit:1
+            # if doc_count is 1
+            Docs.find {},
+                limit:5

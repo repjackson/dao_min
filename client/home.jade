@@ -21,17 +21,18 @@ template(name='cloud')
             //- if selected_tags
             //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
             //- else
-            input#tag_search(type='text' autofocus='' autocomplete="off")
+            input#search(type='text' autofocus='' autocomplete="off")
+            //- input#tag_search(type='text' autofocus='' autocomplete="off")
         .mobile.only.spacer
         if selected_tags
-            #clear_tags.ui.white.icon.large.compact.button
+            #clear_tags.ui.white.icon.compact.button
                 i.remove.icon
             each selected_tags
                 .unselect_tag.ui.white.compact.button
-                    .ui.header #{this}
+                    .ui.small.header #{this}
         each all_tags
             .ui.black.compact.button.select_tag(title=count) 
-                .ui.grey.inverted.header #{this.name}
+                .ui.grey.inverted.small.header #{this.name}
                     if is_admin
                         small #{this.count}
                 
@@ -41,41 +42,61 @@ template(name='cloud')
 
 template(name='doc_card')
     .ui.basic.segment
-        a.ui.inverted.center.aligned.large.header(href=url target='_window' title='view site')
-            //- if thumbnail.length
-            //-     img.ui.centered.rounded.image(src=thumbnail)
-            if title 
-                |#{title}
-            else 
-                |#{url}
-        //- with rd
-        //-     if thumbnail
-        //-         img.ui.centered.rounded.image(src=thumbnail)
-        if is_image 
-            img.ui.large.centered.rounded.image(src=url)
-        unless is_admin
-            .body_view
-                if html
-                    |!{decoded_html}
-                else 
-                    |!{body}
-        .ui.transparent.icon.inverted.big.input 
-            input.add_tag(type='text' placeholder='+ tag')
-        each tags
-            +tag_label
-    if is_admin
-        .ui.inverted.inline.header(title='domain') #{domain}
-        .ui.inverted.header #{when}
-        .ui.icon.button.delete_doc
-            i.remove.icon
-        .ui.icon.button.refresh_post(title='refresh post')
-            i.reddit.icon
+        .ui.fluid.inverted.accordion
+            .title
+                unless thumbnail_self
+                    img.ui.tiny.rounded.inline.image(src=thumbnail)
+                .ui.inverted.inline.header
+                    //- if thumbnail.length
+                    //-     img.ui.centered.rounded.image(src=thumbnail)
+                    if title 
+                        |#{title}
+                    else 
+                        |#{url}
+                    i.dropdown.icon
+                //- with rd
+                if video
+                    //- a(href=url)
+                    blockquote.reddit-card(data-card-created='1573514852')
+                        a(href=url)
+                        //- |  from 
+                        //- a(href="http://www.reddit.com/r/#{subreddit}") r/#{subreddit}
+                    script(async='', src='//embed.redditmedia.com/widgets/platform.js', charset='UTF-8')
+                if is_image 
+                    img.ui.large.centered.rounded.image(src=url)
+                    //- div(style='position:relative; padding-bottom:calc(100.00% + 44px)')
+                    //-     iframe(src=url frameborder='0' scrolling='no' width='100%' height='100%' style='position:absolute;top:0;left:0;' allowfullscreen='')
+                    //- p
+                    //-     a(href='https://gfycat.com/discover/cocktail-gifs') from Cocktail GIFs
+                    //-     a(href='https://gfycat.com/blondprestigiousharvestmouse-cocktail-recipes-cocktails') via Gfycat
+            .content
+                .body_view
+                    if html
+                        |!{decoded_html}
+                    else 
+                        |!{body}
+                .ui.inverted.inline.header(title='domain') #{domain}
+                .ui.inverted.grey.inline.header #{when}
+                a.ui.compact.button(href=url target='_window' title='view site')
+                    i.external.icon
+                    |view
+                .ui.inverted.inline.header tags
+                .ui.transparent.icon.inverted.big.input 
+                    input.add_tag(type='text' placeholder='+ tag')
+                each sorted_tags
+                    +tag_label
+            if is_admin
+                .ui.icon.button.delete_doc
+                    i.remove.icon
+                .ui.icon.button.refresh_post(title='refresh post')
+                    i.reddit.icon
     //-             //- | #{when}
 
 template(name='tag_label')
-    .ui.black.labeled.icon.compact.button
-        i.minus.icon.remove_tag(title='remove tag')
-        span.add_tag(title='select tag') #{this}
+    //- .ui.black.labeled.icon.small.compact.button
+    .ui.black.small.compact.button.add_tag(title='select tag') 
+        |#{this}
+        //- i.minus.icon.remove_tag(title='remove tag')
 
 
         

@@ -16,7 +16,15 @@
 			"iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",
 			"iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a/f18c8f41459468045d98bcffc36f39d4::serviceid:ServiceId-cf75d1ab-91b0-4f1f-a21b-986412a8b311",
 			"url": "https://gateway.watsonplatform.net/natural-language-understanding/api"
-		}
+		},
+        "tone": {
+            "apikey": "XvUaC9tgYfYvDAMTV2R-gUmx4fbo9vG7DcPHNXiHQelH",
+            "iam_apikey_description": "Auto-generated for key deae4105-5b25-425a-9309-228c60b4fbef",
+            "iam_apikey_name": "Auto-generated service credentials",
+            "iam_role_crn": "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+            "iam_serviceid_crn": "crn:v1:bluemix:public:iam-identity::a/4213b01041eb417b8edad4a49eb1190c::serviceid:ServiceId-447527bd-9513-4cfc-be58-047cf18af9ac",
+            "url": "https://gateway.watsonplatform.net/tone-analyzer/api"
+        }
 	},
 	"galaxy.meteor.com": {
 		"env": {

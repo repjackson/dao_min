@@ -36,24 +36,24 @@ Subreddits.allow
     remove: (userId, doc) -> true
 
 
-SyncedCron.add({
-    name: 'refresh_subs'
-    schedule: (parser) ->
-        parser.text 'every 20 mins'
-        # parser.text 'every 30 mins hours'
-    job: ->
-        Meteor.call 'pull_subreddits', (err, res)->
-    }
-)
-SyncedCron.add({
-    name: 'clean_tags'
-    schedule: (parser) ->
-        parser.text 'every 1 hour'
-        # parser.text 'every 30 mins hours'
-    job: ->
-        Meteor.call 'clean_tags', (err, res)->
-    }
-)
+# SyncedCron.add({
+#     name: 'refresh_subs'
+#     schedule: (parser) ->
+#         parser.text 'every 20 mins'
+#         # parser.text 'every 30 mins hours'
+#     job: ->
+#         Meteor.call 'pull_subreddits', (err, res)->
+#     }
+# )
+# SyncedCron.add({
+#     name: 'clean_tags'
+#     schedule: (parser) ->
+#         parser.text 'every 1 hour'
+#         # parser.text 'every 30 mins hours'
+#     job: ->
+#         Meteor.call 'clean_tags', (err, res)->
+#     }
+# )
 # SyncedCron.add({
 #     name: 'random sub'
 #     schedule: (parser) ->

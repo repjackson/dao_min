@@ -12,7 +12,10 @@ body {
 }
 
 /* .ui.image:not(.avatar), .label,  img:not(.avatar) { */
-img {
+/* img {
+    filter: invert(1) !important;
+} */
+.invert {
     filter: invert(1) !important;
 }
 i.green.icon, i.red.icon{
@@ -76,9 +79,9 @@ i.green.icon, i.red.icon{
 }
 
 .body_view {
-  font-size: 150% !important;
+  font-size: 130% !important;
   color: lightgrey !important;
-  line-height: 200% !important;
+  line-height: 180% !important;
 }
 
 

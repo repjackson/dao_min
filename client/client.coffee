@@ -2,6 +2,7 @@
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]
+Template.registerHelper 'sorted_tags', () -> @tags.sort()
 Template.registerHelper 'is_pro', () -> Meteor.isProduction
 Template.donate.onCreated ->
     # @autorun => Meteor.subscribe 'model_docs', 'donation'
