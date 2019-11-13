@@ -1,4 +1,5 @@
 @selected_tags = new ReactiveArray []
+Template.registerHelper 'is_loading', (number) -> Session.get('loading')
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]

@@ -2,9 +2,6 @@ Template.home.onCreated ->
     @autorun => Meteor.subscribe 'me'
 
 
-
-
-
 Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
@@ -18,7 +15,7 @@ Template.cloud.onCreated ->
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:100}) else Tags.find({},{limit:100})
+        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:20}) else Tags.find({},{limit:20})
     tag_class: ->
         # button_class = switch
         #     when @index <= 5 then 'large'
@@ -46,7 +43,11 @@ Template.cloud.events
         selected_tags.push @name
         state = { 'page_id': 1}
         history.pushState(state, 'hi')
-        Meteor.call 'search_reddit', @name
+        Session.set 'loading', true
+        Meteor.call 'search_reddit', selected_tags.array(), ->
+            Session.set 'loading', false
+        Meteor.call "call_wiki", @name, ->
+
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
 
@@ -58,7 +59,11 @@ Template.cloud.events
                 unless val.length is 0
                     selected_tags.push val.toString()
                     $('#search').val ''
-                    Meteor.call 'search_reddit', val.toString()
+                    Session.set 'loading', true
+                    Meteor.call 'search_reddit', selected_tags.array(), ->
+                        Session.set 'loading', false
+                    Meteor.call "call_wiki", val.toString(), ->
+
                     # Meteor.call 'check_subreddit', val.toString()
                     # Meteor.call 'search_author_posts', val.toString()
 
@@ -86,15 +91,23 @@ Template.doc_card.onRendered ->
     Meteor.setTimeout ->
         $('.accordion').accordion()
     , 1000
+Template.tag_label.helpers
+    tag_class: ->
+        if @valueOf() in selected_tags.array() then 'white' else 'black'
+
 Template.tag_label.events
-    'click .add_tag': ->
+    'click .toggle_tag': ->
         # console.log @valueOf()
-        selected_tags.push @valueOf()
-        state = { 'page_id': 1}
-        history.pushState(state, 'hi')
-        Meteor.call 'search_reddit', @valueOf()
-
-
+        tag = @valueOf()
+        if tag in selected_tags.array()
+            selected_tags.remove tag
+        else
+            selected_tags.push @valueOf()
+            state = { 'page_id': 1}
+            history.pushState(state, 'hi')
+            Session.set 'loading', true
+            Meteor.call 'search_reddit', @valueOf(), ->
+                Session.set 'loading', false
     'click .remove_tag': ->
         console.log @
         # if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
@@ -119,7 +132,7 @@ Template.doc_card.events
 
 Template.doc_card.helpers
     thumbnail_self: ->
-        @thumbnail is 'self'
+        @thumbnail and @thumbnail is 'self'
             # if @thumbnail is not 'self'
             #     true
             # else
@@ -156,4 +169,4 @@ Template.home.helpers
         else
             # if doc_count is 1
             Docs.find {},
-                limit:5
+                limit:7

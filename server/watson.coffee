@@ -11,8 +11,28 @@ natural_language_understanding = new NaturalLanguageUnderstandingV1(
     url: Meteor.settings.private.language.url)
 
 
-
 Meteor.methods
+    call_wiki: (query)->
+
+        console.log 'calling wiki', query
+        term = query.split(' ').join('_')
+        found_doc =
+            Docs.findOne
+                url: "https://en.wikipedia.org/wiki/#{term}"
+        if found_doc
+            console.log 'found wiki doc for term', term, found_doc
+            Docs.update found_doc._id,
+                $addToSet:tags:'wikipedia'
+            Meteor.call 'call_watson', found_doc._id, 'url','url'
+        else
+            new_wiki_id = Docs.insert
+                title: "wikipedia: #{query}"
+                tags:['wikipedia', query]
+                url:"https://en.wikipedia.org/wiki/#{term}"
+            Meteor.call 'call_watson', new_wiki_id, 'url','url'
+
+
+
     call_watson: (doc_id, key, mode) ->
         console.log 'calling watson'
         self = @
@@ -37,7 +57,7 @@ Meteor.methods
                     sentiment: false
                     # limit: 2
                 concepts: {}
-                categories: {}
+                # categories: {}
                 # emotion: {}
                 # metadata: {}
                 # relations: {}
@@ -65,15 +85,15 @@ Meteor.methods
                 else
                     console.log '403 error api key'
             else
-                console.log response.result
+                # console.log response.result
                 console.log 'adding watson info', doc.title
                 response = response.result
                 keyword_array = _.pluck(response.keywords, 'text')
                 lowered_keywords = keyword_array.map (keyword)-> keyword.toLowerCase()
-                console.log 'lowered keywords', lowered_keywords
+                # console.log 'lowered keywords', lowered_keywords
                 # if Meteor.isDevelopment
                 #     console.log 'categories',response.categories
-                # adding_tags = []
+                adding_tags = []
                 # if response.categories
                 #     for category in response.categories
                 #         console.log category.label.split('/')[1..]
@@ -112,7 +132,7 @@ Meteor.methods
                     $addToSet:
                         tags:$each:lowered_keywords
                 final_doc = Docs.findOne doc_id
-                console.log 'all tags', final_doc.tags
-                # if Meteor.isDevelopment
-                #     console.log 'final doc tag', final_doc.title, final_doc.tags.length, 'length'
+                if Meteor.isDevelopment
+                    # console.log 'all tags', final_doc.tags
+                    console.log 'final doc tag', final_doc.title, final_doc.tags.length, 'length'
         )

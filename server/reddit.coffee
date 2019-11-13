@@ -49,53 +49,54 @@ Meteor.methods
         )
 
     search_reddit: (query)->
-        # console.log 'searching reddit', query
-        response = HTTP.get("http://reddit.com/search.json?q=#{query}")
-        # console.log response.data
-        if response.data.data.dist > 1
-            console.log 'found data'
-            _.each(response.data.data.children, (item)=>
-                # console.log item
-                data = item.data
-                len = 200
-                reddit_post =
-                    reddit_id: data.id
-                    url: data.url
-                    domain: data.domain
-                    # comment_count: data.num_comments
-                    permalink: data.permalink
-                    title: data.title
-                    # selftext: false
-                    # thumbnail: false
-                    tags:[query, data.title.toLowerCase()]
-                    # tags:[query, data.domain.toLowerCase(), data.author.toLowerCase(), data.title.toLowerCase()]
-                    model:'reddit'
-                # console.log reddit_post
-                image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
-                image_result = image_check.test data.url
-                # if image_result
-                #     if Meteor.isDevelopment
-                #         console.log 'skipping image'
-                if data.domain in ['youtu.be','youtube.com', 'i.redd.it','i.imgur.com']
-                    if Meteor.isDevelopment
-                        console.log 'skipping youtube and imgur'
-                else
-                    # # console.log reddit_post
-                    existing_doc = Docs.findOne url:data.url
-                    if existing_doc
+        console.log 'searching reddit', query
+        # response = HTTP.get("http://reddit.com/search.json?q=#{query}")
+        HTTP.get "http://reddit.com/search.json?q=#{query}",(err,response)->
+            # console.log response.data
+            if response.data.data.dist > 1
+                console.log 'found data'
+                _.each(response.data.data.children, (item)=>
+                    # console.log item
+                    data = item.data
+                    len = 200
+                    reddit_post =
+                        reddit_id: data.id
+                        url: data.url
+                        domain: data.domain
+                        # comment_count: data.num_comments
+                        permalink: data.permalink
+                        title: data.title
+                        # selftext: false
+                        # thumbnail: false
+                        tags:[query, data.title.toLowerCase()]
+                        # tags:[query, data.domain.toLowerCase(), data.author.toLowerCase(), data.title.toLowerCase()]
+                        model:'reddit'
+                    # console.log reddit_post
+                    image_check = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/
+                    image_result = image_check.test data.url
+                    # if image_result
+                    #     if Meteor.isDevelopment
+                    #         console.log 'skipping image'
+                    if data.domain in ['youtu.be','youtube.com', 'i.redd.it','i.imgur.com']
                         if Meteor.isDevelopment
-                            console.log 'skipping existing url', data.url
-                            # console.log 'existing doc', existing_doc
-                        # Meteor.call 'get_reddit_post', existing_doc._id, data.id, (err,res)->
-                    unless existing_doc
-                        # console.log 'importing url', data.url
-                        new_reddit_post_id = Docs.insert reddit_post
-                        # console.log 'calling watson on ', reddit_post.title
-                        Meteor.call 'get_reddit_post', new_reddit_post_id, data.id, (err,res)->
-                            # console.log 'get post res', res
-            )
-        else
-            console.log 'NO found data'
+                            console.log 'skipping youtube and imgur'
+                    else
+                        # # console.log reddit_post
+                        existing_doc = Docs.findOne url:data.url
+                        if existing_doc
+                            if Meteor.isDevelopment
+                                console.log 'skipping existing url', data.url
+                                # console.log 'existing doc', existing_doc
+                            # Meteor.call 'get_reddit_post', existing_doc._id, data.id, (err,res)->
+                        unless existing_doc
+                            # console.log 'importing url', data.url
+                            new_reddit_post_id = Docs.insert reddit_post
+                            # console.log 'calling watson on ', reddit_post.title
+                            Meteor.call 'get_reddit_post', new_reddit_post_id, data.id, (err,res)->
+                                # console.log 'get post res', res
+                )
+            else
+                console.log 'NO found data'
 
         # _.each(response.data.data.children, (item)->
         #     # data = item.data
@@ -147,8 +148,8 @@ Meteor.methods
                         subreddit: rd.subreddit
                         author: rd.author
                         is_video: rd.is_video
-                        # ups: rd.ups
-                        # downs: rd.downs
+                        ups: rd.ups
+                        downs: rd.downs
                         over_18: rd.over_18
                     # $addToSet:
                     #     tags: $each: [rd.subreddit.toLowerCase(), rd.author.toLowerCase()]
