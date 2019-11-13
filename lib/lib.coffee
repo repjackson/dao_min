@@ -43,9 +43,23 @@ Docs.helpers
 
 if Meteor.isServer
     Docs.allow
-        insert: (userId, doc) -> userId
-        update: (userId, doc) -> userId is @_author_id
-        remove: (userId, doc) -> userId is @_author_id
+        # insert: (userId, doc) -> userId
+        # update: (userId, doc) -> userId is @_author_id
+        # remove: (userId, doc) -> userId is @_author_id
+        insert: (userId, doc) ->
+            if doc.model is 'bug'
+                true
+            else
+                userId and doc._author_id is userId
+        update: (userId, doc) ->
+            if doc.model in ['calculator_doc','credit_type', 'debit_type']
+                true
+            else if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+                true
+            else
+                doc._author_id is userId
+        # update: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
+        remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
 
     Meteor.publish 'doc', (id)->
         doc = Docs.findOne id

@@ -15,7 +15,7 @@ Template.cloud.onCreated ->
 Template.cloud.helpers
     all_tags: ->
         doc_count = Docs.find().count()
-        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:20}) else Tags.find({},{limit:20})
+        if 0 < doc_count < 3 then Tags.find({ count: $lt: doc_count }, {limit:42}) else Tags.find({},{limit:42})
     tag_class: ->
         # button_class = switch
         #     when @index <= 5 then 'large'
@@ -40,13 +40,17 @@ Template.cloud.helpers
 
 Template.cloud.events
     'click .select_tag': ->
-        selected_tags.push @name
+        Session.set 'loading', true
+        console.log 'loading'
         state = { 'page_id': 1}
         history.pushState(state, 'hi')
-        Session.set 'loading', true
         Meteor.call 'search_reddit', selected_tags.array(), ->
+            # Session.set 'loading', false
+            # console.log 'done'
+        Meteor.call "call_wiki", @name, =>
+            # console.log 'done2'
+            selected_tags.push @name
             Session.set 'loading', false
-        Meteor.call "call_wiki", @name, ->
 
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
@@ -57,12 +61,12 @@ Template.cloud.events
         switch e.which
             when 13 #enter
                 unless val.length is 0
-                    selected_tags.push val.toString()
                     $('#search').val ''
                     Session.set 'loading', true
                     Meteor.call 'search_reddit', selected_tags.array(), ->
+                    Meteor.call "call_wiki", val.toString(), =>
                         Session.set 'loading', false
-                    Meteor.call "call_wiki", val.toString(), ->
+                        selected_tags.push val.toString()
 
                     # Meteor.call 'check_subreddit', val.toString()
                     # Meteor.call 'search_author_posts', val.toString()
@@ -106,8 +110,10 @@ Template.tag_label.events
             state = { 'page_id': 1}
             history.pushState(state, 'hi')
             Session.set 'loading', true
-            Meteor.call 'search_reddit', @valueOf(), ->
+            Meteor.call 'search_reddit', tag, ->
                 Session.set 'loading', false
+            Meteor.call "call_wiki", tag, ->
+
     'click .remove_tag': ->
         console.log @
         # if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
@@ -127,7 +133,7 @@ Template.doc_card.events
 
     'click .get_comments': ->
         # console.log @
-        Meteor.call 'get_listing_comments', @_id, @reddit_id
+        Meteor.call 'get_listing_comments', @_id, @subreddit, @reddit_id
 
 
 Template.doc_card.helpers

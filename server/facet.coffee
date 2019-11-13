@@ -1,7 +1,7 @@
 Meteor.publish 'tags', (
     selected_tags
     )->
-
+    console.log selected_tags
     self = @
     match = {}
     # match.tags = $all: selected_tags
@@ -36,8 +36,15 @@ Meteor.publish 'facet_docs', (
     if selected_tags.length > 0 then match.tags = $all: selected_tags
     count = Docs.find(match).count()
     console.log 'count', count
-    Docs.find match,
-        sort:
-            _timestamp:-1
-            ups: -1
-        limit: 10
+    if selected_tags.length > 0
+        Docs.find match,
+            sort:
+                ups: -1
+                _timestamp:-1
+            limit: 10
+    else
+        Docs.find match,
+            sort:
+                _timestamp:-1
+                ups: -1
+            limit: 10

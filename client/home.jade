@@ -6,20 +6,21 @@ template(name='home')
     .ui.container
         each docs
             +doc_card
-    if is_pro
-        .center.aligned.basic.segment
-            +donate
+    //- if is_pro
+    .ui.center.aligned.basic.segment
+        +donate_quick
 
 
 template(name='cloud')
     .cloud
         .spacer
-        //- i.big.grey.yin.yang.icon
-        if is_loading
-            i.loading.grey.yin.yang.icon
+        //- i.big.yin.yang.icon
 
-        .ui.left.icon.transparent.inverted.input
-            i.search.icon
+        .ui.left.icon.input
+            if is_loading
+                i.loading.yin.yang.large.icon
+            else
+                i.search.icon
             //- if selected_tags
             //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
             //- else
@@ -27,16 +28,16 @@ template(name='cloud')
             //- input#tag_search(type='text' autofocus='' autocomplete="off")
         .mobile.only.spacer
         if selected_tags
-            #clear_tags.ui.white.icon.compact.circular.button
+            #clear_tags.ui.inverted.icon.compact.circular.button
                 i.remove.icon
             each selected_tags
-                .unselect_tag.ui.white.compact.circular.button
+                .unselect_tag.ui.inverted.compact.circular.button
                     .ui.small.header #{this}
         each all_tags
-            .ui.black.compact.circular.button.select_tag(title=count) 
-                .ui.grey.inverted.small.header #{this.name}
-                    if is_admin
-                        small #{this.count}
+            .ui.compact.circular.button.select_tag(title=count) 
+                |#{this.name}
+                if is_admin
+                    small #{this.count}
                 
 
 
@@ -47,14 +48,14 @@ template(name='doc_card')
         .title
             unless thumbnail_self
                 img.ui.mini.rounded.inline.image(src=thumbnail)
-            .ui.inline.grey.header
+            .ui.inline.header
                 //- if thumbnail.length
                 //-     img.ui.centered.rounded.image(src=thumbnail)
                 if title 
                     |#{title}
                 else 
                     |#{url}
-                i.dropdown.grey.icon
+                i.dropdown.icon
             //- with rd
             if video
                 //- a(href=url)
@@ -77,7 +78,7 @@ template(name='doc_card')
                 else 
                     |!{body}
             .ui.inverted.inline.header(title='domain') #{domain}
-            .ui.inverted.grey.inline.header #{when}
+            .ui.inverted.inline.header #{when}
             a.ui.button(href=url target='_window' title='view site')
                 i.external.icon
                 |view
@@ -93,10 +94,12 @@ template(name='doc_card')
                 i.remove.icon
             .ui.icon.button.refresh_post(title='refresh post')
                 i.reddit.icon
+            .ui.button.get_comments(title='refresh post')
+                |comments
 //-             //- | #{when}
 
 template(name='tag_label')
-    //- .ui.black.labeled.icon.small.compact.button
+    //- .ui.white.labeled.icon.small.compact.button
     .ui.small.compact.button.toggle_tag(title='select tag' class=tag_class) 
         |#{this}
         //- i.minus.icon.remove_tag(title='remove tag')
@@ -105,7 +108,7 @@ template(name='tag_label')
         
 
 
-template(name='donate')
+template(name='donate_quick')
     .ui.right.icon.inverted.transparent.input(title='donate')
         input.donate_amount(type='number' min='1' placeholder='donate')
         i.right.chevron.link.icon.start_donation   

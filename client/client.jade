@@ -12,7 +12,31 @@ head
     script(src='https://cdn.jsdelivr.net/npm/fomantic-ui@2.7.4/dist/semantic.min.js')
 
 template(name='layout')
+    +nav
     +yield
+
+template(name='mlayout')
+    +yield
+
+
+template(name='verification_confirmation')
+    .ui.padded.grid 
+        .row 
+            .sixteen.wide.column 
+                h1.ui.center.aligned.header thank you, your email is been verified
+                .ui.center.aligned.header you may close the window
+
+
+
+template(name='shortcut_modal')
+    .ui.shortcut.modal
+        .ui.header keyboard shortcuts
+        .content
+            .ui.large.list
+                each shortcuts
+                    .item 
+                        .header #{combo}
+                        .content #{action}
 
 
 template(name='not_found')

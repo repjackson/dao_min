@@ -23,13 +23,13 @@ Meteor.methods
             console.log 'found wiki doc for term', term, found_doc
             Docs.update found_doc._id,
                 $addToSet:tags:'wikipedia'
-            Meteor.call 'call_watson', found_doc._id, 'url','url'
+            Meteor.call 'call_watson', found_doc._id, 'url','url', ->
         else
             new_wiki_id = Docs.insert
                 title: "wikipedia: #{query}"
                 tags:['wikipedia', query]
                 url:"https://en.wikipedia.org/wiki/#{term}"
-            Meteor.call 'call_watson', new_wiki_id, 'url','url'
+            Meteor.call 'call_watson', new_wiki_id, 'url','url', ->
 
 
 

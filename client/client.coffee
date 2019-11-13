@@ -5,7 +5,14 @@ Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]
 Template.registerHelper 'sorted_tags', () -> @tags.sort()
 Template.registerHelper 'is_pro', () -> Meteor.isProduction
-Template.donate.onCreated ->
+Template.registerHelper 'current_doc', ->
+    doc = Docs.findOne Router.current().params.doc_id
+    user = Meteor.users.findOne Router.current().params.doc_id
+    # console.log doc
+    # console.log user
+    if doc then doc else if user then user
+
+Template.donate_quick.onCreated ->
     # @autorun => Meteor.subscribe 'model_docs', 'donation'
     if Meteor.isDevelopment
         pub_key = Meteor.settings.public.stripe_test_publishable
@@ -29,7 +36,7 @@ Template.donate.onCreated ->
                     alert 'donation received, thank you', 'success'
 	)
 
-Template.donate.events
+Template.donate_quick.events
     'click .start_donation': ->
         donation_amount = parseInt $('.donate_amount').val()*100
         Template.instance().checkout.open
@@ -105,3 +112,81 @@ Template.registerHelper 'calculated_size', (metric) ->
     else if whole is 8 then 'f8'
     else if whole is 9 then 'f9'
     else if whole is 10 then 'f10'
+Template.registerHelper 'fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        match = {}
+        # if Meteor.user()
+        #     match.view_roles = $in:Meteor.user().roles
+        match.model = 'field'
+        match.parent_id = model._id
+        # console.log model
+        cur = Docs.find match,
+            sort:rank:1
+        # console.log cur.fetch()
+        cur
+
+Template.registerHelper 'edit_fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        Docs.find {
+            model:'field'
+            parent_id:model._id
+            edit_roles:$in:Meteor.user().roles
+        }, sort:rank:1
+
+Template.registerHelper 'sortable_fields', () ->
+    model = Docs.findOne
+        model:'model'
+        slug:Router.current().params.model_slug
+    if model
+        Docs.find {
+            model:'field'
+            parent_id:model._id
+            sortable:true
+        }, sort:rank:1
+
+
+
+Template.registerHelper 'page_doc', ->
+    doc = Docs.findOne Router.current().params.doc_id
+    if doc then doc
+
+Template.registerHelper 'field_value', () ->
+    # console.log @
+    parent = Template.parentData()
+    parent5 = Template.parentData(5)
+    parent6 = Template.parentData(6)
+
+
+    if @direct
+        parent = Template.parentData()
+    else if parent5
+        if parent5._id
+            parent = Template.parentData(5)
+    else if parent6
+        if parent6._id
+            parent = Template.parentData(6)
+    if parent
+        parent["#{@key}"]
+
+
+Template.registerHelper 'sorted_field_values', () ->
+    # console.log @
+    parent = Template.parentData()
+    parent5 = Template.parentData(5)
+    parent6 = Template.parentData(6)
+
+
+    if @direct
+        parent = Template.parentData()
+    else if parent5._id
+        parent = Template.parentData(5)
+    else if parent6._id
+        parent = Template.parentData(6)
+    if parent
+        _.sortBy parent["#{@key}"], 'number'
