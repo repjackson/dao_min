@@ -27,7 +27,8 @@ Meteor.methods
 
 if Meteor.isClient
     Template.view_chats.onCreated ->
-        @autorun -> Meteor.subscribe('chats', selected_theme_tags.array(), selected_participant_ids.array())
+        # @autorun -> Meteor.subscribe('chats', selected_theme_tags.array(), selected_participant_ids.array())
+        @autorun -> Meteor.subscribe('model_docs','chat')
         @view_published = new ReactiveVar(true)
 
     Template.view_chats.helpers

@@ -24,15 +24,15 @@ template(name='cloud')
             //- if selected_tags
             //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
             //- else
-            input#search(type='text' autofocus='' autocomplete="off")
+            input#search(type='text' autofocus='' autocomplete="off" placeholder='ask anything')
             //- input#tag_search(type='text' autofocus='' autocomplete="off")
         .mobile.only.spacer
         if selected_tags
-            #clear_tags.ui.inverted.icon.compact.circular.button
+            #clear_tags.ui.active.icon.compact.circular.button
                 i.remove.icon
             each selected_tags
-                .unselect_tag.ui.inverted.compact.circular.button
-                    .ui.small.header #{this}
+                .unselect_tag.ui.active.compact.circular.button
+                    .ui.small.inverted.header #{this}
         each all_tags
             .ui.compact.circular.button.select_tag(title=count) 
                 |#{this.name}

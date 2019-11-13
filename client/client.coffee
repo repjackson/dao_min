@@ -1,4 +1,17 @@
 @selected_tags = new ReactiveArray []
+@selected_shop_tags = new ReactiveArray []
+@selected_bug_tags = new ReactiveArray []
+@selected_task_tags = new ReactiveArray []
+
+
+
+Template.registerHelper 'first_letter', (user) ->
+    @first_name[..0]+'.'
+Template.registerHelper 'first_initial', (user) ->
+    @first_name[..2]+'.'
+    # moment(input).fromNow()
+Template.registerHelper 'logging_out', () -> Session.get 'logging_out'
+
 Template.registerHelper 'is_loading', (number) -> Session.get('loading')
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
@@ -66,6 +79,10 @@ Template.home.events
 # Stripe.setPublishableKey Meteor.settings.public.stripe_publishable
 
 
+Template.registerHelper 'current_model', (input) ->
+    Docs.findOne
+        model:'model'
+        slug: Router.current().params.model_slug
 
 Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->

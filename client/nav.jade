@@ -2,7 +2,7 @@ template(name='nav')
     .ui.attached.borderless.topnav.large.menu
         if is_loading
             .item
-                i.loading.yin.yang.icon
+                i.loading.yin.yang.large.icon
         else 
             a.icon.item(href='/' class="{{isActivePath '/'}}") 
                 i.yin.yang.large.icon
@@ -58,9 +58,9 @@ template(name='nav')
                         i.grey.database.icon
                 if is_admin
                     a.icon.item(href="/grid")
-                        i.large.grey.th.icon
+                        i.grey.th.icon
                     a.icon.item(href="/grid" title='admin')
-                        i.grey.shield.large.icon
+                        i.grey.shield.icon
                 unless logging_out
                     a.ui.dropdown.item(href="/user/#{currentUser._id}" class=user_nav_button_class)
                         if currentUser.profile_image_id

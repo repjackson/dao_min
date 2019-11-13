@@ -93,13 +93,13 @@ template(name='delta')
                         //-             +set_view_mode title='items' icon='list'
                         //-             +set_view_mode title='map' icon='map'
                         //-             +set_view_mode title='graph' icon='graph'
-                        .ui.hidden.fitted.divider
+                        //- .ui.hidden.fitted.divider
                     .scrolling    
                         each current_delta.result_ids
                             //- .column
                             if is_loading
                                 .ui.segment
-                                    .ui.placeholder
+                                    .ui.fluid.placeholder
                                         .line
                                         .line
                                         .line

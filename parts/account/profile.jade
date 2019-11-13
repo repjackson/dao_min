@@ -1,0 +1,211 @@
+template(name='profile_layout')
+    +nav
+    with current_user
+        .ui.stackable.padded.grid
+            .row
+                //- if view_side
+                //-     .two.wide.column
+                        //- .ui.fluid.vertical.menu.scrolling
+                        //-     each user_sections
+                        //-         a.item(href="/user/#{user.username}/#{slug}" class="{{isActiveRoute regex=route_slug}}")
+                        //-             i.icon
+                        //-                 +ismall name=icon
+                        //-             |#{title}
+                div(class=main_column_class)
+                    .ui.stackable.grid
+                        //- img.ui.fluid.image.checkin_banner(src="{{c.url banner_image width=1000 height=1000 crop='crop'}}")
+                        .four.wide.column
+                            //- .ui.fluid.button.toggle_size
+                            //-     i.bars.icon
+                            img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
+                            .ui.center.aligned.basic.segment
+                                //- a(href="/user/#{user.username}")
+                                .ui.center.aligned.header
+                                    | #{user.first_name} #{user.last_name}
+                                    //- .ui.small.header @#{user.username}        
+                            if is_current_user
+                                a.ui.large.fluid.button(href="/user/#{current_user._id}/edit")
+                                    i.cog.grey.icon
+                                        //- +ismall name='settings' classes='ui inline mini image'
+                                    |Profile
+                                a.ui.fluid.button.logout(href="#")
+                                    i.sign.out.alternate.icon
+                                    //- +ismall name='exit' 
+                                    |Log Out
+                                //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
+                                //-     //- i.globe.icon
+                                //-     +ismall name='globe' 
+                                //-     |log out other clients
+                            if is_admin
+                                .ui.basic.segment
+                                    .ui.header 
+                                        i.shield.icon
+                                        //- +i name='shield' classes='ui mini inline image'
+                                        |Roles
+                                    each roles
+                                        .ui.basic.label #{this}
+                        .twelve.wide.column
+                            //- each user_sections
+                            //-     a.ui.button(href="/user/#{user.username}/#{slug}")
+                            //-         //- i.icon(class=icon)
+                            //-         +ismall name=icon
+                            //-         |#{title}
+
+                            +yield    
+    +footer
+                
+                    
+template(name='user_dashboard')                    
+    .ui.stackable.padded.grid
+        .row
+            .sixteen.wide.column
+                .ui.center.aligned.header.recalc_student_stats
+                    +i name='dashboard'
+                    |#{current_user.name}'s dashboard
+    if user_is_student
+        +student_dashboard
+    if user_is_teacher
+        +teacher_dashboard
+        
+        
+        
+template(name='user_offers_small')
+    .ui.fluid.segment
+        .ui.grey.header 
+            i.tasks.icon
+            |offers
+        .ui.list
+            each available_offers
+                .ui.item
+                    |#{title}
+                    strong #{credit_amount}c
+                    .ui.small.button.accept_offer
+                        i.green.checkmark.icon
+                        |accept
+                    .ui.small.button.reject_offer
+                        i.red.cancel.icon
+                        |reject
+        
+template(name='user_actions')
+    .ui.fluid.segment
+        .ui.grey.header 
+            i.target.icon
+            |actions        
+        .ui.large.list
+            each user_actions
+                a.item(href=link) #{title}
+    
+        
+        
+        
+template(name='teacher_dashboard')  
+    .ui.grid      
+        .row
+            .sixteen.wide.column 
+                .ui.header Your Classrooms
+                each teacher_classrooms 
+                    +classroom_card_template
+                    
+                    
+                    
+                    
+                    
+template(name='student_dashboard')  
+    .ui.grid      
+        .three.column.row
+            .column
+                .ui.segment
+                    .ui.small.header 
+                        +i name='money-bag' classes='ui mini inline image'
+                        strong $#{ssd.total_credit_amount}
+                        small total weekly income
+                    .ui.small.header
+                        +i name='hashtag' classes='ui mini inline image'
+                        strong #{ssd.credit_count}
+                        small credits
+            .column
+                .ui.segment
+                    .ui.small.header
+                        +ismall name='shopping-cart-loaded'
+                        strong $#{ssd.total_debit_amount}
+                        small total weekly expenses
+                    .ui.small.header
+                        +ismall name='hashtag'
+                        strong #{ssd.debit_count}
+                        small debits
+            .column
+                .ui.segment
+                    .ui.small.header
+                        +i name='economic-improvement'
+                        |growth from last week
+        .two.column.row
+            .column
+                .ui.segment
+                    .ui.header 
+                        +i name='deposit'
+                        |weekly paycheck (credits)
+                    //- .ui.bulleted.list
+                    //-     each user_credits
+                    //-         .item 
+                    //-             |#{amount}
+                    //-             if icon
+                    //-                 +i name=icon
+                    //-             strong #{text}
+                    //-             small #{when}
+                    .ui.feed.mediumscroll
+                        each user_credits
+                            .event 
+                                .label
+                                    if is_credit
+                                        +i name='deposit' classes='ui inline mini image'
+                                    if is_debit
+                                        +i name='withdrawal' classes='ui inline mini image'
+                                    else if icon
+                                        +i name=icon
+                                .content
+                                    .summary
+                                        a.user(href="/user/#{target_user.username}")
+                                            |#{target_user.name}
+                                        |#{text}
+                                        .date #{when}
+                                    .meta
+                                        +voting_small
+                                        //- a.like
+                                        //-     i.like.icon 
+                                        //-     |4 likes
+                                        a.remove
+                                            i.undo.icon
+                                        //- if is_dev
+                                        //-     +remove_button
+            .column
+                .ui.segment
+                    .ui.header 
+                        +i name='withdrawal'
+                        |weekly expenses (debits)
+                    .ui.feed.mediumscroll
+                        each user_debits
+                            .event 
+                                .label
+                                    if is_credit
+                                        +i name='deposit' classes='ui inline mini image'
+                                    if is_debit
+                                        +i name='withdrawal' classes='ui inline mini image'
+                                    else if icon
+                                        +i name=icon
+                                .content
+                                    .summary
+                                        a.user(href="/user/#{target_user.username}")
+                                            |#{target_user.name}
+                                        |#{text}
+                                        .date #{when}
+                                    .meta
+                                        +voting_small
+                                        //- a.like
+                                        //-     i.like.icon 
+                                        //-     |4 likes
+                                        a.remove
+                                            i.undo.icon
+                                        //- if is_dev
+                                        //-     +remove_button
+                
+                        //- +range_edit                
