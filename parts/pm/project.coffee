@@ -1,6 +1,7 @@
 # Router.route '/tasks', -> @render 'tasks'
 # Router.route '/projects/', -> @render 'projects'
 Router.route '/projects', (->
+    @layout 'admin_layout'
     @render 'projects'
     ), name:'projects'
 

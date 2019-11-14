@@ -44,12 +44,12 @@ Template.cloud.events
         console.log 'loading'
         state = { 'page_id': 1}
         history.pushState(state, 'hi')
+        selected_tags.push @name
         Meteor.call 'search_reddit', selected_tags.array(), ->
             # Session.set 'loading', false
             # console.log 'done'
         Meteor.call "call_wiki", @name, =>
             # console.log 'done2'
-            selected_tags.push @name
             Session.set 'loading', false
 
     'click .unselect_tag': -> selected_tags.remove @valueOf()
@@ -63,10 +63,10 @@ Template.cloud.events
                 unless val.length is 0
                     $('#search').val ''
                     Session.set 'loading', true
+                    selected_tags.push val.toString()
                     Meteor.call 'search_reddit', selected_tags.array(), ->
                     Meteor.call "call_wiki", val.toString(), =>
                         Session.set 'loading', false
-                        selected_tags.push val.toString()
 
                     # Meteor.call 'check_subreddit', val.toString()
                     # Meteor.call 'search_author_posts', val.toString()
@@ -97,7 +97,7 @@ Template.doc_card.onRendered ->
     , 1000
 Template.tag_label.helpers
     tag_class: ->
-        if @valueOf() in selected_tags.array() then 'white' else 'black'
+        if @valueOf() in selected_tags.array() then 'active' else ''
 
 Template.tag_label.events
     'click .toggle_tag': ->

@@ -17,10 +17,10 @@ template(name='cloud')
         //- i.big.yin.yang.icon
 
         .ui.left.icon.input
-            if is_loading
-                i.loading.yin.yang.large.icon
-            else
-                i.search.icon
+            //- if is_loading
+            //-     i.loading.yin.yang.large.icon
+            //- else
+            i.search.icon
             //- if selected_tags
             //-     +inputAutocomplete settings=tag_settings id="tag_search" class="" autofocus='' autocomplete="off" 
             //- else
@@ -44,7 +44,7 @@ template(name='cloud')
 
 
 template(name='doc_card')
-    .ui.fluid.inverted.accordion
+    .ui.fluid.inverted.styled.accordion
         .title
             unless thumbnail_self
                 img.ui.mini.rounded.inline.image(src=thumbnail)
@@ -77,8 +77,8 @@ template(name='doc_card')
                     |!{decoded_html}
                 else 
                     |!{body}
-            .ui.inverted.inline.header(title='domain') #{domain}
-            .ui.inverted.inline.header #{when}
+            .ui.inline.header(title='domain') #{domain}
+            .ui.inline.header #{when}
             a.ui.button(href=url target='_window' title='view site')
                 i.external.icon
                 |view

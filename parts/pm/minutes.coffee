@@ -1,5 +1,9 @@
 # Router.route '/tasks', -> @render 'tasks'
-Router.route '/minutes/', -> @render 'minutes'
+Router.route '/minutes', (->
+    @layout 'admin_layout'
+    @render 'minutes'
+    ), name:'minutes'
+
 Router.route '/minute/:doc_id/view', -> @render 'minute_view'
 Router.route '/minute/:doc_id/edit', -> @render 'minute_edit'
 

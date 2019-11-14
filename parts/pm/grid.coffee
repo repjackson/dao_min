@@ -1,6 +1,6 @@
 if Meteor.isClient
     Router.route '/grid', (->
-        @layout 'layout'
+        @layout 'admin_layout'
         @render 'grid'
         ), name:'grid'
 

@@ -34,17 +34,19 @@ template(name='nav')
                     i.user.plus.grey.icon
                     span.mobile.hidden sign up
             if currentUser
+                a.icon.large.item(href='/chat' title='chat')
+                    i.chat.outline.grey.large.icon
                 a.icon.large.item(href='/m/event' title='events')
-                    i.calendar.outline.grey.icon
+                    i.calendar.outline.grey.large.icon
                 a.icon.large.item(href='/m/task' title='tasks')
-                    i.tasks.grey.icon
+                    i.tasks.grey.large.icon
                 a.icon.large.item(href='/mail' title='mail')
-                    i.envelope.outline.grey.icon
-                a.ui.simple.dropdown.item(href='/alerts' title='alerts')
+                    i.envelope.outline.grey.large.icon
+                a.ui.simple.dropdown.item(href='/alerts')
                     if unread_alert_count
                         i.bell.yellow.icon
                     else 
-                        i.bell.grey.outline.icon
+                        i.bell.grey.outline.large.icon
                     .menu 
                         if unread_alert_count
                             .item alert
@@ -55,12 +57,12 @@ template(name='nav')
                             .item no alerts
                 if is_dev
                     a.icon.item.set_models(href="/m/model")
-                        i.grey.database.icon
+                        i.grey.database.large.icon
                 if is_admin
-                    a.icon.item(href="/grid")
-                        i.grey.th.icon
+                    //- a.icon.item(href="/grid")
+                    //-     i.grey.th.large.icon
                     a.icon.item(href="/grid" title='admin')
-                        i.grey.shield.icon
+                        i.grey.shield.large.icon
                 unless logging_out
                     a.ui.dropdown.item(href="/user/#{currentUser._id}" class=user_nav_button_class)
                         if currentUser.profile_image_id
@@ -73,7 +75,10 @@ template(name='nav')
                             a.item(href="/user/#{currentUser._id}") profile
                             .item credits
                             .item debits
-                            .item loans
+                            .item tasks
+                            .item messages
+                            .item alerts
+                            .item settings
                             .item dark mode
                             a#logout.item(href='#')
                                 |log out
