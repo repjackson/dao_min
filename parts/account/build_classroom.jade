@@ -5,16 +5,12 @@ template(name='build_classroom')
                 .ui.center.aligned.basic.segment
                     img.ui.rounded.small.centered.inline.image(src="{{c.url 'mmmlogo' width=400 height=400}}")
                     .ui.header
-                        +i name='earth-planet'
                         | build classroom
                 .ui.fluid.big.button.build_classroom
-                    +i name='classroom' classes='ui inline image'
                     |classroom
                 .ui.fluid.big.disabled.button.build_after_school
-                    +i name='clock' classes='ui inline image'
                     |after school
                 .ui.fluid.big.disabled.button.build_home
-                    +i name='home' classes='ui inline image'
                     |home
 
 
@@ -25,12 +21,10 @@ template(name='build_classroom_info')
                 .sixteen.wide.column
                     .ui.center.aligned.basic.segment
                         .ui.inline.header
-                            //- +i name='classroom'
                             |building
                         if teacher_name
                             .ui.inline.header #{teacher_name}'s' #{title}
                         .ui.small.inline.header
-                            //- +i name='classroom'
                             |classroom
                     .ui.four.steps
                         .active.step
@@ -54,7 +48,6 @@ template(name='build_classroom_info')
             .centered.row
                 .seven.wide.column
                     //- .ui.center.aligned.header 
-                    //-     +i name='info'
                     //-     |info
                     .spacer
                     +text_edit key='teacher_name' label='Teacher Name' placeholder='enter your name' tooltip='examples: john smith' direct=true
@@ -90,11 +83,9 @@ template(name='build_classroom_finance')
                 .sixteen.wide.column
                     .ui.center.aligned.basic.segment
                         .ui.small.inline.header
-                            //- +i name='classroom'
                             |building
                         .ui.inline.header #{teacher_name}'s #{school_name}
                         .ui.small.inline.header
-                            +i name='classroom'
                             |classroom
                     .ui.four.steps
                         a.step(href="/build_classroom/#{_id}/info")
@@ -118,26 +109,22 @@ template(name='build_classroom_finance')
                     //- .ui.button.generate_transaction_types
                     //-     |generate
                     //- .ui.center.aligned.header 
-                    //-     +i name='request-money'
                     //-     |income
                     +classroom_edit_credits        
                     //- each credits
                     //-     div
                     //-     .ui.inline.small.header 
-                    //-         +i name=icon
                     //-         |#{title}
                     //-         +number_edit key='amount' direct=true no_header=true classes='large'
                     //-     +remove_button
                 .seven.wide.column
                     //- .ui.center.aligned.header 
-                    //-     +i name='initiate-money-transfer'
                     //-     |expenses
                     //- .spacer
                     +classroom_edit_debits        
                     //- each debits
                     //-     div
                     //-     .ui.inline.small.header 
-                    //-         +i name=icon
                     //-         |#{title}
                     //-         +number_edit key='amount' direct=true no_header=true classes='large'
                     //-     +remove_button
@@ -155,11 +142,9 @@ template(name='build_classroom_students')
                 .sixteen.wide.column
                     .ui.center.aligned.basic.segment
                         .ui.small.inline.header
-                            //- +i name='classroom'
                             |building
                         .ui.inline.header #{teacher_name}'s #{school_name}
                         .ui.small.inline.header
-                            //- +i name='classroom'
                             |classroom
                     .ui.four.steps
                         a.step(href="/build_classroom/#{_id}/info")
@@ -182,7 +167,6 @@ template(name='build_classroom_students')
             .centered.row
                 .twelve.wide.column
                     //- .ui.center.aligned.header 
-                    //-     +i name='students'
                     //-     |students
                     //- .ui.header students
                     //- .ui.large.list
@@ -190,7 +174,6 @@ template(name='build_classroom_students')
                     //-         .item #{first_name} #{last_name}
                     //-             i.remove.grey.link.icon.remove_student
                     .ui.center.aligned.header 
-                        +i name='students'
                         |student selector
                     +student_selector
                     .spacer

@@ -48,7 +48,7 @@ if Meteor.isClient
                 $set: question_type:'essay'
         'click .select_number': ->
             Docs.update Router.current().params.doc_id,
-                $set: question_type:'select_number'
+                $set: question_type:'number'
         'click .select_text': ->
             Docs.update Router.current().params.doc_id,
                 $set: question_type:'text'

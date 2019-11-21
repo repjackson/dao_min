@@ -33,6 +33,10 @@ if Meteor.isClient
             console.log @
             Docs.update Router.current().params.doc_id,
                 $set: choice_selection_id: @_id
+        'click .submit_answer': ->
+            if confirm 'submit?'
+                Meteor.call 'calculate_answer', Router.current().params.doc_id
+            # (href="/answer_session/#{_id}/view" title='save')
     Template.answer_session_edit.helpers
         choice_select_class: ->
             answer_session = Docs.findOne Router.current().params.doc_id
@@ -149,6 +153,36 @@ if Meteor.isServer
 
 
     Meteor.methods
+        calculate_answer: (answer_session_id)->
+            console.log answer_session_id
+            answer_session = Docs.findOne answer_session_id
+            question = Docs.findOne answer_session.question_id
+
+            console.log 'question', question
+            switch question.question_type
+                when 'number'
+                    console.log 'number'
+                when 'text'
+                    if question.single_answer
+                        console.log 'required answer', question.required_answer
+                        console.log 'given answer', answer_session.text_answer
+                        if answer_session.text_answer is question.required_answer
+                            console.log 'true'
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: true
+                                    complete: true
+                        else
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: false
+                                    complete: true
+                            console.log 'false'
+
+                    console.log 'text'
+            console.log 'answer session', answer_session
+
+
         refresh_answer_session_stats: (answer_session_id)->
             answer_session = Docs.findOne answer_session_id
             # console.log answer_session

@@ -33,8 +33,6 @@ template(name='model_edit')
                         each fields
                             .title 
                                 |#{rank}
-                                if icon
-                                    +i name=icon classes='ui avatar image'
                                 |#{title} (#{field_type})
                                 if faceted
                                     i.filter.icon

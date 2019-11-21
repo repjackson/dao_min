@@ -16,7 +16,6 @@ template(name='project_stats')
     .ui.fluid.accordion
         .title
             .ui.inline.header 
-                +i name='line chart' classes='ui avatar image'
                 |project stats
                 .ui.large.basic.label #{project_stats_doc.total_count} total
                 .ui.large.basic.label #{project_stats_doc.complete_count} complete 
@@ -37,7 +36,6 @@ template(name='project_stats')
                         +latest_project_updates
                     .column
                         .ui.header 
-                            +i name='comments'
                             |latest comments
                         .ui.large.link.bulleted.list
                             each latest_comments
@@ -50,8 +48,6 @@ template(name='project_stats')
 template(name='project_card_template')
     .ui.segment
         a.ui.inline.header(href="/project/#{_id}/feed")
-            //- if icon
-            //-     +i name=icon
             |#{title}
         |!{description}
         //- |complete
@@ -61,10 +57,8 @@ template(name='project_card_template')
         //-     i.large.circle.outline.icon(title='incomplete')
         //- |approved
         //- if approved
-        //-     +i name='approval' title='approved'
         //- else
         //-     i.large.circle.outline.icon(title='not approved')
-        //- +ismall name='tags' classes='ui inline image'
         //- each tags
         //-     .ui.basic.label #{this}
         //- div
@@ -113,8 +107,6 @@ template(name='project_edit')
                         i.pencil.icon
                         |edit project
                     .ui.header
-                        if icon
-                            +i name=icon
                         |#{title}
                     a.ui.big.fluid.button(href="/project/#{_id}/feed" title='save')
                         i.checkmark.icon
@@ -146,12 +138,9 @@ template(name='project_layout')
                 .four.wide.column
                     a.ui.small.fluid.button(href="/projects" title='view projects')
                         i.left.chevron.icon
-                        +i name='work' classes='ui avatar image'
                         |projects
                         
                     .ui.inline.header
-                        //- if icon
-                        //-     +i name=icon
                         +text_view key='title' label='title' direct=true
                     .ui.fluid.large.vertical.borderless.menu
                         a.item(href="/project/#{_id}/feed" class="{{isActiveRoute 'project_feed'}}") 
@@ -207,7 +196,6 @@ template(name='project_layout')
                      
 template(name='project_files')
     .ui.inline.header 
-        +i name='file'
         | documents
     if is_admin
         .ui.icon.button.add_file
@@ -271,7 +259,6 @@ template(name='project_finance')
 
 template(name='project_tasks')
     .ui.header 
-        +i name='task'
         |tasks
     if is_admin
         .ui.button.add_task 
@@ -318,13 +305,11 @@ template(name='update_item')
 
 
 template(name='latest_project_updates')
-    +ismall name='clock'
     a.ui.inline.header(href="/projects")
         |latest project updates
     .ui.link.list
         each latest_updates
             a.item(href="/project/#{parent_id}/view") 
-                +ismall name=project.icon classes='ui middle aligned image'
                 .ui.small.inline.header 
                     |#{project.title}: 
                 strong #{text}

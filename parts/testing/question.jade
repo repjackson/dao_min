@@ -3,7 +3,6 @@ template(name='questions')
         .row
             .four.wide.column
                 .ui.inline.header 
-                    //- +i name='faq'
                     |questions
                 .ui.icon.button.add_question(title='add question')
                     i.plus.icon
@@ -61,15 +60,15 @@ template(name='question_edit')
                     a.ui.big.fluid.button(href="/question/#{_id}/view" title='save')
                         |save
                     +remove_button
-                    +boolean_edit key='has_image' label='image' direct=true
-                    if has_image
-                        +image_edit key='image_id' icon='image' label='image' direct=true
                     +array_edit key='tags' label='tags' direct=true
                 .six.wide.column 
                     +text_edit key='title' label='question' direct=true
                     +boolean_edit key='has_description' label='description' direct=true
                     if has_description
                         +textarea_edit key='description' label='description' icon='content' direct=true
+                    +boolean_edit key='has_image' label='image' direct=true
+                    if has_image
+                        +image_edit key='image_id' icon='image' label='image' direct=true
                     //- +html_edit key='description' label='description' icon='content' direct=true
                     .ui.header rules 
                     +boolean_edit key='has_answer_limit' label='answer limit' direct=true
@@ -79,16 +78,12 @@ template(name='question_edit')
                 .six.wide.column
                     .ui.header question type
                     .ui.button.select_multiple_choice(class=multiple_choice_class)
-                        //- +ismall name='multiple-choice'
                         |multiple choice
                     .ui.button.select_essay(class=select_essay_class)
-                        //- +ismall name='content'
                         |essay
                     .ui.button.select_number(class=select_number_class)
-                        //- +ismall name='hashtag'
                         |number
                     .ui.button.select_text(class=text_class)
-                        //- +ismall name='text'
                         |text
                     .ui.divider
                     if is_multiple_choice_answer
@@ -128,7 +123,6 @@ template(name='question_view')
                 .four.wide.column
                     a.ui.fluid.button(href="/questions")
                         i.chevron.left.icon
-                        //- +i name='question' classes='ui inline mini image'
                         |questions
                     .ui.header question view 
                     +image_view key='question_image_id' label='image' direct=true
@@ -140,7 +134,6 @@ template(name='question_view')
                     .ui.header #{title}
                     //- if my_answer
                     //-     .ui.header 
-                    //-         +i name='list'
                     //-         |choices
                     //-     each choices
                     //-         .ui.segment(class=answer_segment_class)
@@ -161,7 +154,6 @@ template(name='question_view')
                         .ui.header #{when} by #{_author_username}
                 .six.wide.column
                     .ui.inline.header
-                        //- +i name='receive-cash'
                         | bounties
                     .ui.icon.button.offer_bounty(title='offer bounty')
                         i.plus.icon

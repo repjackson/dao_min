@@ -3,7 +3,6 @@ template(name='answer_sessions')
         .row
             .four.wide.column
                 .ui.inline.header
-                    +i name='answer_session'
                     |answer_sessions
                 .ui.icon.button.add_answer_session(title='add answer_session')
                     i.plus.icon
@@ -63,16 +62,20 @@ template(name='answer_session_edit')
                     else if is_number_answer
                         +number_edit key='number_answer' direct=true
                     else if is_text_answer
+                        .ui.header text
                         +text_edit key='text_answer' label='answer' direct=true
-                        if has_entered_text 
-                            .ui.large.button.submit_answer
-                                |submit
+                        //- if has_answered 
+                        //-     .ui.large.button.submit_answer
+                        //-         |submit
                 .six.wide.column
-                    if has_answered
-                        a.ui.big.fluid.button(href="/answer_session/#{_id}/view" title='save')
-                            |submit
-                            i.right.chevron.icon
-
+                    unless complete
+                        if has_answered
+                            .ui.big.fluid.button.submit_answer
+                                |submit
+                                i.right.chevron.icon
+                    if complete 
+                        .ui.header complete
+                        .ui.header correct: #{correct_answer}
 
 
 
@@ -84,7 +87,6 @@ template(name='answer_session_view')
                 .four.wide.column
                     a.ui.fluid.button(href="/answer_sessions")
                         i.chevron.left.icon
-                        +i name='answer_session' classes='ui inline mini image'
                         |answer_sessions
                     .ui.header answer_session view
                     +image_view key='answer_session_image_id' label='image' direct=true

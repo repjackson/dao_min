@@ -3,10 +3,8 @@
 //-         .row
 //-             .four.wide.column
 //-                 .ui.inline.header 
-//-                     +i name='shop'
 //-                     |shop
 //-                 .ui.icon.button.add_product(title='add product')
-//-                     +i name='plus' classes='ui inline mini image'
 //-                 //- .ui.small.header 
 //-                 //-     i.filter.icon
 //-                 //-     |filter
@@ -102,12 +100,10 @@
 //-                 .four.wide.column
 //-                     a.ui.fluid.button(href="/shop")
 //-                         i.chevron.left.icon
-//-                         +i name='shop' classes='ui inline mini image'
 //-                         |shop
 //-                     .ui.header shop view 
 //-                     +image_view key='shop_image_id' label='image' direct=true
 //-                     a.ui.fluid.button(href="/shop/#{_id}/checkout")
-//-                         +i name='buy' classes='ui inline mini image'
 //-                         |purchase
 //-                     +voting_full
 //-                     if can_edit
@@ -118,7 +114,6 @@
 //-                     .ui.header #{title}
 //-                     .ui.header $#{price}
 //-                     .ui.header 
-//-                         +i name='invoice' classes='ui inline mini image'
 //-                         |purchases
 //-                     each purchases
 //-                         .ui.header #{title}
@@ -138,7 +133,6 @@
 //-                 .four.wide.column
 //-                     a.ui.fluid.button(href="/shop")
 //-                         i.chevron.left.icon
-//-                         +i name='shop' classes='ui inline mini image'
 //-                         |shop
 //-                     .ui.header shop checkout view 
 //-                     +image_view key='shop_image_id' label='image' direct=true
@@ -151,11 +145,9 @@
 //-                     .ui.header your credit $#{currentUser.credit}
 //-                     if can_buy
 //-                         .ui.big.green.fluid.button
-//-                             +i name='checkout' classes='ui inline mini image'
 //-                             |buy
 //-                     else if need_credit
 //-                         .ui.big.disabled.fluid.button
-//-                             +i name='cancel' classes='ui inline mini image'
 //-                             |need #{credit_needed} credit
 //- 
 //- 

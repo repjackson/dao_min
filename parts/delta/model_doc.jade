@@ -36,7 +36,6 @@ template(name='model_doc_view')
                     .four.wide.column
                         .ui.circular.button.back_to_model
                             i.chevron.left.icon
-                            +i name=current_model.icon classes='ui avatar image'
                             |#{current_model.title}
                         if can_edit
                             a.ui.circular.large.button(href="/m/#{current_model.slug}/#{_id}/edit" title='Edit')
@@ -44,7 +43,6 @@ template(name='model_doc_view')
                                 |edit    
                         if is_admin
                             .ui.header 
-                                +i name='clock'
                                 //- i.clock.icon
                                 |timestamp tags
                             each _timestamp_tags

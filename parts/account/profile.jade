@@ -48,7 +48,6 @@ template(name='profile_layout')
                         .ui.basic.segment
                             .ui.header 
                                 i.shield.icon
-                                //- +i name='shield' classes='ui mini inline image'
                                 |roles
                             each roles
                                 .ui.basic.label #{this}
@@ -68,7 +67,6 @@ template(name='user_dashboard')
         .row
             .sixteen.wide.column
                 .ui.center.aligned.header.recalc_student_stats
-                    //- +i name='dashboard'
                     i.dashboard.icon
                     |#{current_user.name}'s dashboard
         
@@ -99,109 +97,3 @@ template(name='user_actions')
         .ui.large.list
             each user_actions
                 a.item(href=link) #{title}
-    
-        
-        
-        
-                    
-                    
-                    
-                    
-template(name='user_money')  
-    .ui.grid      
-        .three.column.row
-            .column
-                .ui.segment
-                    .ui.small.header 
-                        +i name='money-bag' classes='ui mini inline image'
-                        strong $#{ssd.total_credit_amount}
-                        small total weekly income
-                    .ui.small.header
-                        +i name='hashtag' classes='ui mini inline image'
-                        strong #{ssd.credit_count}
-                        small credits
-            .column
-                .ui.segment
-                    .ui.small.header
-                        +ismall name='shopping-cart-loaded'
-                        strong $#{ssd.total_debit_amount}
-                        small total weekly expenses
-                    .ui.small.header
-                        +ismall name='hashtag'
-                        strong #{ssd.debit_count}
-                        small debits
-            .column
-                .ui.segment
-                    .ui.small.header
-                        +i name='economic-improvement'
-                        |growth from last week
-        .two.column.row
-            .column
-                .ui.segment
-                    .ui.header 
-                        +i name='deposit'
-                        |weekly paycheck (credits)
-                    //- .ui.bulleted.list
-                    //-     each user_credits
-                    //-         .item 
-                    //-             |#{amount}
-                    //-             if icon
-                    //-                 +i name=icon
-                    //-             strong #{text}
-                    //-             small #{when}
-                    .ui.feed.mediumscroll
-                        each user_credits
-                            .event 
-                                .label
-                                    if is_credit
-                                        +i name='deposit' classes='ui inline mini image'
-                                    if is_debit
-                                        +i name='withdrawal' classes='ui inline mini image'
-                                    else if icon
-                                        +i name=icon
-                                .content
-                                    .summary
-                                        a.user(href="/user/#{target_user.username}")
-                                            |#{target_user.name}
-                                        |#{text}
-                                        .date #{when}
-                                    .meta
-                                        +voting_small
-                                        //- a.like
-                                        //-     i.like.icon 
-                                        //-     |4 likes
-                                        a.remove
-                                            i.undo.icon
-                                        //- if is_dev
-                                        //-     +remove_button
-            .column
-                .ui.segment
-                    .ui.header 
-                        +i name='withdrawal'
-                        |weekly expenses (debits)
-                    .ui.feed.mediumscroll
-                        each user_debits
-                            .event 
-                                .label
-                                    if is_credit
-                                        +i name='deposit' classes='ui inline mini image'
-                                    if is_debit
-                                        +i name='withdrawal' classes='ui inline mini image'
-                                    else if icon
-                                        +i name=icon
-                                .content
-                                    .summary
-                                        a.user(href="/user/#{target_user.username}")
-                                            |#{target_user.name}
-                                        |#{text}
-                                        .date #{when}
-                                    .meta
-                                        +voting_small
-                                        //- a.like
-                                        //-     i.like.icon 
-                                        //-     |4 likes
-                                        a.remove
-                                            i.undo.icon
-                                        //- if is_dev
-                                        //-     +remove_button
-                        //- +range_edit                

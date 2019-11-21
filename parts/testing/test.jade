@@ -3,7 +3,6 @@ template(name='tests')
         .row
             .four.wide.column
                 .ui.inline.header 
-                    +i name='test-passed'
                     |tests
                 .ui.icon.button.add_test(title='add test')
                     i.plus.icon
@@ -86,7 +85,6 @@ template(name='test_view')
                 .four.wide.column
                     a.ui.fluid.button(href="/tests")
                         i.chevron.left.icon
-                        +i name='test' classes='ui inline mini image'
                         |tests
                     .ui.header test view 
                     +image_view key='test_image_id' label='image' direct=true
@@ -101,10 +99,8 @@ template(name='test_view')
                     .ui.button.take_test 
                         |take test
                     .ui.header 
-                        +i name='test'
                         |questions
                     .ui.header 
-                        +i name='test'
                         |sessions
                     each sessions
                         .ui.header #{title}

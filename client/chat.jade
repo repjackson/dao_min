@@ -117,7 +117,6 @@ template(name='view_chats')
                 //- .ui.label(title='Unread') #{unread_message_count} Unread
                 .unread_icon(data-tooltip='Unread Messages' data-position='bottom center')
                     i.secured-letter.icon
-                +i name='tags' classes='ui inline mini image'
                 //- +cloud filter='chat'
                 //- +participant_filter type='chat'
                 +chat_list
@@ -147,7 +146,6 @@ template(name='view_chat')
             .four.wide.column
                 .ui.basic.segment
                     .ui.header 
-                        +i name='line chart' classes='ui inline mini image'
                         |stats
                     //- .ui.inline.header #{message_count} messages
                     //- .ui.inline.header #{unread_message_count} unread

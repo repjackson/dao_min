@@ -3,29 +3,23 @@ template(name='register')
         .centered.row
             .ten.wide.column
                 .ui.center.aligned.basic.segment
-                    a.ui.circular.icon.button(href="/")
+                    a.ui.icon.button(href="/")
                         i.large.home.icon
                         
                     div
-                    i.big.yin.yang.icon
                     //- img.ui.rounded.small.centered.inline.image(src="{{c.url 'mmmlogo' width=400 height=400}}")
-                    //- +i name='add-user-male' classes='ui mini inline image'
                     .ui.inline.header registration
                 //- if message
                 //-     h4.ui.center.aligned.header #{message}
                 //- .ui.small.inline.header 
-                //-     //- +i name='user-male'
                 //-     |First Name
                 //- .ui.fluid.input(class=login_class)
                 //-     input.first_name(type='text')
                 //- .ui.small.inline.header 
-                //-     //- +i name='user-male'
                 //-     |Last Name
                 //- .ui.fluid.input(class=login_class)
                 //-     input.last_name(type='text')
                 .ui.small.inline.header 
-                    //- +i name='user-male'
-                    i.user.outline.grey.icon
                     |username
                 .ui.fluid.icon.input(class=login_class)
                     //- if email_valid
@@ -35,8 +29,6 @@ template(name='register')
                         i.red.ban.icon
                     input.username(type='text')
                 .ui.small.inline.header 
-                    //- +i name='password'
-                    i.lock.grey.icon
                     | password
                 .ui.fluid.input(class=login_class)
                     input.password(type='password')
@@ -47,14 +39,11 @@ template(name='register')
                 //-     input.password2(type='password')
                 if can_register
                     //- if registering
-                    .ui.fluid.large.circular.button.register(class=enter_class)
-                        //- +i name='enter-2' classes='ui mini inline image'  
-                        i.user.plus.icon
+                    .ui.fluid.large.button.register(class=enter_class)
                         |register '#{username}'
                 else
                     .ui.small.header username "#{username}" found
                     a.ui.basic.fluid.button(href='/login') 
-                        +i name='enter-2' classes='ui mini inline image'                    
                         |login
                     
                         
@@ -63,9 +52,8 @@ template(name='register')
                         a(href='/p/privacy' target="_window") privacy policy
                     unless username
                         .ui.small.header or
-                            a.ui.circular.basic.sign.in.button(href='/login') 
+                            a.ui.basic.sign.in.button(href='/login') 
                                 i.sign.in.alternate.icon
-                                //- +i name='enter-2' classes='ui mini inline image'                    
                                 |login
                     
 template(name='choose_personas')
@@ -78,25 +66,19 @@ template(name='choose_personas')
                         |back
                     div
                     img.ui.rounded.small.centered.inline.image(src="{{c.url 'mmmlogo' width=400 height=400}}")
-                    //- +i name='add-user-male' classes='ui mini inline image'
                     //- .ui.inline.header registration
                     div
                     .ui.huge.header I am a...
                     a.ui.huge.fluid.button.choose_teacher(href="/register")
-                        +i name='teacher' classes='ui inline image'
                         |teacher
                     a.ui.huge.fluid.disabled.button.choose_student(href='/student_connect')
-                        +i name='students' classes='ui inline image'
                         |student
                     a.ui.huge.fluid.disabled.button.choose_parent(href="/parent_connect")
-                        +i name='manager' classes='ui inline image'
                         |parent
                     //- .ui.huge.fluid.button
-                    //-     +i name='donate' classes='ui inline image'
                     //-     |donor
                     //- each user_personas
                     //-     .ui.large.button.select_persona(class=persona_class)
-                    //-         +i name=icon classes='ui inline avatar image'
                     //-         |#{title}
                     //- .spacer
                     //- a.ui.big.green.button(href="/choose_interests")
@@ -116,7 +98,6 @@ template(name='student_connect')
             
                     img.ui.rounded.small.centered.inline.image(src="{{c.url 'mmmlogo' width=400 height=400}}")
                     .ui.header 
-                        +i name='students'
                         |enter student code
                     .ui.fluid.inverted.blue.center.aligned.segment
                         .ui.massive.fluid.transparent.inverted.input 
@@ -168,13 +149,11 @@ template(name='choose_interests')
             .twelve.wide.column
                 .ui.center.aligned.basic.segment
                     img.ui.rounded.small.centered.inline.image(src="{{c.url 'mmmlogo' width=400 height=400}}")
-                    //- +i name='add-user-male' classes='ui mini inline image'
                     //- .ui.inline.header registration
                     div
                     .ui.huge.header I want to...
                     each user_interests
                         .ui.large.button.select_interest(class=interest_class)
-                            +i name=icon classes='ui inline avatar image'
                             |#{title}
                     .spacer
                     a.ui.button(href="/choose_personas")

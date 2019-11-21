@@ -6,7 +6,6 @@ template(name='user_edit_layout')
                 .four.wide.column
                     .ui.center.aligned.large.inline.grey.header
                         | #{current_user.first_name} #{current_user.last_name}
-                    //- +i name='pencil'
                     //- .ui.small.inline.header @#{current_user._id}
                     a.ui.fluid.basic.large.button(href="/user/#{current_user._id}/") 
                         i.checkmark.large.green.icon
@@ -102,12 +101,10 @@ template(name='password_edit')
         .ui.fluid.basic.button.reset_password
             |Reset Password
         .ui.fluid.large.basic.button.set_password
-            +i name='password' classes='ui mini inline image'
             | Set Password
     if passwords_matching        
         .ui.fluid.basic.button.change_password
             i.refresh.icon
-            //- +i name='password' classes='ui mini inline image'
             | Change Password
             
             

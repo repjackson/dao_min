@@ -62,7 +62,6 @@ template(name='message_view')
                 .eight.wide.column
                     a.ui.button(href="/messages")
                         i.chevron.left.icon
-                        +i name='message' classes='ui inline mini image'
                         |message
                     .ui.header message view 
                     +image_view key='message_image_id' label='image' direct=true
@@ -73,6 +72,5 @@ template(name='message_view')
                     .ui.header #{title}
                     +icon_view key='icon' direct=true
                     .ui.header 
-                        +i name='message'
                     +comments
                     

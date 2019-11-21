@@ -1,6 +1,5 @@
 template(name='comments')
     .ui.inline.header
-        //- +i name='comments' classes='ui inline mini image'
         |comments
     div
     if currentUser
@@ -38,15 +37,13 @@ template(name='viewing')
 
 
 template(name='goto_model')
-    if is_staff
+    if is_admin
         a.goto_model(href="/m/#{slug}" title="goto #{slug}")
             i.external.blue.icon
-            //- +i name='external-link'
 
 template(name='events_column')
     .ui.accordion
         h4.active.title
-            // +i name='edit-property' classes='ui inline image'
             //- i.rss.icon
             | log
             i.dropdown.icon
@@ -88,7 +85,6 @@ template(name='user_list_info')
 template(name='call_watson')
     .ui.button.autotag
         //- i.chess.icon
-        +ismall name='dna-helix'
         |call watson
 
 template(name='view_full_button')
@@ -128,8 +124,6 @@ template(name='small_horizontal_user_card')
             .image
                 if profile_photo
                     img.ui.rounded.tiny.image(src="{{c.url profile_photo width=200 height=200 gravity='face' crop='fill'}}")
-                else if image_id
-                    img.ui.rounded.image(src="{{c.url image_id width=300 height=300 gravity='face' crop='fill'}}")
                 else if image_id
                     img.ui.rounded.image(src="{{c.url image_id width=300 height=300 gravity='face' crop='fill'}}")
             .content    
@@ -174,11 +168,6 @@ template(name='big_user_card')
                     //- .meta @#{username}
                     //- +array_view key='tags' label='Tags' direct=true
 
-
-template(name='unit_key_checkout')
-    .ui.compact.button.unit_key_checkout
-        +i name='key' classes='ui mini inline image'
-        strong Checkout Unit Key
 
 
 template(name='user_info')
@@ -229,7 +218,6 @@ template(name='user_list_toggle')
                 i.large.icon(class=remove_icon)
             else
                 i.large.icon(class=add_icon)
-            //- +ismall name=icon
             //- |#{label}
         //- each list_users
         //-     +user_info
@@ -265,7 +253,6 @@ template(name='voting_small')
 template(name='voting_full')
     div
     //- .ui.inline.header 
-    //-     //- +i name='elections'
     //-     |voting
     .ui.large.icon.button.upvote(title='upvote')
         i.thumbs.up.icon(class=upvote_class)
@@ -294,7 +281,6 @@ template(name='voting_full')
 template(name='view_button')
     a.ui.icon.compact.basic.button.view(title='view' href="/m/#{model}/#{_id}/view")
         //- i.right.chevron.large.icon
-        +i name='chevron right' classes='ui mini inline image'
 
 
 template(name='remove_button')
@@ -306,11 +292,6 @@ template(name='remove_button')
 template(name='add_button')
     a.ui.large.basic.button.add(title="add #{model}")
         //- |#{model.icon}
-        if model.icon
-            //- i.icon(class=icon)
-            +ismall name=model.icon classes='ui inline image'
-        else 
-            i.plus.icon
         if label
             |#{label}
         //- |#{model}
@@ -326,7 +307,7 @@ template(name='add_button')
 template(name='save_button')
     a.ui.basic.button.large.icon.save(title='Save' href="/m/#{model}/#{_id}/view")
         i.checkmark.icon
-        |Save
+        | save
 
 template(name='toggle_button')
     .ui.icon.toggle.basic.button(title=label)
@@ -359,14 +340,13 @@ template(name='email_validation_check')
     unless email_verified
         .ui.basic.fluid.button.send_verification
             //- i.user.shield.icon
-            //- +i name='user-shield' classes='ui inline image'
             |resend verification email
         if times
             .ui.label
                 |#{times}
             //- else
                 //- |#{times}x sent
-        if is_staff
+        if is_admin
             .ui.button.toggle_email_verified
                 |mark email verified
         
@@ -375,13 +355,12 @@ template(name='lease_expiration_check')
     div
     if expiration_date
         i.grey.clock.icon
-        //- +i name='clock' classes='ui avatar image'
         |lease expiring 
         |#{lease_expiring}
         
         
 template(name='rules_and_regs_check')
-    if is_staff
+    if is_admin
         if rules_signed
             a.ui.basic.button(href="/m/rules_regs_signing/#{rules_signed._id}/view" title='click to view/edit signing document')
                 i.signature.large.icon
@@ -395,7 +374,7 @@ template(name='rules_and_regs_check')
     //-         .ui.large.basic.button.sign_rules
     //-             i.signature.icon
     //-             |click to sign rules and regulations
-        //- else if is_staff
+        //- else if is_admin
         //-     .ui.large.basic.button
         //-         i.signature.icon
         //-         |rules and regs signed 
@@ -403,7 +382,7 @@ template(name='rules_and_regs_check')
         
         
 template(name='user_guidelines_check')
-    if is_staff
+    if is_admin
         if guidelines_signed
             a.ui.basic.button(href="/m/sign_guidelines/#{guidelines_signed._id}/view" title='click to view/edit signing document')
                 i.signature.icon
@@ -417,7 +396,7 @@ template(name='user_guidelines_check')
             .ui.large.basic.fluid.button.sign_guidelines
                 i.signature.icon
                 | sign student guidelines
-    //-     else if is_staff
+    //-     else if is_admin
     //-         .ui.large.basic.button
     //-             i.signature.icon
     //-             |rules and regs signed 

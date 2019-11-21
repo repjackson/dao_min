@@ -62,7 +62,6 @@ template(name='task_cloud')
 //-     .ui.stackable.padded.grid
 //-         .row
 //-             .six.wide.column
-//-                 +i name='tasks' classes='ui avatar image'
 //-                 .ui.inline.header tasks
 //-                 .ui.icon.big.button.add_task
 //-                     i.plus.green.icon
@@ -72,7 +71,6 @@ template(name='task_cloud')
 //-                 .ui.large.icon.button.calculate_task_stats(title='calculate task stats')
 //-                     i.refresh.icon
 //-                 .ui.header 
-//-                     +i name='line chart' classes='ui avatar image'
 //-                     |task stats
 //-                 with task_stats_doc
 //-                     .ui.small.header work done
@@ -148,7 +146,6 @@ template(name='task_view')
             .row
                 .four.wide.column 
                     a.ui.fluid.button(href="/tasks")
-                        +i name='task' classes='ui avatar image'
                         |tasks
                     .ui.header view task
                     a.ui.big.icon.button(href="/task/#{_id}/edit")
@@ -170,7 +167,6 @@ template(name='task_view')
 
 template(name='user_tasks')
     .ui.inline.header 
-        +i name='tasks'
         |tasks
     +goto_model slug='task'
     .ui.icon.input

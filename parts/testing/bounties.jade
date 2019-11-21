@@ -3,7 +3,6 @@ template(name='bounties')
         .row
             .four.wide.column
                 .ui.inline.header 
-                    +i name='bounty-passed'
                     |bounties
                 .ui.icon.button.add_bounty(title='add bounty')
                     i.plus.icon
@@ -89,7 +88,6 @@ template(name='bounty_view')
                 .four.wide.column
                     a.ui.fluid.button(href="/bounties")
                         i.chevron.left.icon
-                        +i name='treasure-chest' classes='ui inline mini image'
                         |bounty
                     .ui.header bounty view 
                     a.ui.fluid.button(href="/bounty/#{_id}/edit")

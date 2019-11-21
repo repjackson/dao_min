@@ -43,7 +43,6 @@ template(name='minute_edit')
                 .twelve.wide.column 
                     +date_edit key='meeting_date' label='meeting date' icon='calendar' direct=true
                     .ui.small.header 
-                        +i name='meeting-room'
                         |board members present
                     .ui.link.list
                         each board_members
@@ -61,26 +60,20 @@ template(name='minute_edit')
                     //- .ui.header owner/guest
                     +textarea_edit key='owner_guest_notes' label='owner/guest' icon='user-male' direct=true
                     //- .ui.header
-                    //-     +i name='approval'
                     //-     |approval of minutes
                     +textarea_edit key='approval_of_minutes_notes' label='approval of minutes' icon='approval' direct=true
                     //- .ui.header
-                    //-     +i name='approval'
                     //-     |ratification/ email approvals
                     +textarea_edit key='ratification_email_approvals' label='ratification/ email approval' icon='approval' direct=true
                     //- .ui.header 
-                    //-     +i name='invoice'
                     //-     |financial review
                     +textarea_edit key='financial_review_notes' label='financial review' icon='invoice' direct=true
                     //- .ui.header 
-                    //-     +i name='sorting-arrows-horizontal'
                     //-     |need for direction
                     .ui.inline.header 
-                        +i name='clock'
                         |need for direction business
                     each need_for_direction_updates
                         div
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         +project_lookup key='project_id' label='project' ref_model='project' direct=true
@@ -94,11 +87,9 @@ template(name='minute_edit')
                     +textarea_edit key='need_for_direction_notes' label='need for direction' icon='sorting-arrows-horizontal' direct=true
                     div
                     .ui.inline.header 
-                        +i name='clock'
                         |old business
                     each old_business_updates
                         div
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         +project_lookup key='project_id' label='project' ref_model='project' direct=true
@@ -111,11 +102,9 @@ template(name='minute_edit')
                     //- +textarea_edit key='old_business_notes' label='new business notes' direct=true
                     div
                     .ui.inline.header 
-                        +i name='business'
                         |new business
                     each new_business_updates
                         div
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         +project_lookup key='project_id' label='project' ref_model='project' direct=true
@@ -137,7 +126,6 @@ template(name='minute_view')
                 .four.wide.column 
                     a.ui.fluid.button(href="/minutes")
                         i.left.chevron.icon
-                        +i name='list' classes='ui avatar image'
                         |minutes
                     .ui.header view minute
                     a.ui.big.fluid.button(href="/minute/#{_id}/edit")
@@ -152,33 +140,25 @@ template(name='minute_view')
                         small minutes of the board of director’s meeting 
                         strong {{short_date meeting_date}}
                     .ui.header
-                        +i name='meeting-room'
                         |board members present
                     .ui.header 
-                        +i name='service-bell'
                         |call to order
                     .ui.small.header called to order at {{long_date called_to_order_timestamp}}
                     //- .ui.header 
-                    //-     +i name='rent'
                     //-     |owner/guest
                     +textarea_view key='owner_guest_notes' label='owner/guest' icon='rent' direct=true
                     //- .ui.header 
-                    //-     +i name='approval'
                     //-     |approval of minutes
                     +textarea_view key='approval_of_minutes_notes' icon='approval' label='approval of minutes' direct=true
                     //- .ui.header 
-                    //-     +i name='approval'
                     //-     |ratification/ email approvals
                     +textarea_view key='ratification_email_approvals' icon='approval' label='ratification/ email approval' direct=true
                     //- .ui.header 
-                    //-     +i name='invoice'
                     //-     |financial review
                     +textarea_view key='financial_review_notes' label='financial review' icon='invoice' direct=true
                     .ui.header
-                        +i name='sorting-arrows-horizontal'
                         |need for direction
                     each need_for_direction_updates
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         | #{text}
@@ -186,10 +166,8 @@ template(name='minute_view')
                         div
                     +textarea_view key='need_for_direction_notes' icon='sorting-arrows-horizontal' label='need for direction' direct=true
                     .ui.header 
-                        +i name='clock'
                         |old business
                     each old_business_updates
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         | #{text}
@@ -201,7 +179,6 @@ template(name='minute_view')
                         i.briefcase.icon
                         |new business
                     each old_business_updates
-                        +ismall name=project.icon
                         .ui.small.inline.header 
                             |#{project.title}
                         | #{text}
