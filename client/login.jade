@@ -10,14 +10,12 @@ template(name='login')
                 if message
                     h4.ui.center.aligned.header #{message}
                 .ui.inline.small.header 
-                    //- +i name='user-male'
                     i.grey.user.outline.icon
                     |username
                 .ui.fluid.large.input(class=login_class)
                     input.username(type='text')
                 .spacer
                 .ui.inline.small.header 
-                    //- +i name='password'
                     i.grey.lock.icon
                     | password
                 .ui.fluid.large.input(class=login_class)

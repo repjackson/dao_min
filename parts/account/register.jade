@@ -28,11 +28,12 @@ template(name='register')
                     i.user.outline.grey.icon
                     |username
                 .ui.fluid.icon.input(class=login_class)
-                    if email_valid
+                    //- if email_valid
+                    if username_valid
                         i.green.checkmark.icon
-                    if email_invalid
+                    else
                         i.red.ban.icon
-                    input.email(type='text')
+                    input.username(type='text')
                 .ui.small.inline.header 
                     //- +i name='password'
                     i.lock.grey.icon
@@ -46,15 +47,16 @@ template(name='register')
                 //-     input.password2(type='password')
                 if can_register
                     //- if registering
-                    .ui.fluid.large.circular.button.enter(class=enter_class)
-                        +i name='enter-2' classes='ui mini inline image'  
-                        |register '#{email}'
-                    //- else
-                    //-     .ui.small.header username "#{username}" found
-                    //-     a.ui.basic.fluid.button(href='/login') 
-                    //-         +i name='enter-2' classes='ui mini inline image'                    
-                    //-         |login
-                        
+                    .ui.fluid.large.circular.button.register(class=enter_class)
+                        //- +i name='enter-2' classes='ui mini inline image'  
+                        i.user.plus.icon
+                        |register '#{username}'
+                else
+                    .ui.small.header username "#{username}" found
+                    a.ui.basic.fluid.button(href='/login') 
+                        +i name='enter-2' classes='ui mini inline image'                    
+                        |login
+                    
                         
                 .ui.center.aligned.basic.segment    
                     .ui.small.header by registering you agree to our 
@@ -62,7 +64,8 @@ template(name='register')
                     unless username
                         .ui.small.header or
                             a.ui.circular.basic.sign.in.button(href='/login') 
-                                +i name='enter-2' classes='ui mini inline image'                    
+                                i.sign.in.alternate.icon
+                                //- +i name='enter-2' classes='ui mini inline image'                    
                                 |login
                     
 template(name='choose_personas')

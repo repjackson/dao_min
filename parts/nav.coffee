@@ -277,5 +277,5 @@ if Meteor.isServer
             }, sort:_timestamp:-1
 
 
-    Meteor.publish 'me', ->
-        Meteor.users.find @userId
+    # Meteor.publish 'me', ->
+    #     Meteor.users.find @userId

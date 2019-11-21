@@ -1,0 +1,111 @@
+template(name='answer_sessions')
+    .ui.stackable.padded.grid
+        .row
+            .four.wide.column
+                .ui.inline.header
+                    +i name='answer_session'
+                    |answer_sessions
+                .ui.icon.button.add_answer_session(title='add answer_session')
+                    i.plus.icon
+                +answer_session_cloud
+            .twelve.wide.column
+                each answer_sessions
+                    +answer_session_segment
+
+
+template(name='answer_session_cloud')
+    div
+    //- #cloud
+        //- .ui.left.icon.input
+        //-     i.search.icon
+        //-     +inputAutocomplete settings=settings id="search" class="" autocomplete="off"
+        // .ui.hidden.fitted.divider
+    //- i.grey.tags.icon
+    //- .ui.inline.header tags
+    if selected_answer_session_tags
+        #clear_tags.ui.active.icon.circular.button
+            i.remove.icon
+        each selected_answer_session_tags
+            .unselect_answer_session_tag.ui.active.circular.button
+                strong #{this}
+    each all_answer_session_tags
+        .ui.compact.circular.button.select_answer_session_tag(class=cloud_tag_class)
+            strong #{this.name}
+
+
+
+template(name='answer_session_segment')
+    //- .ui.card
+    .ui.segment
+        img.ui.fluid.image(src="{{c.url answer_session_image_id width=400 height=200 crop='fill'}}")
+        .content
+            a.ui.header(href="/answer_session/#{_id}/view") #{title}
+            each tags
+                .ui.basic.label #{this}
+
+
+
+template(name='answer_session_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column
+                    .ui.fluid.button.cancel_answer_session
+                        i.ban.icon
+                        |cancel
+                .six.wide.column
+                    with parent_question
+                        .ui.header.f7 #{title}
+                    if is_multiple_choice_answer
+                        each choices
+                            .ui.large.fluid.button.select_choice(class=choice_select_class)
+                                .ui.header !{content}
+                    else if is_number_answer
+                        +number_edit key='number_answer' direct=true
+                    else if is_text_answer
+                        +text_edit key='text_answer' label='answer' direct=true
+                        if has_entered_text 
+                            .ui.large.button.submit_answer
+                                |submit
+                .six.wide.column
+                    if has_answered
+                        a.ui.big.fluid.button(href="/answer_session/#{_id}/view" title='save')
+                            |submit
+                            i.right.chevron.icon
+
+
+
+
+
+template(name='answer_session_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column
+                    a.ui.fluid.button(href="/answer_sessions")
+                        i.chevron.left.icon
+                        +i name='answer_session' classes='ui inline mini image'
+                        |answer_sessions
+                    .ui.header answer_session view
+                    +image_view key='answer_session_image_id' label='image' direct=true
+                    if is_dev
+                        a.ui.fluid.button(href="/answer_session/#{_id}/edit")
+                            i.pencil.icon
+                            |edit
+                .six.wide.column
+                    with parent_question
+                        .ui.header.f7 #{title}
+                    if is_multiple_choice_answer
+                        each choices
+                            .ui.large.disabled.fluid.button.select_choice(class=choice_select_class)
+                                .ui.header !{content}
+                    else if is_number_answer
+                        +number_view key='number_answer' direct=true
+                    else if is_text_answer
+                        +text_view key='text_answer' direct=true
+                    +comments
+                .six.wide.column
+                    if is_correct
+                        .ui.header correct
+                    else
+                        .ui.header incorrect

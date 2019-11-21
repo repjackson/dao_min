@@ -5,8 +5,8 @@ body {
     font-family: 'Ubuntu', sans-serif !important;
     /* font-size: 110% !important; */
     /* line-height: 200% !important; */
-    /* background: rgba(0,0,0,.8) !important; */
-    /* filter: invert(.2) !important; */
+    background: rgba(0,0,0,.7) !important;
+    filter: invert(.8) !important;
     /* background: rgba(250, 250, 250, .05) !important */
     /* background: #0e0e44 !important; */
 }
@@ -27,9 +27,8 @@ i.green.icon, i.red.icon{
 } */
 
 .button {
-    transition: all 1s !important;
+    transition: all .5s !important;
     font-family: 'Ubuntu', sans-serif !important;
-
 }
 
 
@@ -39,18 +38,18 @@ i.green.icon, i.red.icon{
 }
 
 .ui.button:not(.circular){
-    border-radius: 10px !important;
+    border-radius: 8px !important;
     /* border-width: 1px !important; */
     /* border-style: dotted !important; */
     border-color: rgba(0,0,0,.9) !important;
 }
 
 .ui.segment:not(.circular){
-    border-radius: 7px !important;
+    /* border-radius: 7px !important; */
 }
 
 .label{
-    border-radius: 7px !important;
+    /* border-radius: 7px !important; */
     margin: .2em !important;
 }
 
@@ -71,7 +70,7 @@ i.green.icon, i.red.icon{
 }
 
 .rounded {
-    border-radius: 10px !important
+    /* border-radius: 10px !important */
 }
 
 .cloud {
@@ -246,13 +245,13 @@ i.green.icon, i.red.icon{
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }
 .global_container{
-    transition: transform .5s; /* Animation */
+    transition: transform 1s; /* Animation */
     /* padding-top: 5em !important; */
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }
 .zoom:hover {
     box-shadow: inset 0px 0px 10px 10px rgba(250,250,250,0.8);
-    border-radius: 15px !important;
+    /* border-radius: 15px !important; */
     filter: drop-shadow(0px 0px 5px 5px rgba(200,200,200,.7)) !important;
     transform: scale(1.1) !important; /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
     z-index:1000 !important;
@@ -268,29 +267,29 @@ i.green.icon, i.red.icon{
 
 
 input:not(.no_format){
-    -webkit-border-radius: 10px !important; */
-    border-radius: 10px !important;
+    /* -webkit-border-radius: 10px !important; */ */
+    /* border-radius: 10px !important; */
     margin-bottom: 3px !important;
     margin-top: 3px !important;
     /* font-size: 120% !important; */
-    /* -moz-border-radius: 50px !important; */
+    -moz-border-radius: 50px !important;
     /* border-radius: 50px !important;
-    /* -webkit-border-radius: 5px !important; */
-    /* -moz-border-radius: 5px !important; */
+    -webkit-border-radius: 5px !important;
+    -moz-border-radius: 5px !important;
     /* background: rgba(250, 250, 250, 0.9) !important; */
     opacity: 1;
 }
 
 textarea{
-    -webkit-border-radius: 7px !important; */
-    border-radius: 7px !important;
+    /* -webkit-border-radius: 7px !important; */ */
+    /* border-radius: 7px !important; */
 }
 
 
 
 
 .button:not(.circular) {
-    border-radius: 10px !important;
+    /* border-radius: 10px !important; */
 }
 .button:not(.labeled) {
     /* background-color: rgba(200, 200, 200, 0.5) !important; */

@@ -2,6 +2,7 @@
 @selected_shop_tags = new ReactiveArray []
 @selected_bug_tags = new ReactiveArray []
 @selected_task_tags = new ReactiveArray []
+@selected_question_tags = new ReactiveArray []
 
 
 
@@ -11,6 +12,15 @@ Template.registerHelper 'first_initial', (user) ->
     @first_name[..2]+'.'
     # moment(input).fromNow()
 Template.registerHelper 'logging_out', () -> Session.get 'logging_out'
+Template.registerHelper 'current_user', () ->  Meteor.users.findOne Router.current().params.user_id
+Template.registerHelper 'is_current_user', () ->
+    if Meteor.userId() is Router.current().params.user_id
+        true
+    else
+        if Meteor.user().roles and 'dev' in Meteor.user().roles
+            true
+        else
+            false
 
 Template.registerHelper 'is_loading', (number) -> Session.get('loading')
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
@@ -25,38 +35,38 @@ Template.registerHelper 'current_doc', ->
     # console.log user
     if doc then doc else if user then user
 
-Template.donate_quick.onCreated ->
-    # @autorun => Meteor.subscribe 'model_docs', 'donation'
-    if Meteor.isDevelopment
-        pub_key = Meteor.settings.public.stripe_test_publishable
-    else if Meteor.isProduction
-        pub_key = Meteor.settings.public.stripe_live_publishable
-    Template.instance().checkout = StripeCheckout.configure(
-        key: pub_key
-        # image: 'https://res.cloudinary.com/facet/image/upload/c_fill,g_face,h_300,w_300/mmmlogo.png'
-        locale: 'auto'
-        # zipCode: true
-        token: (token) ->
-            donate_amount = parseInt $('.donate_amount').val()*100
-            charge =
-                amount: donate_amount
-                currency: 'usd'
-                source: token.id
-                description: token.description
-            Meteor.call 'donate', charge, (error, response) =>
-                if error then alert error.reason, 'danger'
-                else
-                    alert 'donation received, thank you', 'success'
-	)
-
-Template.donate_quick.events
-    'click .start_donation': ->
-        donation_amount = parseInt $('.donate_amount').val()*100
-        Template.instance().checkout.open
-            name: 'dao donation'
-            # email:Meteor.user().emails[0].address
-            # description: 'mmm donation'
-            amount: donation_amount
+# Template.donate_quick.onCreated ->
+#     # @autorun => Meteor.subscribe 'model_docs', 'donation'
+#     if Meteor.isDevelopment
+#         pub_key = Meteor.settings.public.stripe_test_publishable
+#     else if Meteor.isProduction
+#         pub_key = Meteor.settings.public.stripe_live_publishable
+#     Template.instance().checkout = StripeCheckout.configure(
+#         key: pub_key
+#         # image: 'https://res.cloudinary.com/facet/image/upload/c_fill,g_face,h_300,w_300/mmmlogo.png'
+#         locale: 'auto'
+#         # zipCode: true
+#         token: (token) ->
+#             donate_amount = parseInt $('.donate_amount').val()*100
+#             charge =
+#                 amount: donate_amount
+#                 currency: 'usd'
+#                 source: token.id
+#                 description: token.description
+#             Meteor.call 'donate', charge, (error, response) =>
+#                 if error then alert error.reason, 'danger'
+#                 else
+#                     alert 'donation received, thank you', 'success'
+# 	)
+#
+# Template.donate_quick.events
+#     'click .start_donation': ->
+#         donation_amount = parseInt $('.donate_amount').val()*100
+#         Template.instance().checkout.open
+#             name: 'dao donation'
+#             # email:Meteor.user().emails[0].address
+#             # description: 'mmm donation'
+#             amount: donation_amount
 
 
 

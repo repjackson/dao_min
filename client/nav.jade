@@ -6,14 +6,8 @@ template(name='nav')
         else 
             a.icon.item(href='/' class="{{isActivePath '/'}}") 
                 i.yin.yang.large.icon
-        unless currentUser
-            a.ui.mobile.hidden.item(href='/p/about')
-                |work
-            //- a.item(href='/p/team')
-            //-     span.mobile.hidden &nbsp; Team
-            a.item(href='/contact')
-                span.mobile.hidden &nbsp; contact
-                //- i.phone.icon.mobile.only
+        a.ui.mobile.hidden.item(href='/questions')
+            |questions
         if current_doc 
             a.ui.center.aligned.header.item(href="/classroom/#{current_doc._id}")
                 |#{current_doc.title}
@@ -36,25 +30,25 @@ template(name='nav')
             if currentUser
                 a.icon.large.item(href='/chat' title='chat')
                     i.chat.outline.grey.large.icon
-                a.icon.large.item(href='/m/event' title='events')
-                    i.calendar.outline.grey.large.icon
-                a.icon.large.item(href='/m/task' title='tasks')
-                    i.tasks.grey.large.icon
-                a.icon.large.item(href='/mail' title='mail')
-                    i.envelope.outline.grey.large.icon
-                a.ui.simple.dropdown.item(href='/alerts')
-                    if unread_alert_count
-                        i.bell.yellow.icon
-                    else 
-                        i.bell.grey.outline.large.icon
-                    .menu 
-                        if unread_alert_count
-                            .item alert
-                            .item alert
-                            .item alert
-                            .item alert
-                        else
-                            .item no alerts
+                //- a.icon.large.item(href='/m/event' title='events')
+                //-     i.calendar.outline.grey.large.icon
+                //- a.icon.large.item(href='/m/task' title='tasks')
+                //-     i.tasks.grey.large.icon
+                //- a.icon.large.item(href='/mail' title='mail')
+                //-     i.envelope.outline.grey.large.icon
+                //- a.ui.simple.dropdown.item(href='/alerts')
+                //-     if unread_alert_count
+                //-         i.bell.yellow.icon
+                //-     else 
+                //-         i.bell.grey.outline.large.icon
+                //-     .menu 
+                //-         if unread_alert_count
+                //-             .item alert
+                //-             .item alert
+                //-             .item alert
+                //-             .item alert
+                //-         else
+                //-             .item no alerts
                 if is_dev
                     a.icon.item.set_models(href="/m/model")
                         i.grey.database.large.icon
@@ -73,13 +67,13 @@ template(name='nav')
                         //- #{currentUser.credit}
                         .menu 
                             a.item(href="/user/#{currentUser._id}") profile
-                            .item credits
-                            .item debits
-                            .item tasks
-                            .item messages
-                            .item alerts
-                            .item settings
-                            .item dark mode
+                            //- .item credits
+                            //- .item debits
+                            //- .item tasks
+                            //- .item messages
+                            //- .item alerts
+                            //- .item settings
+                            //- .item dark mode
                             a#logout.item(href='#')
                                 |log out
                                 i.sign.out.grey.icon

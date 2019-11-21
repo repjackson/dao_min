@@ -131,21 +131,6 @@ if Meteor.isClient
 
 
 
-    Template.teacher_dashboard.onCreated ->
-        @autorun -> Meteor.subscribe 'model_docs', 'classroom'
-    Template.teacher_dashboard.helpers
-        teacher_classrooms: ->
-            user = Meteor.users.findOne Router.current().params.user_id
-
-            Docs.find
-                model:'classroom'
-                teacher_id: user._id
-
-
-
-
-
-
 
 
 

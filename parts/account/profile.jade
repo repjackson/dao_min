@@ -3,55 +3,63 @@ template(name='profile_layout')
     with current_user
         .ui.stackable.padded.grid
             .row
-                //- if view_side
-                //-     .two.wide.column
-                        //- .ui.fluid.vertical.menu.scrolling
-                        //-     each user_sections
-                        //-         a.item(href="/user/#{user.username}/#{slug}" class="{{isActiveRoute regex=route_slug}}")
-                        //-             i.icon
-                        //-                 +ismall name=icon
-                        //-             |#{title}
-                div(class=main_column_class)
-                    .ui.stackable.grid
-                        //- img.ui.fluid.image.checkin_banner(src="{{c.url banner_image width=1000 height=1000 crop='crop'}}")
-                        .four.wide.column
-                            //- .ui.fluid.button.toggle_size
-                            //-     i.bars.icon
-                            img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
-                            .ui.center.aligned.basic.segment
-                                //- a(href="/user/#{user.username}")
-                                .ui.center.aligned.header
-                                    | #{user.first_name} #{user.last_name}
-                                    //- .ui.small.header @#{user.username}        
-                            if is_current_user
-                                a.ui.large.fluid.button(href="/user/#{current_user._id}/edit")
-                                    i.cog.grey.icon
-                                        //- +ismall name='settings' classes='ui inline mini image'
-                                    |Profile
-                                a.ui.fluid.button.logout(href="#")
-                                    i.sign.out.alternate.icon
-                                    //- +ismall name='exit' 
-                                    |Log Out
-                                //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
-                                //-     //- i.globe.icon
-                                //-     +ismall name='globe' 
-                                //-     |log out other clients
-                            if is_admin
-                                .ui.basic.segment
-                                    .ui.header 
-                                        i.shield.icon
-                                        //- +i name='shield' classes='ui mini inline image'
-                                        |Roles
-                                    each roles
-                                        .ui.basic.label #{this}
-                        .twelve.wide.column
-                            //- each user_sections
-                            //-     a.ui.button(href="/user/#{user.username}/#{slug}")
-                            //-         //- i.icon(class=icon)
-                            //-         +ismall name=icon
-                            //-         |#{title}
+                .four.wide.column
+                    //- .ui.fluid.button.toggle_size
+                    //-     i.bars.icon
+                    img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
+                    .ui.center.aligned.basic.segment
+                        //- a(href="/user/#{user.username}")
+                        .ui.center.aligned.header
+                            | #{user.first_name} #{user.last_name}
+                            //- .ui.small.header @#{user.username}        
+                        //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
+                        //-     //- i.globe.icon
+                        //-     +ismall name='globe' 
+                        //-     |log out other clients
+                    
+                    .ui.fluid.vertical.menu.scrolling
+                        a.item(href="/user/#{user.username}/money" class="{{isActiveRoute regex=user_money}}")
+                            i.money.grey.icon
+                            |money
+                        a.item(href="/user/#{user.username}/tags" class="{{isActiveRoute regex=user_tags}}")
+                            i.tags.icon
+                            |tags
+                        a.item(href="/user/#{user.username}/social" class="{{isActiveRoute regex=user_social}}")
+                            i.chat.icon
+                            |social
+                        a.item(href="/user/#{user.username}/offers" class="{{isActiveRoute regex=user_social}}")
+                            i.chat.icon
+                            |offers
+                        a.item(href="/user/#{user.username}/messages" class="{{isActiveRoute regex=user_mail}}")
+                            i.envelope.icon
+                            |messages
+                        a.item(href="/user/#{user.username}/posts" class="{{isActiveRoute regex=user_posts}}")
+                            i.blog.icon
+                            |posts
+                    if is_current_user
+                        a.ui.large.fluid.button(href="/user/#{current_user._id}/edit")
+                            i.cog.grey.icon
+                            |profile
+                        a.ui.fluid.button.logout(href="#")
+                            i.sign.out.alternate.icon
+                            |log out
 
-                            +yield    
+                    if is_admin
+                        .ui.basic.segment
+                            .ui.header 
+                                i.shield.icon
+                                //- +i name='shield' classes='ui mini inline image'
+                                |roles
+                            each roles
+                                .ui.basic.label #{this}
+                .twelve.wide.column
+                    //- each user_sections
+                    //-     a.ui.button(href="/user/#{user.username}/")
+                    //-         //- i.icon(class=icon)
+                    //-         +ismall name=icon
+                    //-         |#{title}
+
+                    +yield    
     +footer
                 
                     
@@ -60,12 +68,9 @@ template(name='user_dashboard')
         .row
             .sixteen.wide.column
                 .ui.center.aligned.header.recalc_student_stats
-                    +i name='dashboard'
+                    //- +i name='dashboard'
+                    i.dashboard.icon
                     |#{current_user.name}'s dashboard
-    if user_is_student
-        +student_dashboard
-    if user_is_teacher
-        +teacher_dashboard
         
         
         
@@ -98,19 +103,11 @@ template(name='user_actions')
         
         
         
-template(name='teacher_dashboard')  
-    .ui.grid      
-        .row
-            .sixteen.wide.column 
-                .ui.header Your Classrooms
-                each teacher_classrooms 
-                    +classroom_card_template
                     
                     
                     
                     
-                    
-template(name='student_dashboard')  
+template(name='user_money')  
     .ui.grid      
         .three.column.row
             .column
@@ -207,5 +204,4 @@ template(name='student_dashboard')
                                             i.undo.icon
                                         //- if is_dev
                                         //-     +remove_button
-                
                         //- +range_edit                

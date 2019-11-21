@@ -5,11 +5,7 @@ if Meteor.isClient
         ), name:'feed'
 
     Template.feed.onCreated ->
-        @autorun -> Meteor.subscribe('event_facet_docs',
-            selected_event_tags.array()
-            # Session.get('selected_school_id')
-            # Session.get('sort_key')
-        )
+        @autorun -> Meteor.subscribe 'event_log'
 
     Template.feed.helpers
         feed: ->

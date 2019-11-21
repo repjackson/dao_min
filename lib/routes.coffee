@@ -14,6 +14,8 @@ Router.onBeforeAction(force_loggedin, {
   # only: ['admin']
   except: [
     'register'
+    'questions'
+    'question_view'
     'login'
     'home'
     'page'

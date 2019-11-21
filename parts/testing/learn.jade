@@ -1,0 +1,46 @@
+template(name='learn')
+    img.ui.fluid.image.bg_overlay(src="{{c.url 'forestbg' width=1000 height=1000 crop='crop'}}")    
+    
+    .ui.stackable.padded.grid
+        .row
+            .sixteen.wide.column
+                .ui.header 
+                    +i name='reading-ebook'
+                    |courses
+                .ui.button.add_course 
+                    i.plus.icon 
+                    |course
+        .row
+            .sixteen.wide.column
+                .ui.small.cards
+                    each courses
+                        a.link.card(href="/course/#{_id}/view")
+                            img.ui.fluid.image(src="{{c.url image_id width=400 height=200 crop='fill'}}")
+                            .content
+                                .ui.center.aligned.header #{title}
+        .ui.header 
+            +i name='geometry'
+            |topics
+        .five.column.row
+            .center.aligned.column
+                .ui.disabled.segment 
+                    +ilarge name='physics' classes='ui centered image'
+                    .ui.center.aligned.header 
+                        |science 
+            .center.aligned.column
+                .ui.disabled.segment 
+                    +ilarge name='quill-with-ink' classes='ui centered image'
+                    .ui.center.aligned.header 
+                        |english
+            .center.aligned.column
+                .ui.disabled.segment 
+                    +ilarge name='sine' classes='ui centered image'
+                    .ui.center.aligned.header 
+                        |math
+            .center.aligned.column
+                .ui.disabled.segment 
+                    +ilarge name='reading' classes='ui centered image'
+                    .ui.center.aligned.header 
+                        |reading
+            a.ui.big.button(href='/passages')
+                |passages
