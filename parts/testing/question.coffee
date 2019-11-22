@@ -37,7 +37,7 @@ if Meteor.isClient
         text_class: -> if @question_type is 'text' then 'active' else ''
         is_multiple_choice_answer: -> @question_type is 'multiple_choice'
         is_essay_answer: -> @question_type is 'essay'
-        is_number_answer: -> @question_type is 'select_number'
+        is_number_answer: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
     Template.question_edit.events
         'click .select_multiple_choice': ->

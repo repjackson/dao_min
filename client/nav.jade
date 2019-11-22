@@ -1,81 +1,61 @@
 template(name='nav')
-    .ui.attached.borderless.topnav.large.menu
-        if is_loading
-            .item
-                i.loading.yin.yang.large.icon
-        else 
-            a.item(href='/' class="{{isActivePath '/'}}") 
-                |search
-                //- i.yin.yang.large.icon
-        a.ui.mobile.hidden.item(href='/questions')
-            |questions
-        if current_doc 
-            a.ui.center.aligned.header.item(href="/classroom/#{current_doc._id}")
-                |#{current_doc.title}
-        //- if is_teacher 
-        //-     each my_classrooms
-        //-         a.mobile.hidden.item(href="/classroom/#{_id}/students")
-        //-             if image_id 
-        //-                 img.ui.avatar.inline.image(src="{{c.url image_id width=100 height=100 gravity='face' crop='fill'}}")
-        //-             else 
-        //-                 i.dashboard.icon
-        //-             |#{title}
-        .right.menu
-            unless currentUser
-                a.item(href='/login') 
-                    span.mobile.hidden enter
-                a.item(href='/register')
-                    span.mobile.hidden register
-            if currentUser
-                //- a.icon.large.item(href='/chat' title='chat')
-                //-     i.chat.outline.grey.large.icon
-                //- a.icon.large.item(href='/m/event' title='events')
-                //-     i.calendar.outline.grey.large.icon
-                //- a.icon.large.item(href='/m/task' title='tasks')
-                //-     i.tasks.grey.large.icon
-                //- a.icon.large.item(href='/mail' title='mail')
-                //-     i.envelope.outline.grey.large.icon
-                //- a.ui.simple.dropdown.item(href='/alerts')
-                //-     if unread_alert_count
-                //-         i.bell.yellow.icon
-                //-     else 
-                //-         i.bell.grey.outline.large.icon
-                //-     .menu 
-                //-         if unread_alert_count
-                //-             .item alert
-                //-             .item alert
-                //-             .item alert
-                //-             .item alert
-                //-         else
-                //-             .item no alerts
-                if is_dev
-                    a.icon.item.set_models(href="/m/model")
-                        i.grey.database.large.icon
-                if is_admin
-                    //- a.icon.item(href="/grid")
-                    //-     i.grey.th.large.icon
-                    a.icon.item(href="/grid" title='admin')
-                        i.grey.shield.large.icon
-                unless logging_out
-                    a.ui.dropdown.item(href="/user/#{currentUser._id}" class=user_nav_button_class)
-                        if currentUser.profile_image_id
-                            img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
-                        else
-                            i.user.outline.icon
-                        span.mobile.hidden #{currentUser.name} 
-                        //- #{currentUser.credit}
-                        .menu 
-                            a.item(href="/user/#{currentUser._id}") profile
-                            //- .item credits
-                            //- .item debits
-                            //- .item tasks
-                            //- .item messages
-                            //- .item alerts
-                            //- .item settings
-                            //- .item dark mode
-                            a#logout.item(href='#')
-                                | leave
-                                i.sign.out.grey.icon
-                if logging_out
-                    .item
-                        i.loading.circle.notch.icon
+    a.ui.button(href='/' class="{{isActivePath '/'}}") 
+        |search
+        //- i.yin.yang.large.icon
+    a.ui.button(href='/questions')
+        |questions
+    unless currentUser
+        a.ui.button(href='/login') 
+            span.mobile.hidden enter
+        a.ui.button(href='/register')
+            span.mobile.hidden register
+    if currentUser
+        //- a.icon.large.ui.button(href='/chat' title='chat')
+        //-     i.chat.outline.grey.large.icon
+        //- a.icon.large.ui.button(href='/m/event' title='events')
+        //-     i.calendar.outline.grey.large.icon
+        //- a.icon.large.ui.button(href='/m/task' title='tasks')
+        //-     i.tasks.grey.large.icon
+        //- a.icon.large.ui.button(href='/mail' title='mail')
+        //-     i.envelope.outline.grey.large.icon
+        //- a.ui.simple.dropdown.ui.button(href='/alerts')
+        //-     if unread_alert_count
+        //-         i.bell.yellow.icon
+        //-     else 
+        //-         i.bell.grey.outline.large.icon
+        //-     .menu 
+        //-         if unread_alert_count
+        //-             .ui.button alert
+        //-             .ui.button alert
+        //-             .ui.button alert
+        //-             .ui.button alert
+        //-         else
+        //-             .ui.button no alerts
+        if is_admin
+            //- a.icon.ui.button(href="/grid")
+            //-     i.grey.th.large.icon
+            a.icon.ui.button(href="/grid" title='admin')
+                i.grey.shield.large.icon
+        unless logging_out
+            a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
+                if currentUser.profile_image_id
+                    img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
+                else
+                    i.user.outline.icon
+                span.mobile.hidden #{currentUser.name} 
+                //- #{currentUser.credit}
+                .menu 
+                    a.item(href="/user/#{currentUser._id}") profile
+                    //- .item credits
+                    //- .item debits
+                    //- .item tasks
+                    //- .item messages
+                    //- .item alerts
+                    //- .item settings
+                    //- .item dark mode
+                    a#logout.ui.button(href='#')
+                        | leave
+                        i.sign.out.grey.icon
+        if logging_out
+            .ui.button
+                i.loading.circle.notch.icon

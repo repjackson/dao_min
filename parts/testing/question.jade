@@ -1,15 +1,15 @@
 template(name='questions')
     .ui.stackable.padded.grid
         .row
-            .four.wide.column
+            .six.wide.column
                 .ui.inline.header 
                     |questions
                 .ui.icon.button.add_question(title='add question')
                     i.plus.icon
                 +question_cloud
-            .twelve.wide.column
-                .ui.button questions you've answered
-                .ui.button questions you've haven't answered
+            .ten.wide.column
+                .ui.button answered
+                .ui.button unanswered
                 each questions
                     +question_segment
 
@@ -24,13 +24,13 @@ template(name='question_cloud')
     //- i.grey.tags.icon
     //- .ui.inline.header tags
     if selected_question_tags
-        #clear_tags.ui.active.icon.circular.button
+        #clear_tags.ui.active.icon.large.button
             i.remove.icon
         each selected_question_tags
-            .unselect_question_tag.ui.active.circular.button
+            .unselect_question_tag.ui.active.large.button
                 strong #{this}
     each all_question_tags
-        .ui.compact.circular.button.select_question_tag(class=cloud_tag_class) 
+        .ui.compact.large.button.select_question_tag(class=cloud_tag_class) 
             strong #{this.name}
 
 
@@ -90,21 +90,24 @@ template(name='question_edit')
                         .ui.fluid.button.add_choice
                             i.plus.green.icon
                             |choice
+                        +boolean_edit key='correct_answer' label='correct answer' direct=true
+                        //- +boolean_edit key='single_answer' label='single answer' direct=true
                         div.scrolling
                             each choices
                                 .ui.segment(class=answer_segment_class)
                                     .ui.small.inline.header choice
-                                    +number_edit key='number' direct=true
+                                    //- +number_edit key='number' direct=true
                                     +textarea_edit key='content' direct=true
                                     //- +html_edit key='content' direct=true
-                                    +boolean_edit key='correct' direct=true
+                                    if question.correct_answer
+                                        +boolean_edit key='correct' label='correct' direct=true
                                     +remove_button
                     else if is_number_answer
                         +boolean_edit key='single_answer' label='single answer' direct=true
                         div
                         if single_answer
-                            +number_edit key='number_answer' label='number answer' direct=true    
-                        |if single answer then answer will be marked right or wrong, otherwise just used to collect answers
+                            +number_edit key='required_answer' label='number answer' direct=true    
+                        div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
                     else if is_essay_answer
                         +array_edit key='required_answer_tags' label='required answer tags' direct=true    
                     else if is_text_answer
@@ -112,7 +115,7 @@ template(name='question_edit')
                         div
                         if single_answer
                             +text_edit key='required_answer' label='required answer' direct=true    
-                        |if single answer then answer will be marked right or wrong, otherwise just used to collect answers
+                        div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
 
 
 
@@ -143,15 +146,26 @@ template(name='question_view')
                     //- else
                     .ui.fluid.button.new_answer_session
                         |answer
-                        i.right.chevron.icon
                     if my_answer
-                        .ui.small.header my answer
+                        .ui.header my answer
                         with my_answer
-                            .ui.header #{when} by #{_author_username}
-                    .ui.header 
-                        |answers
-                    each answer_sessions
-                        .ui.header #{when} by #{_author_username}
+                            .ui.small.header #{when} by #{_author_username}
+                    .ui.header
+                        |all answers
+                    .ui.link.list
+                        each answer_sessions
+                            a.item(href="/answer_session/#{_id}/view")
+                                .content 
+                                    .header #{number_answer} #{text_answer}
+                                    .description
+                                        |#{when} by #{_author_username}
+                                        if correct_answer
+                                            i.checkmark.large.icon(title='correct')
+                                        else 
+                                            i.remove.large.icon(title='incorrect')
+                                        if is_admin 
+                                            +remove_button
+                            
                 .six.wide.column
                     .ui.inline.header
                         | bounties

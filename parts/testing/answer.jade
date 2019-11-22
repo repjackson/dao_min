@@ -49,9 +49,10 @@ template(name='answer_session_edit')
         .ui.stackable.padded.grid
             .row
                 .four.wide.column
-                    .ui.fluid.button.cancel_answer_session
-                        i.ban.icon
-                        |cancel
+                    unless complete
+                        .ui.fluid.button.cancel_answer_session
+                            i.ban.icon
+                            |cancel
                 .six.wide.column
                     with parent_question
                         .ui.header.f7 #{title}
@@ -60,22 +61,45 @@ template(name='answer_session_edit')
                             .ui.large.fluid.button.select_choice(class=choice_select_class)
                                 .ui.header !{content}
                     else if is_number_answer
-                        +number_edit key='number_answer' direct=true
+                        if complete 
+                            .ui.small.grey.header your answer
+                            .ui.circular.segment 
+                                +number_view key='number_answer' label='answer' direct=true
+                        else 
+                            +number_edit key='number_answer' direct=true
                     else if is_text_answer
-                        .ui.header text
-                        +text_edit key='text_answer' label='answer' direct=true
-                        //- if has_answered 
-                        //-     .ui.large.button.submit_answer
-                        //-         |submit
+                        if complete 
+                            .ui.small.grey.header your answer
+                            .ui.circular.segment 
+                                +text_view key='text_answer' label='answer' direct=true
+                        else 
+                            +text_edit key='text_answer' label='answer' direct=true
                 .six.wide.column
                     unless complete
                         if has_answered
-                            .ui.big.fluid.button.submit_answer
+                            .ui.big.fluid.button.submit_answer(class=loading_class)
                                 |submit
                                 i.right.chevron.icon
                     if complete 
                         .ui.header complete
-                        .ui.header correct: #{correct_answer}
+                        if is_multiple_choice_answer
+                            if question.correct_answer
+                                if correct_answer
+                                    i.checkmark.icon
+                                    |right 
+                                else 
+                                    i.remove.icon 
+                                    | wrong
+                        else 
+                            if correct_answer
+                                i.checkmark.icon
+                                |right 
+                            else 
+                                i.remove.icon 
+                                | wrong
+                            div
+                        a.ui.button(href="/answer_session/#{_id}/view")
+                            |answer details
 
 
 
@@ -85,16 +109,19 @@ template(name='answer_session_view')
         .ui.stackable.padded.grid
             .row
                 .four.wide.column
-                    a.ui.fluid.button(href="/answer_sessions")
+                    a.ui.fluid.button(href="/question/#{question._id}/view")
                         i.chevron.left.icon
-                        |answer_sessions
-                    .ui.header answer_session view
+                        |question
+                        //- |#{question.title}
+                    .ui.small.header by #{_author_username} #{when}
+                    
                     +image_view key='answer_session_image_id' label='image' direct=true
                     if is_dev
                         a.ui.fluid.button(href="/answer_session/#{_id}/edit")
-                            i.pencil.icon
+                            i.shield.icon
                             |edit
                 .six.wide.column
+                    .ui.grey.header viewing answer session
                     with parent_question
                         .ui.header.f7 #{title}
                     if is_multiple_choice_answer
@@ -104,10 +131,12 @@ template(name='answer_session_view')
                     else if is_number_answer
                         +number_view key='number_answer' direct=true
                     else if is_text_answer
-                        +text_view key='text_answer' direct=true
+                        if complete 
+                            .ui.segment 
+                                +text_view key='text_answer' label='answer' direct=true
                     +comments
                 .six.wide.column
-                    if is_correct
+                    if correct_answer
                         .ui.header correct
                     else
                         .ui.header incorrect

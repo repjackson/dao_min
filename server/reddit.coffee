@@ -143,7 +143,7 @@ Meteor.methods
                             Meteor.call 'call_watson', doc_id, 'url', 'url', ->
 
                 update_ob = {}
-
+                # console.log 'rd', rd
                 Docs.update doc_id,
                     $set:
                         # rd: rd
@@ -154,6 +154,7 @@ Meteor.methods
                         ups: rd.ups
                         downs: rd.downs
                         over_18: rd.over_18
+                        reddit_timestamp: rd.created_utc
                     # $addToSet:
                     #     tags: $each: [rd.subreddit.toLowerCase(), rd.author.toLowerCase()]
                 # console.log Docs.findOne(doc_id)

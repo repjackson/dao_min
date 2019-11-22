@@ -13,8 +13,7 @@ head
 
 template(name='layout')
     +nav
-    .global_container
-        +yield
+    +yield
 
 template(name='mlayout')
     +yield
@@ -24,8 +23,7 @@ template(name='verification_confirmation')
     .ui.padded.grid 
         .row 
             .sixteen.wide.column 
-                h1.ui.center.aligned.header thank you, your email is been verified
-                .ui.center.aligned.header you may close the window
+                h1.ui.center.aligned.header your email is been verified
 
 
 

@@ -34,8 +34,10 @@ if Meteor.isClient
             Docs.update Router.current().params.doc_id,
                 $set: choice_selection_id: @_id
         'click .submit_answer': ->
-            if confirm 'submit?'
-                Meteor.call 'calculate_answer', Router.current().params.doc_id
+            # if confirm 'submit?'
+            Session.set 'loading', true
+            Meteor.call 'calculate_answer', Router.current().params.doc_id, ->
+                Session.set 'loading', false
             # (href="/answer_session/#{_id}/view" title='save')
     Template.answer_session_edit.helpers
         choice_select_class: ->
@@ -59,7 +61,7 @@ if Meteor.isClient
             if question.question_type is 'number'
                 @number_answer
             else if question.question_type is 'multiple_choice'
-                @answer_id
+                @choice_selection_id
             else if question.question_type is 'text'
                 @text_answer
             # if Template.parentData().
@@ -89,6 +91,10 @@ if Meteor.isClient
         @autorun => Meteor.subscribe 'question_choices_from_answer_session_id', Router.current().params.doc_id
     Template.answer_session_view.events
     Template.answer_session_view.helpers
+        choice_select_class: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            if answer_session.choice_selection_id is @_id then 'active' else ''
+    
         parent_question: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             Docs.findOne
@@ -108,6 +114,22 @@ if Meteor.isClient
             answer_session.choice_selection_id is correct_choice._id
 
 
+        is_multiple_choice_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'multiple_choice'
+        is_essay_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'select_essay'
+        is_number_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'number'
+        is_text_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'text'
 
 
 
@@ -118,8 +140,6 @@ if Meteor.isClient
         answer_sessions: ->
             Docs.find
                 model:'answer_session'
-
-
     Template.answer_sessions.events
         'click .add_answer_session': ->
             new_answer_session_id = Docs.insert
@@ -162,6 +182,21 @@ if Meteor.isServer
             switch question.question_type
                 when 'number'
                     console.log 'number'
+                    if question.single_answer
+                        console.log 'required answer', question.required_answer
+                        console.log 'given answer', answer_session.number_answer
+                        if answer_session.number_answer is question.required_answer
+                            console.log 'true'
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: true
+                                    complete: true
+                        else
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: false
+                                    complete: true
+                            console.log 'false'
                 when 'text'
                     if question.single_answer
                         console.log 'required answer', question.required_answer
@@ -178,8 +213,28 @@ if Meteor.isServer
                                     correct_answer: false
                                     complete: true
                             console.log 'false'
-
                     console.log 'text'
+                when 'multiple_choice'
+                    if question.correct_answer
+                        # console.log 'required answer', question.required_answer
+                        # console.log 'given answer', answer_session.text_answer
+                        if answer_session.text_answer is question.required_answer
+                            console.log 'true'
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: true
+                                    complete: true
+                        else
+                            Docs.update answer_session_id,
+                                $set:
+                                    correct_answer: false
+                                    complete: true
+                            console.log 'false'
+                    else
+                        Docs.update answer_session_id,
+                            $set:
+                                complete: true
+                        console.log 'multiple choice, no correct, marked complete'
             console.log 'answer session', answer_session
 
 

@@ -23,6 +23,11 @@ Template.registerHelper 'is_current_user', () ->
             false
 
 Template.registerHelper 'is_loading', (number) -> Session.get('loading')
+Template.registerHelper 'loading_class', () ->
+    if Session.equals('loading', true)
+        'loading disabled'
+    else
+        ''
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]
@@ -93,6 +98,9 @@ Template.registerHelper 'current_model', (input) ->
     Docs.findOne
         model:'model'
         slug: Router.current().params.model_slug
+
+Template.registerHelper 'question', () ->
+    Docs.findOne @question_id
 
 Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->
