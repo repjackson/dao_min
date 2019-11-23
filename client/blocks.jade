@@ -85,7 +85,8 @@ template(name='user_list_info')
 template(name='call_watson')
     .ui.button.autotag
         //- i.chess.icon
-        |call watson
+        //- |call watson
+        |analyze
 
 template(name='view_full_button')
     a.ui.icon.basic.button(href="/view/#{_id}" class=classes data-tooltip='View Full')
@@ -225,11 +226,11 @@ template(name='user_list_toggle')
 
 template(name='voting')
     .ui.icon.circular.button.upvote(title='upvote')
-        i.thumbs.up.icon(class=upvote_class)
+        i.thumbs.up.outline.icon(class=upvote_class)
     //- each upvoter_ids
     //-     +user_info
     .ui.icon.circular.button.downvote(title='downvote')
-        i.thumbs.down.icon(class=downvote_class)
+        i.thumbs.down.outline.icon(class=downvote_class)
     //- each downvoter_ids
     //-     +user_info
     if points

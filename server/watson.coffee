@@ -117,12 +117,12 @@ Meteor.methods
                 #
                 concept_array = _.pluck(response.concepts, 'text')
                 lowered_concepts = concept_array.map (concept)-> concept.toLowerCase()
-                # Docs.update { _id: doc_id },
-                #     $set:
-                #         body:response.analyzed_text
-                        # watson: response
-                #         watson_concepts: lowered_concepts
-                #         watson_keywords: lowered_keywords
+                Docs.update { _id: doc_id },
+                    $set:
+                        analyzed_text:response.analyzed_text
+                        watson: response
+                        # watson_keywords: lowered_keywords
+                        # watson_concepts: lowered_concepts
                         # doc_sentiment_score: response.sentiment.document.score
                         # doc_sentiment_label: response.sentiment.document.label
                 Docs.update { _id: doc_id },

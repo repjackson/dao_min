@@ -8,6 +8,8 @@
 
 Template.registerHelper 'first_letter', (user) ->
     @first_name[..0]+'.'
+Template.registerHelper 'facet_tags', () ->
+    if Session.get('loading', true) then 'disabled' else ''
 Template.registerHelper 'first_initial', (user) ->
     @first_name[..2]+'.'
     # moment(input).fromNow()

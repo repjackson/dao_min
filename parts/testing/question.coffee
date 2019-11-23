@@ -32,8 +32,8 @@ if Meteor.isClient
                 model:'choice'
                 question_id:@_id
         multiple_choice_class: -> if @question_type is 'multiple_choice' then 'active' else ''
-        select_essay_class: -> if @question_type is 'select_essay' then 'active' else ''
-        select_number_class: -> if @question_type is 'select_number' then 'active' else ''
+        select_essay_class: -> if @question_type is 'essay' then 'active' else ''
+        select_number_class: -> if @question_type is 'number' then 'active' else ''
         text_class: -> if @question_type is 'text' then 'active' else ''
         is_multiple_choice_answer: -> @question_type is 'multiple_choice'
         is_essay_answer: -> @question_type is 'essay'
@@ -52,7 +52,6 @@ if Meteor.isClient
         'click .select_text': ->
             Docs.update Router.current().params.doc_id,
                 $set: question_type:'text'
-
         'click .add_choice': ->
             console.log @
             Docs.insert
@@ -84,7 +83,6 @@ if Meteor.isClient
             Docs.find
                 model:'answer_session'
                 question_id: Router.current().params.doc_id
-
         can_accept: ->
             console.log @
             my_answer_session =
@@ -115,9 +113,11 @@ if Meteor.isClient
                 model:'bounty'
                 question_id:@_id
             Router.go "/bounty/#{new_bounty_id}/edit"
-
         'click .accept': ->
             console.log @
+
+        'click .calc_stats': ->
+            Meteor.call 'calc_multiple_choice_stats', Router.current().params.doc_id
 
 
 
@@ -274,3 +274,40 @@ if Meteor.isServer
             # .ui.small.header biggest renter
             # .ui.small.header predicted payback duration
             # .ui.small.header predicted payback date
+
+
+
+        calc_multiple_choice_stats: (question_id)->
+            question = Docs.findOne question_id
+            answer_count = Docs.find(
+                model:'answer_session'
+                question_id:question_id
+            ).count()
+            choice_cursor = Docs.find(
+                model:'choice'
+                question_id:question_id
+            )
+            answer_selections_array = []
+            for choice in choice_cursor.fetch()
+                choice_answer_selections =  Docs.find(
+                    model:'answer_session'
+                    question_id:question_id
+                    choice_selection_id: choice._id
+                )
+                choice_selection_count = choice_answer_selections.count()
+                console.log 'choice selection count', choice_selection_count
+                choice_percent = (choice_selection_count/answer_count).toFixed(2)*100
+                choice_calc_object = {
+                    choice_id:choice._id
+                    choice_content:choice.content
+                    choice_selection_count:choice_selection_count
+                    choice_percent:choice_percent
+                }
+                answer_selections_array.push choice_calc_object
+
+
+            Docs.update question._id,
+                $set:
+                    answer_selections: answer_selections_array
+                    answer_count:answer_count
+                    choice_count:choice_cursor.count()

@@ -24,6 +24,8 @@ Template.cloud.helpers
         # return button_class
         if @name in selected_tags.array() then 'white' else 'black'
     selected_tags: -> selected_tags.array()
+    input_class: ->
+        if Session.get('loading', true) then 'transparent' else ''
     tag_settings: -> {
         position: 'bottom'
         limit: 10
@@ -102,6 +104,7 @@ Template.tag_label.helpers
 Template.tag_label.events
     'click .toggle_tag': ->
         # console.log @valueOf()
+        Session.set 'loading', true
         tag = @valueOf()
         if tag in selected_tags.array()
             selected_tags.remove tag
@@ -109,8 +112,7 @@ Template.tag_label.events
             selected_tags.push @valueOf()
             state = { 'page_id': 1}
             history.pushState(state, 'hi')
-            Session.set 'loading', true
-            Meteor.call 'search_reddit', tag, ->
+            Meteor.call 'search_reddit', selected_tags.array(), ->
                 Session.set 'loading', false
             Meteor.call "call_wiki", tag, ->
 

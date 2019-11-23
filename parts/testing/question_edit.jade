@@ -1,0 +1,71 @@
+template(name='question_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .row
+                .three.wide.column 
+                    .ui.header 
+                        | edit '#{title}' question
+                    a.ui.big.fluid.button(href="/question/#{_id}/view" title='save')
+                        |save
+                    +remove_button
+                .six.wide.column 
+                    +text_edit key='title' label='question' direct=true
+                    +array_edit key='tags' label='tags' direct=true
+                    +boolean_edit key='has_description' label='description' direct=true
+                    if has_description
+                        +textarea_edit key='description' label='description' icon='content' direct=true
+                    +boolean_edit key='has_image' label='image' direct=true
+                    if has_image
+                        +image_edit key='image_id' icon='image' label='image' direct=true
+                    //- +html_edit key='description' label='description' icon='content' direct=true
+                    .ui.header rules 
+                    +boolean_edit key='has_answer_limit' label='answer limit' direct=true
+                    div
+                    if has_answer_limit
+                        +number_edit key='answer_limit' label='answer limit' direct=true
+                    +boolean_edit key='show_before_test' label='show before test' direct=true
+                .seven.wide.column
+                    .ui.header question type
+                    .ui.button.select_multiple_choice(class=multiple_choice_class)
+                        |multiple choice
+                    .ui.button.select_essay(class=select_essay_class)
+                        |essay
+                    .ui.button.select_number(class=select_number_class)
+                        |number
+                    .ui.button.select_text(class=text_class)
+                        |text
+                    .ui.divider
+                    if is_multiple_choice_answer
+                        .ui.fluid.button.add_choice
+                            i.plus.green.icon
+                            |choice
+                        +boolean_edit key='correct_answer' label='correct answer' direct=true
+                        //- +boolean_edit key='single_answer' label='single answer' direct=true
+                        div.scrolling
+                            each choices
+                                .ui.segment(class=answer_segment_class)
+                                    .ui.small.inline.header choice
+                                    //- +number_edit key='number' direct=true
+                                    +textarea_edit key='content' direct=true
+                                    //- +html_edit key='content' direct=true
+                                    if question.correct_answer
+                                        +boolean_edit key='correct' label='correct' direct=true
+                                    +remove_button
+                    else if is_number_answer
+                        +boolean_edit key='single_answer' label='single answer' direct=true
+                        div
+                        if single_answer
+                            +number_edit key='required_answer' label='number answer' direct=true    
+                        div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
+                    else if is_essay_answer
+                        //- +boolean_edit key='has_' label='single answer' direct=true
+                        //- div
+                        //- if single_answer
+                        //- 
+                        //- +array_edit key='required_answer_tags' label='required answer tags' direct=true    
+                    else if is_text_answer
+                        +boolean_edit key='single_answer' label='single answer' direct=true
+                        div
+                        if single_answer
+                            +text_edit key='required_answer' label='required answer' direct=true    
+                        div if single answer then answer will be marked right or wrong, otherwise just used to collect answers

@@ -38,7 +38,7 @@ i.green.icon, i.red.icon{
 }
 
 .ui.button:not(.circular){
-    /* border-radius: 7px !important; */
+    border-radius: 7px !important;
     /* border-width: 1px !important; */
     /* border-style: dotted !important; */
     border-color: rgba(0,0,0,.9) !important;
@@ -245,7 +245,7 @@ i.green.icon, i.red.icon{
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }
 .global_container{
-    transition: transform 1s; /* Animation */
+    transition: transform .5s; /* Animation */
     /* padding-top: 5em !important; */
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }

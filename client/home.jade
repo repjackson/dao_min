@@ -12,9 +12,9 @@ template(name='home')
 
 
 template(name='cloud')
-    .ui.left.icon.large.input
+    .ui.left.icon.large.input(class=input_class)
         if is_loading
-            i.loading.yin.yang.icon
+            i.loading.yin.yang.large.icon
         else
             i.search.icon
         //- if selected_tags
@@ -29,7 +29,7 @@ template(name='cloud')
             .unselect_tag.ui.active.compact.large.button
                 .ui.small.inverted.header #{this}
     each all_tags
-        .ui.compact.large.button.select_tag(title=count) 
+        .ui.compact.large.button.select_tag(title=count class=facet_tags) 
             |#{this.name}
             if is_admin
                 small #{this.count}

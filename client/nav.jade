@@ -1,14 +1,14 @@
 template(name='nav')
-    a.ui.button(href='/' class="{{isActivePath '/'}}") 
+    a.ui.button(href='/' class="{{isActivePath '/'}}" class=facet_tags) 
         |search
         //- i.yin.yang.large.icon
-    a.ui.button(href='/questions')
+    a.ui.button(href='/questions' class=facet_tags)
         |questions
     unless currentUser
         a.ui.button(href='/login') 
-            span.mobile.hidden enter
+            | enter
         a.ui.button(href='/register')
-            span.mobile.hidden register
+            | register
     if currentUser
         //- a.icon.large.ui.button(href='/chat' title='chat')
         //-     i.chat.outline.grey.large.icon

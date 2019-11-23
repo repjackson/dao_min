@@ -32,7 +32,9 @@ if Meteor.isClient
         'click .select_choice': ->
             console.log @
             Docs.update Router.current().params.doc_id,
-                $set: choice_selection_id: @_id
+                $set:
+                    choice_selection_id: @_id
+                    choice_selection_content:@content
         'click .submit_answer': ->
             # if confirm 'submit?'
             Session.set 'loading', true
@@ -49,8 +51,10 @@ if Meteor.isClient
                 model:'question'
                 _id:answer_session.question_id
         choices: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
             Docs.find
                 model:'choice'
+                question_id: answer_session.question_id
         has_answered: ->
             console.log @
             console.log Template.parentData()
@@ -64,6 +68,8 @@ if Meteor.isClient
                 @choice_selection_id
             else if question.question_type is 'text'
                 @text_answer
+            else if question.question_type is 'essay'
+                @essay_answer
             # if Template.parentData().
             # answer_session = Docs.findOne Router.current().params.doc_id
             # answer_session.choice_selection_id
@@ -75,7 +81,7 @@ if Meteor.isClient
         is_essay_answer: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
-            question.question_type is 'select_essay'
+            question.question_type is 'essay'
         is_number_answer: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
@@ -94,15 +100,16 @@ if Meteor.isClient
         choice_select_class: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             if answer_session.choice_selection_id is @_id then 'active' else ''
-    
         parent_question: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             Docs.findOne
                 model:'question'
                 _id:answer_session.question_id
         choices: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
             Docs.find
                 model:'choice'
+                question_id: answer_session.question_id
         is_correct: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
@@ -121,7 +128,7 @@ if Meteor.isClient
         is_essay_answer: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
-            question.question_type is 'select_essay'
+            question.question_type is 'essay'
         is_number_answer: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
@@ -234,7 +241,10 @@ if Meteor.isServer
                         Docs.update answer_session_id,
                             $set:
                                 complete: true
-                        console.log 'multiple choice, no correct, marked complete'
+                when 'essay'
+                    Docs.update answer_session_id,
+                        $set:
+                            complete: true
             console.log 'answer session', answer_session
 
 

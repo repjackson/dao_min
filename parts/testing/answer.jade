@@ -53,7 +53,7 @@ template(name='answer_session_edit')
                         .ui.fluid.button.cancel_answer_session
                             i.ban.icon
                             |cancel
-                .six.wide.column
+                .eight.wide.column
                     with parent_question
                         .ui.header.f7 #{title}
                     if is_multiple_choice_answer
@@ -74,7 +74,17 @@ template(name='answer_session_edit')
                                 +text_view key='text_answer' label='answer' direct=true
                         else 
                             +text_edit key='text_answer' label='answer' direct=true
-                .six.wide.column
+                    else if is_essay_answer
+                        if complete 
+                            .ui.small.grey.header your answer
+                            .ui.segment 
+                                +textarea_view key='essay_answer' label='answer' direct=true
+                        else 
+                            +textarea_edit key='essay_answer' label='answer' direct=true
+                            +call_watson mode='text' key='essay_answer'
+                            if watson 
+                                +watson_view
+                .four.wide.column
                     unless complete
                         if has_answered
                             .ui.big.fluid.button.submit_answer(class=loading_class)
@@ -92,11 +102,13 @@ template(name='answer_session_edit')
                                     | wrong
                         else 
                             if correct_answer
-                                i.checkmark.icon
-                                |right 
+                                .ui.header 
+                                    i.checkmark.icon
+                                    |right 
                             else 
-                                i.remove.icon 
-                                | wrong
+                                .ui.header 
+                                    i.remove.icon 
+                                    | wrong
                             div
                         a.ui.button(href="/answer_session/#{_id}/view")
                             |answer details
@@ -120,7 +132,12 @@ template(name='answer_session_view')
                         a.ui.fluid.button(href="/answer_session/#{_id}/edit")
                             i.shield.icon
                             |edit
-                .six.wide.column
+                    if correct_answer
+                        .ui.header correct
+                    else
+                        .ui.header incorrect
+                        
+                .twelve.wide.column
                     .ui.grey.header viewing answer session
                     with parent_question
                         .ui.header.f7 #{title}
@@ -134,9 +151,10 @@ template(name='answer_session_view')
                         if complete 
                             .ui.segment 
                                 +text_view key='text_answer' label='answer' direct=true
+                    else if is_essay_answer
+                        .ui.segment 
+                            +textarea_view key='essay_answer' label='answer' direct=true
+                            if watson 
+                                +watson_view
+
                     +comments
-                .six.wide.column
-                    if correct_answer
-                        .ui.header correct
-                    else
-                        .ui.header incorrect
