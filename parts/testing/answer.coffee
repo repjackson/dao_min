@@ -43,8 +43,14 @@ if Meteor.isClient
             # (href="/answer_session/#{_id}/view" title='save')
     Template.answer_session_edit.helpers
         choice_select_class: ->
+            classes = ''
             answer_session = Docs.findOne Router.current().params.doc_id
-            if answer_session.choice_selection_id is @_id then 'active' else ''
+            if answer_session.complete
+                classes+='disabled'
+
+            if answer_session.choice_selection_id is @_id
+                classes+='active'
+            classes
         parent_question: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             Docs.findOne
@@ -74,15 +80,15 @@ if Meteor.isClient
             # answer_session = Docs.findOne Router.current().params.doc_id
             # answer_session.choice_selection_id
 
-        is_multiple_choice_answer: ->
+        is_multiple_choice: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'multiple_choice'
-        is_essay_answer: ->
+        is_essay: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'essay'
-        is_number_answer: ->
+        is_number_test: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'number'
@@ -121,15 +127,15 @@ if Meteor.isClient
             answer_session.choice_selection_id is correct_choice._id
 
 
-        is_multiple_choice_answer: ->
+        is_multiple_choice: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'multiple_choice'
-        is_essay_answer: ->
+        is_essay: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'essay'
-        is_number_answer: ->
+        is_number_test: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'number'
@@ -188,92 +194,130 @@ if Meteor.isServer
             console.log 'question', question
             switch question.question_type
                 when 'number'
-                    console.log 'number'
-                    if question.single_answer
-                        console.log 'required answer', question.required_answer
-                        console.log 'given answer', answer_session.number_answer
+                    if question.has_correct_answer
                         if answer_session.number_answer is question.required_answer
                             console.log 'true'
                             Docs.update answer_session_id,
                                 $set:
                                     correct_answer: true
                                     complete: true
+                            Docs.update question._id,
+                                $addToSet:
+                                    correct_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
                         else
                             Docs.update answer_session_id,
                                 $set:
-                                    correct_answer: false
+                                    is_correct_answer: false
                                     complete: true
-                            console.log 'false'
+                            Docs.update question._id,
+                                $addToSet:
+                                    incorrect_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
+                    else
+                        Docs.update answer_session_id,
+                            $set:
+                                complete: true
+                        Docs.update question._id,
+                            $addToSet:
+                                answered_user_ids: Meteor.userId()
                 when 'text'
-                    if question.single_answer
+                    if question.has_correct_answer
                         console.log 'required answer', question.required_answer
                         console.log 'given answer', answer_session.text_answer
                         if answer_session.text_answer is question.required_answer
                             console.log 'true'
                             Docs.update answer_session_id,
                                 $set:
-                                    correct_answer: true
+                                    is_correct_answer: true
                                     complete: true
+                            Docs.update question._id,
+                                $addToSet:
+                                    correct_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
                         else
                             Docs.update answer_session_id,
                                 $set:
-                                    correct_answer: false
+                                    is_correct_answer: false
                                     complete: true
-                            console.log 'false'
-                    console.log 'text'
-                when 'multiple_choice'
-                    if question.correct_answer
-                        # console.log 'required answer', question.required_answer
-                        # console.log 'given answer', answer_session.text_answer
-                        if answer_session.text_answer is question.required_answer
-                            console.log 'true'
-                            Docs.update answer_session_id,
-                                $set:
-                                    correct_answer: true
-                                    complete: true
-                        else
-                            Docs.update answer_session_id,
-                                $set:
-                                    correct_answer: false
-                                    complete: true
-                            console.log 'false'
+                            Docs.update question._id,
+                                $addToSet:
+                                    incorrect_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
                     else
                         Docs.update answer_session_id,
                             $set:
                                 complete: true
+                        Docs.update question._id,
+                            $addToSet:
+                                answered_user_ids: Meteor.userId()
+                when 'multiple_choice'
+                    if question.has_correct_answer
+                        # console.log 'required answer', question.required_answer
+                        # console.log 'given answer', answer_session.text_answer
+                        selected_choice = Docs.findOne answer_session.choice_selection_id
+                        if selected_choice.correct
+                            console.log 'true'
+                            Docs.update answer_session_id,
+                                $set:
+                                    is_correct_answer: true
+                                    complete: true
+                            Docs.update question._id,
+                                $addToSet:
+                                    correct_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
+                        else
+                            Docs.update answer_session_id,
+                                $set:
+                                    is_correct_answer: false
+                                    complete: true
+                            Docs.update question._id,
+                                $addToSet:
+                                    incorrect_user_ids: Meteor.userId()
+                                    answered_user_ids: Meteor.userId()
+                    else
+                        Docs.update answer_session_id,
+                            $set:
+                                complete: true
+                        Docs.update question._id,
+                            $addToSet:
+                                answered_user_ids: Meteor.userId()
+
                 when 'essay'
                     Docs.update answer_session_id,
                         $set:
                             complete: true
-            console.log 'answer session', answer_session
+                    Docs.update question._id,
+                        $addToSet:
+                            answered_user_ids: Meteor.userId()
 
 
-        refresh_answer_session_stats: (answer_session_id)->
-            answer_session = Docs.findOne answer_session_id
-            # console.log answer_session
-            reservations = Docs.find({model:'reservation', answer_session_id:answer_session_id})
-            reservation_count = reservations.count()
-            total_earnings = 0
-            total_answer_session_hours = 0
-            average_answer_session_duration = 0
-
-            # shoranswer_session_reservation =
-            # longest_reservation =
-
-            for res in reservations.fetch()
-                total_earnings += parseFloat(res.cost)
-                total_answer_session_hours += parseFloat(res.hour_duration)
-
-            average_answer_session_cost = total_earnings/reservation_count
-            average_answer_session_duration = total_answer_session_hours/reservation_count
-
-            Docs.update answer_session_id,
-                $set:
-                    reservation_count: reservation_count
-                    total_earnings: total_earnings.toFixed(0)
-                    total_answer_session_hours: total_answer_session_hours.toFixed(0)
-                    average_answer_session_cost: average_answer_session_cost.toFixed(0)
-                    average_answer_session_duration: average_answer_session_duration.toFixed(0)
+        # refresh_answer_session_stats: (answer_session_id)->
+        #     answer_session = Docs.findOne answer_session_id
+        #     # console.log answer_session
+        #     reservations = Docs.find({model:'reservation', answer_session_id:answer_session_id})
+        #     reservation_count = reservations.count()
+        #     total_earnings = 0
+        #     total_answer_session_hours = 0
+        #     average_answer_session_duration = 0
+        #
+        #     # shoranswer_session_reservation =
+        #     # longest_reservation =
+        #
+        #     for res in reservations.fetch()
+        #         total_earnings += parseFloat(res.cost)
+        #         total_answer_session_hours += parseFloat(res.hour_duration)
+        #
+        #     average_answer_session_cost = total_earnings/reservation_count
+        #     average_answer_session_duration = total_answer_session_hours/reservation_count
+        #
+        #     Docs.update answer_session_id,
+        #         $set:
+        #             reservation_count: reservation_count
+        #             total_earnings: total_earnings.toFixed(0)
+        #             total_answer_session_hours: total_answer_session_hours.toFixed(0)
+        #             average_answer_session_cost: average_answer_session_cost.toFixed(0)
+        #             average_answer_session_duration: average_answer_session_duration.toFixed(0)
 
             # .ui.small.header total earnings
             # .ui.small.header answer_session ranking #reservations

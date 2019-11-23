@@ -31,11 +31,11 @@ template(name='nav')
         //-             .ui.button alert
         //-         else
         //-             .ui.button no alerts
-        if is_admin
-            //- a.icon.ui.button(href="/grid")
-            //-     i.grey.th.large.icon
-            a.icon.ui.button(href="/grid" title='admin')
-                i.grey.shield.large.icon
+        //- if is_admin
+        //-     //- a.icon.ui.button(href="/grid")
+        //-     //-     i.grey.th.large.icon
+        //-     a.icon.ui.button(href="/grid" title='admin')
+        //-         i.grey.shield.large.icon
         unless logging_out
             a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
                 if currentUser.profile_image_id

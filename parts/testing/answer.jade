@@ -56,11 +56,11 @@ template(name='answer_session_edit')
                 .eight.wide.column
                     with parent_question
                         .ui.header.f7 #{title}
-                    if is_multiple_choice_answer
+                    if is_multiple_choice
                         each choices
                             .ui.large.fluid.button.select_choice(class=choice_select_class)
                                 .ui.header !{content}
-                    else if is_number_answer
+                    else if is_number_test
                         if complete 
                             .ui.small.grey.header your answer
                             .ui.circular.segment 
@@ -74,7 +74,7 @@ template(name='answer_session_edit')
                                 +text_view key='text_answer' label='answer' direct=true
                         else 
                             +text_edit key='text_answer' label='answer' direct=true
-                    else if is_essay_answer
+                    else if is_essay
                         if complete 
                             .ui.small.grey.header your answer
                             .ui.segment 
@@ -92,16 +92,17 @@ template(name='answer_session_edit')
                                 i.right.chevron.icon
                     if complete 
                         .ui.header complete
-                        if is_multiple_choice_answer
-                            if question.correct_answer
-                                if correct_answer
-                                    i.checkmark.icon
+                        if is_multiple_choice
+                            if question.has_correct_answer
+                                if is_correct_answer
+                                    //- i.checkmark.icon
                                     |right 
                                 else 
-                                    i.remove.icon 
+                                    //- i.remove.icon 
                                     | wrong
+                            div
                         else 
-                            if correct_answer
+                            if is_correct_answer
                                 .ui.header 
                                     i.checkmark.icon
                                     |right 
@@ -132,7 +133,7 @@ template(name='answer_session_view')
                         a.ui.fluid.button(href="/answer_session/#{_id}/edit")
                             i.shield.icon
                             |edit
-                    if correct_answer
+                    if is_correct_answer
                         .ui.header correct
                     else
                         .ui.header incorrect
@@ -141,17 +142,18 @@ template(name='answer_session_view')
                     .ui.grey.header viewing answer session
                     with parent_question
                         .ui.header.f7 #{title}
-                    if is_multiple_choice_answer
+                    if is_multiple_choice
                         each choices
-                            .ui.large.disabled.fluid.button.select_choice(class=choice_select_class)
+                            .ui.large.label.select_choice(class=choice_select_class)
                                 .ui.header !{content}
-                    else if is_number_answer
+                        div
+                    else if is_number_test
                         +number_view key='number_answer' direct=true
                     else if is_text_answer
                         if complete 
                             .ui.segment 
                                 +text_view key='text_answer' label='answer' direct=true
-                    else if is_essay_answer
+                    else if is_essay
                         .ui.segment 
                             +textarea_view key='essay_answer' label='answer' direct=true
                             if watson 

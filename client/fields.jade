@@ -211,7 +211,7 @@ template(name='textarea')
 
 template(name='text_edit')
     div
-    //- .ui.inline.small.grey.header
+    .ui.inline.small.grey.header
         if title
             |#{title}
         else if label
@@ -489,7 +489,7 @@ template(name='number_edit')
 template(name='array_view')
     if field_value
         div
-        //- if label
+        if label
             .ui.inline.small.grey.header(title=title)
                 |#{label}
         each field_value
@@ -497,7 +497,7 @@ template(name='array_view')
 
 template(name='array_edit')
     div
-    //- .ui.inline.small.grey.header
+    .ui.inline.small.grey.header
         if title
             |#{title}
         else if label
@@ -1000,7 +1000,7 @@ template(name='textarea_edit')
                 //-     |#{key}
                 //- else
                 //-     |#{this}
-            textarea.edit_textarea(rows='10') #{field_value}
+            textarea.edit_textarea(rows='5') #{field_value}
     //- if is_admin
     //-     +call_watson mode='text' key=key
     //-     //- div

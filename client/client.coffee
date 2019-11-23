@@ -30,6 +30,12 @@ Template.registerHelper 'loading_class', () ->
         'loading disabled'
     else
         ''
+
+Template.registerHelper 'choices',
+    Docs.find
+        model:'choice'
+        question_id:@_id
+
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]

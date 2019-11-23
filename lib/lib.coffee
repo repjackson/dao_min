@@ -2,13 +2,8 @@
 @Tags = new Meteor.Collection 'tags'
 @Subreddits = new Meteor.Collection 'subreddits'
 
-@Bug_tags = new Meteor.Collection 'bug_tags'
-@Rental_tags = new Meteor.Collection 'rental_tags'
-@Task_tags = new Meteor.Collection 'task_tags'
-@Shop_tags = new Meteor.Collection 'shop_tags'
 @Question_tags = new Meteor.Collection 'question_tags'
 @Test_tags = new Meteor.Collection 'test_tags'
-@User_section_tags = new Meteor.Collection 'user_section_tags'
 
 Docs.before.insert (userId, doc)->
     if Meteor.user()

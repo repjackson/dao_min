@@ -13,6 +13,89 @@ if Meteor.isClient
         ), name:'question_view'
 
 
+    Template.questions.onRendered ->
+        @autorun => Meteor.subscribe 'model_docs', 'choice'
+        @autorun -> Meteor.subscribe('question_facet_docs',
+            selected_question_tags.array()
+            Session.get('view_answered')
+            Session.get('view_unanswered')
+            Session.get('view_correct')
+            Session.get('view_incorrect')
+        )
+    Template.questions.helpers
+        questions: ->
+            Docs.find
+                model:'question'
+        view_answered_class: -> if Session.equals('view_answered',true) then 'active' else ''
+        view_unanswered_class: -> if Session.equals('view_unanswered',true) then 'active' else ''
+        view_correct_class: -> if Session.equals('view_correct',true) then 'active' else ''
+        view_incorrect_class: -> if Session.equals('view_incorrect',true) then 'active' else ''
+    Template.questions.events
+        'click .add_question': ->
+            new_question_id = Docs.insert
+                model:'question'
+            Router.go "/question/#{new_question_id}/edit"
+        'click .view_answered': -> Session.set('view_answered', !Session.get('view_answered'))
+        'click .view_unanswered': -> Session.set('view_unanswered', !Session.get('view_unanswered'))
+        'click .view_correct': ->
+            if Session.equals 'view_correct',true
+                Session.set('view_correct', false)
+            else
+                Session.set('view_answered', true)
+                Session.set('view_unanswered', false)
+                Session.set('view_correct', true)
+        'click .view_incorrect': ->
+            if Session.equals 'view_incorrect',true
+                Session.set('view_incorrect', false)
+            else
+                Session.set('view_answered', true)
+                Session.set('view_unanswered', false)
+                Session.set('view_incorrect', true)
+
+    Template.question_cloud.onCreated ->
+        @autorun -> Meteor.subscribe('question_tags',
+            selected_question_tags.array()
+            Session.get('view_answered')
+            Session.get('view_unanswered')
+            Session.get('view_correct')
+            Session.get('view_incorrect')
+        )
+
+        # @autorun -> Meteor.subscribe('model_docs', 'target')
+    Template.question_cloud.helpers
+        selected_target_id: -> Session.get('selected_target_id')
+        selected_target: ->
+            Docs.findOne Session.get('selected_target_id')
+        all_question_tags: ->
+            question_count = Docs.find(model:'question').count()
+            if 0 < question_count < 3 then Question_tags.find { count: $lt: question_count } else Question_tags.find({},{limit:42})
+        selected_question_tags: -> selected_question_tags.array()
+    # Template.sort_item.events
+    #     'click .set_sort': ->
+    #         console.log @
+    #         Session.set 'sort_key', @key
+    Template.question_cloud.events
+        'click .unselect_target': -> Session.set('selected_target_id',null)
+        'click .select_target': -> Session.set('selected_target_id',@_id)
+        'click .select_question_tag': -> selected_question_tags.push @name
+        'click .unselect_question_tag': -> selected_question_tags.remove @valueOf()
+        'click #clear_question_tags': -> selected_question_tags.clear()
+
+
+
+    Template.question_segment.helpers
+        choices: ->
+            Docs.find
+                model:'choice'
+                question_id:@_id
+        is_multiple_choice: -> @question_type is 'multiple_choice'
+        is_essay: -> @question_type is 'essay'
+        is_number_test: -> @question_type is 'number'
+        is_text_answer: -> @question_type is 'text'
+
+
+
+
 
     Template.question_edit.onRendered ->
         Meteor.setTimeout ->
@@ -35,9 +118,9 @@ if Meteor.isClient
         select_essay_class: -> if @question_type is 'essay' then 'active' else ''
         select_number_class: -> if @question_type is 'number' then 'active' else ''
         text_class: -> if @question_type is 'text' then 'active' else ''
-        is_multiple_choice_answer: -> @question_type is 'multiple_choice'
-        is_essay_answer: -> @question_type is 'essay'
-        is_number_answer: -> @question_type is 'number'
+        is_multiple_choice: -> @question_type is 'multiple_choice'
+        is_essay: -> @question_type is 'essay'
+        is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
     Template.question_edit.events
         'click .select_multiple_choice': ->
@@ -67,6 +150,23 @@ if Meteor.isClient
     Template.question_view.onRendered ->
         Meteor.call 'increment_view', Router.current().params.doc_id, ->
     Template.question_view.helpers
+        can_answer: ->
+            question = Docs.findOne Router.current().params.doc_id
+            if question.has_answer_limit
+                my_answer_count =
+                    Docs.find(
+                        model: 'answer_session'
+                        _author_id: Meteor.userId()
+                        question_id:Router.current().params.doc_id
+                    ).count()
+                # console.log my_answer_count
+                if question.answer_limit > my_answer_count
+                    true
+                else
+                    false
+            else
+                true
+
         choices: ->
             Docs.find
                 model:'choice'
@@ -95,9 +195,9 @@ if Meteor.isClient
             else
                 console.log 'true'
                 true
-        is_multiple_choice_answer: -> @question_type is 'multiple_choice'
-        is_essay_answer: -> @question_type is 'essay'
-        is_number_answer: -> @question_type is 'number'
+        is_multiple_choice: -> @question_type is 'multiple_choice'
+        is_essay: -> @question_type is 'essay'
+        is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
 
     Template.question_view.events
@@ -117,54 +217,12 @@ if Meteor.isClient
             console.log @
 
         'click .calc_stats': ->
-            Meteor.call 'calc_multiple_choice_stats', Router.current().params.doc_id
+            Meteor.call 'calc_question_stats', Router.current().params.doc_id
 
 
 
 
 
-    Template.questions.onRendered ->
-        # @autorun => Meteor.subscribe 'model_docs', 'question'
-        @autorun -> Meteor.subscribe('question_facet_docs',
-            selected_question_tags.array()
-            # Session.get('selected_school_id')
-            # Session.get('sort_key')
-        )
-    Template.questions.helpers
-        questions: ->
-            Docs.find
-                model:'question'
-    Template.questions.events
-        'click .add_question': ->
-            new_question_id = Docs.insert
-                model:'question'
-            Router.go "/question/#{new_question_id}/edit"
-
-
-    Template.question_cloud.onCreated ->
-        @autorun -> Meteor.subscribe('question_tags',
-            selected_question_tags.array()
-            Session.get('selected_target_id')
-            )
-        # @autorun -> Meteor.subscribe('model_docs', 'target')
-    Template.question_cloud.helpers
-        selected_target_id: -> Session.get('selected_target_id')
-        selected_target: ->
-            Docs.findOne Session.get('selected_target_id')
-        all_question_tags: ->
-            question_count = Docs.find(model:'question').count()
-            if 0 < question_count < 3 then Question_tags.find { count: $lt: question_count } else Question_tags.find({},{limit:42})
-        selected_question_tags: -> selected_question_tags.array()
-    # Template.sort_item.events
-    #     'click .set_sort': ->
-    #         console.log @
-    #         Session.set 'sort_key', @key
-    Template.question_cloud.events
-        'click .unselect_target': -> Session.set('selected_target_id',null)
-        'click .select_target': -> Session.set('selected_target_id',@_id)
-        'click .select_question_tag': -> selected_question_tags.push @name
-        'click .unselect_question_tag': -> selected_question_tags.remove @valueOf()
-        'click #clear_question_tags': -> selected_question_tags.clear()
 
 
 
@@ -184,14 +242,33 @@ if Meteor.isServer
         Docs.find
             model:'question'
             product_id:product_id
-    Meteor.publish 'question_tags', (selected_question_tags, selected_target_id)->
-        # user = Meteor.users.finPdOne @userId
-        # current_herd = user.profile.current_herd
+    Meteor.publish 'question_tags', (
+        selected_question_tags
+        view_answered
+        view_unanswered
+        view_correct
+        view_incorrect
+        )->
         self = @
         match = {}
 
-        if selected_target_id
-            match.target_id = selected_target_id
+        # console.log selected_question_tags
+        # console.log view_answered
+        # console.log view_unanswered
+        # console.log view_correct
+        # console.log view_incorrect
+        if view_answered
+            match.answered_user_ids = $in:[Meteor.userId()]
+        if view_unanswered
+            match.answered_user_ids = $nin:[Meteor.userId()]
+        if view_correct
+            match.correct_user_ids = $in:[Meteor.userId()]
+        if view_incorrect
+            match.incorrect_user_ids = $in:[Meteor.userId()]
+
+
+        # if selected_target_id
+        #     match.target_id = selected_target_id
         # selected_question_tags.push current_herd
 
         if selected_question_tags.length > 0 then match.tags = $all: selected_question_tags
@@ -216,15 +293,32 @@ if Meteor.isServer
         self.ready()
 
 
-    Meteor.publish 'question_facet_docs', (selected_question_tags, selected_target_id)->
-        # user = Meteor.users.findOne @userId
-        console.log selected_question_tags
+    Meteor.publish 'question_facet_docs', (
+        selected_question_tags
+        view_answered
+        view_unanswered
+        view_correct
+        view_incorrect
+        )->
+
+        # console.log selected_question_tags
+        # console.log view_answered
+        # console.log view_unanswered
+        # console.log view_correct
+        # console.log view_incorrect
         # console.log filter
         self = @
         match = {}
-        if selected_target_id
-            match.target_id = selected_target_id
-
+        # if selected_target_id
+        #     match.target_id = selected_target_id
+        if view_answered
+            match.answered_user_ids = $in:[Meteor.userId()]
+        if view_unanswered
+            match.answered_user_ids = $nin:[Meteor.userId()]
+        if view_correct
+            match.correct_user_ids = $in:[Meteor.userId()]
+        if view_incorrect
+            match.incorrect_user_ids = $in:[Meteor.userId()]
 
         # if filter is 'shop'
         #     match.active = true
@@ -277,37 +371,81 @@ if Meteor.isServer
 
 
 
-        calc_multiple_choice_stats: (question_id)->
+        calc_question_stats: (question_id)->
             question = Docs.findOne question_id
-            answer_count = Docs.find(
+            answer_cursor = Docs.find(
                 model:'answer_session'
                 question_id:question_id
-            ).count()
-            choice_cursor = Docs.find(
-                model:'choice'
-                question_id:question_id
             )
-            answer_selections_array = []
-            for choice in choice_cursor.fetch()
-                choice_answer_selections =  Docs.find(
-                    model:'answer_session'
+            answer_count = answer_cursor.count()
+            if question.question_type is 'multiple_choice'
+                choice_cursor = Docs.find(
+                    model:'choice'
                     question_id:question_id
-                    choice_selection_id: choice._id
                 )
-                choice_selection_count = choice_answer_selections.count()
-                console.log 'choice selection count', choice_selection_count
-                choice_percent = (choice_selection_count/answer_count).toFixed(2)*100
-                choice_calc_object = {
-                    choice_id:choice._id
-                    choice_content:choice.content
-                    choice_selection_count:choice_selection_count
-                    choice_percent:choice_percent
-                }
-                answer_selections_array.push choice_calc_object
+                answer_selections_array = []
+                for choice in choice_cursor.fetch()
+                    choice_answer_selections =  Docs.find(
+                        model:'answer_session'
+                        question_id:question_id
+                        choice_selection_id: choice._id
+                    )
+                    choice_selection_count = choice_answer_selections.count()
+                    console.log 'choice selection count', choice_selection_count
+                    choice_percent = (choice_selection_count/answer_count).toFixed(2)*100
+                    choice_calc_object = {
+                        choice_id:choice._id
+                        choice_content:choice.content
+                        choice_selection_count:choice_selection_count
+                        choice_percent:choice_percent
+                    }
+                    answer_selections_array.push choice_calc_object
 
 
-            Docs.update question._id,
-                $set:
-                    answer_selections: answer_selections_array
-                    answer_count:answer_count
-                    choice_count:choice_cursor.count()
+                Docs.update question._id,
+                    $set:
+                        answer_selections: answer_selections_array
+                        answer_count:answer_cursor.count()
+                        choice_count:choice_cursor.count()
+                if question.has_correct_answer
+                    incorrect_count = 0
+                    correct_count = 0
+                    for answer_session in answer_cursor.fetch()
+                        if answer_session.is_correct_answer
+                            correct_count++
+                        else
+                            incorrect_count++
+                    Docs.update question._id,
+                        $set:
+                            incorrect_count: incorrect_count
+                            correct_count: correct_count
+
+            if question.question_type is 'number'
+                if question.single_answer
+                    incorrect_count = 0
+                    correct_count = 0
+                    for answer_session in answer_cursor.fetch()
+                        if answer_session.is_correct_answer
+                            correct_count++
+                        else
+                            incorrect_count++
+                    Docs.update question._id,
+                        $set:
+                            answer_count:answer_cursor.count()
+                            incorrect_count: incorrect_count
+                            correct_count: correct_count
+            if question.question_type is 'text'
+                console.log 'calculating text'
+                if question.single_answer
+                    incorrect_count = 0
+                    correct_count = 0
+                    for answer_session in answer_cursor.fetch()
+                        if answer_session.is_correct_answer
+                            correct_count++
+                        else
+                            incorrect_count++
+                    Docs.update question._id,
+                        $set:
+                            answer_count:answer_cursor.count()
+                            incorrect_count: incorrect_count
+                            correct_count: correct_count

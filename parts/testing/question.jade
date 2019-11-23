@@ -8,8 +8,13 @@ template(name='questions')
                     i.plus.icon
                 +question_cloud
             .ten.wide.column
-                .ui.button answered
-                .ui.button unanswered
+                if currentUser
+                    |view 
+                    .ui.button.view_answered(class=view_answered_class) answered
+                    .ui.button.view_unanswered(class=view_unanswered_class) unanswered
+                    if view_answered_class
+                        .ui.button.view_correct(class=view_correct_class) got correct
+                        .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
                 each questions
                     +question_segment
 
@@ -48,12 +53,27 @@ template(name='question_segment')
             if show_before_test
                 .ui.header 
                     |choices
-                each choices
-                    .ui.segment(class=answer_segment_class)
-                        .ui.header 
+                .ui.large.bulleted.list
+                    each choices
+                        .item
                             |!{content}
-                
-            |#{points} points (#{upvotes} up, #{downvotes} down)
+            if my_answer
+                .ui.header my answer
+                with my_answer
+                    .ui.small.header #{when} by #{_author_username}
+            .ui.header stats
+            .ui.list 
+                .item #{answer_count} answers
+                    if question.has_correct_answer
+                        .item #{incorrect_count} incorrect 
+                        .item #{correct_count} correct 
+                if is_multiple_choice    
+                    //- .item #{choice_count} choices
+                    each answer_selections 
+                        .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
+
+            if points 
+                span #{points} points (#{upvotes} up, #{downvotes} down)
         a.ui.large.button(href="/question/#{_id}/view")
             |view
         
@@ -72,6 +92,9 @@ template(name='question_view')
                     +image_view key='question_image_id' label='image' direct=true
                     a.ui.fluid.button(href="/question/#{_id}/edit")
                         |edit
+                    .ui.small.header settings 
+                        if has_answer_limit
+                            p answer limit #{answer_limit}
                     +comments
                     +voting_full
                 .six.wide.column
@@ -83,8 +106,6 @@ template(name='question_view')
                             .ui.segment(class=answer_segment_class)
                                 .ui.header 
                                     |!{content}
-                    .ui.fluid.button.new_answer_session
-                        |answer
                     if my_answer
                         .ui.header my answer
                         with my_answer
@@ -94,10 +115,17 @@ template(name='question_view')
                         |calc stats
                     .ui.list 
                         .item #{answer_count} answers
-                        .item #{choice_count} choices
-                        .ui.list.item 
+                        if has_correct_answer
+                            .item #{incorrect_count} incorrect 
+                            .item #{correct_count} correct 
+                        if is_multiple_choice    
+                            .item #{choice_count} choices
                             each answer_selections 
-                                .item #{choice_content}: #{choice_selection_count} #{choice_percent}%
+                                .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
+                .six.wide.column
+                    if can_answer
+                        .ui.fluid.button.new_answer_session
+                            |answer
                     .ui.header
                         |all answers
                     .ui.link.list
@@ -107,14 +135,12 @@ template(name='question_view')
                                     .header #{number_answer} #{text_answer} #{choice_selection_content}
                                     .description
                                         |#{when} by #{_author_username}
-                                        if correct_answer
+                                        if is_correct_answer
                                             i.checkmark.large.icon(title='correct')
                                         else 
                                             i.remove.large.icon(title='incorrect')
                                         if is_admin 
                                             +remove_button
-                            
-                .six.wide.column
                     .ui.inline.header
                         | bounties
                     .ui.icon.button.offer_bounty(title='offer bounty')
