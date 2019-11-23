@@ -36,7 +36,8 @@ if Meteor.isClient
                 model:'question'
             Router.go "/question/#{new_question_id}/edit"
         'click .view_answered': -> Session.set('view_answered', !Session.get('view_answered'))
-        'click .view_unanswered': -> Session.set('view_unanswered', !Session.get('view_unanswered'))
+        'click .view_unanswered': ->
+            Session.set('view_unanswered', !Session.get('view_unanswered'))
         'click .view_correct': ->
             if Session.equals 'view_correct',true
                 Session.set('view_correct', false)

@@ -61,7 +61,6 @@ template(name='question_segment')
                 .ui.header my answer
                 with my_answer
                     .ui.small.header #{when} by #{_author_username}
-            .ui.header stats
             .ui.list 
                 .item #{answer_count} answers
                     if question.has_correct_answer
@@ -71,7 +70,18 @@ template(name='question_segment')
                     //- .item #{choice_count} choices
                     each answer_selections 
                         .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-
+                .item correct users
+                    each correct_user_ids
+                        |#{this}
+                .item incorrect users
+                    each incorrect_user_ids
+                        |#{this}
+                .item upvoting users
+                    each upvoter_ids
+                        |#{this}
+                .item downvoting users
+                    each downvoter_ids
+                        |#{this}
             if points 
                 span #{points} points (#{upvotes} up, #{downvotes} down)
         a.ui.large.button(href="/question/#{_id}/view")
