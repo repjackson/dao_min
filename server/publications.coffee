@@ -32,10 +32,10 @@ Meteor.publish 'child_docs', (doc_id)->
     Docs.find
         parent_id:doc_id
 
-Meteor.publish 'all_classroom_docs', (doc_id)->
-    console.log 'running classroom docs', doc_id
+Meteor.publish 'all_question_docs', (doc_id)->
+    console.log 'running question docs', doc_id
     Docs.find
-        classroom_id:doc_id
+        question_id:doc_id
 
 
 Meteor.publish 'facet_doc', (tags)->
@@ -95,20 +95,11 @@ Meteor.publish 'student', (guest_id)->
 
 
 
-Meteor.publish 'health_club_students', (username_query)->
-    existing_sessions =
-        Docs.find(
-            model:'healthclub_session'
-            active:true
-        ).fetch()
-    active_session_ids = []
-    for active_session in existing_sessions
-        active_session_ids.push active_session.user_id
-    Meteor.users.find({
-        # _id:$nin:active_session_ids
-        username: {$regex:"#{username_query}", $options: 'i'}
-        # healthclub_checkedin:$ne:true
-        roles:$in:['student','owner']
+Meteor.publish 'question_lookup', (title_query)->
+    console.log 'looking up question', title_query
+    Docs.find({
+        model:'question'
+        title: {$regex:"#{title_query}", $options: 'i'}
         },{ limit:20 })
 
 

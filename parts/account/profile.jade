@@ -8,7 +8,7 @@ template(name='profile_layout')
                     //-     i.bars.icon
                     img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
                     .ui.center.aligned.basic.segment
-                        //- a(href="/user/#{user.username}")
+                        //- a(href="/user/#{user._id}")
                         .ui.center.aligned.header
                             | #{user.first_name} #{user.last_name}
                             //- .ui.small.header @#{user.username}        
@@ -17,23 +17,23 @@ template(name='profile_layout')
                         //-     +ismall name='globe' 
                         //-     |log out other clients
                     
-                    .ui.fluid.vertical.menu.scrolling
-                        a.item(href="/user/#{user.username}/money" class="{{isActiveRoute regex=user_money}}")
+                    .ui.fluid.vertical.large.menu
+                        a.item(href="/user/#{user._id}/money" class="{{isActiveRoute regex=user_money}}")
                             i.money.grey.icon
                             |money
-                        a.item(href="/user/#{user.username}/tags" class="{{isActiveRoute regex=user_tags}}")
+                        a.item(href="/user/#{user._id}/tags" class="{{isActiveRoute regex=user_tags}}")
                             i.tags.icon
                             |tags
-                        a.item(href="/user/#{user.username}/social" class="{{isActiveRoute regex=user_social}}")
+                        a.item(href="/user/#{user._id}/social" class="{{isActiveRoute regex=user_social}}")
                             i.chat.icon
                             |social
-                        a.item(href="/user/#{user.username}/offers" class="{{isActiveRoute regex=user_social}}")
+                        a.item(href="/user/#{user._id}/offers" class="{{isActiveRoute regex=user_social}}")
                             i.chat.icon
                             |offers
-                        a.item(href="/user/#{user.username}/messages" class="{{isActiveRoute regex=user_mail}}")
+                        a.item(href="/user/#{user._id}/messages" class="{{isActiveRoute regex=user_mail}}")
                             i.envelope.icon
                             |messages
-                        a.item(href="/user/#{user.username}/posts" class="{{isActiveRoute regex=user_posts}}")
+                        a.item(href="/user/#{user._id}/posts" class="{{isActiveRoute regex=user_posts}}")
                             i.blog.icon
                             |posts
                     if is_current_user
@@ -53,7 +53,7 @@ template(name='profile_layout')
                                 .ui.basic.label #{this}
                 .twelve.wide.column
                     //- each user_sections
-                    //-     a.ui.button(href="/user/#{user.username}/")
+                    //-     a.ui.button(href="/user/#{user._id}/")
                     //-         //- i.icon(class=icon)
                     //-         +ismall name=icon
                     //-         |#{title}

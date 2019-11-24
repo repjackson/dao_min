@@ -8,26 +8,26 @@ template(name='user_edit_layout')
                         | #{current_user.first_name} #{current_user.last_name}
                     //- .ui.small.inline.header @#{current_user._id}
                     a.ui.fluid.basic.large.button(href="/user/#{current_user._id}/") 
-                        i.checkmark.large.green.icon
-                        strong Save
+                        i.checkmark.icon
+                        strong save
                     .ui.vertical.fluid.big.menu
                         a.item(href="/user/#{current_user._id}/edit/info" class="{{isActiveRoute regex='user_edit_info'}}") 
-                            | Info
+                            | info
                             i.info.icon
-                        //- a.item(href="/user/#{current_user._id}/edit/friends" class="{{isActiveRoute regex='user_edit_friends'}}") 
-                        //-     |friends
-                        //-     i.users.icon
+                        a.item(href="/user/#{current_user._id}/edit/friends" class="{{isActiveRoute regex='user_edit_friends'}}") 
+                            |friends
+                            i.users.icon
                         //- a.item(href="/user/#{current_user._id}/edit/styles" class="{{isActiveRoute regex='user_edit_styles'}}") 
                         //-     |styles
                         //-     i.brush.icon
                         //- a.item(href="/user/#{current_user._id}/edit/alerts" class="{{isActiveRoute regex='user_edit_alerts'}}") 
                         //-     |alerts
                         //-     i.bell.icon
-                        //- a.item(href="/user/#{current_user._id}/edit/payment" class="{{isActiveRoute regex='user_edit_payment'}}") 
-                        //-     |payment
-                        //-     i.money.icon
+                        a.item(href="/user/#{current_user._id}/edit/payment" class="{{isActiveRoute regex='user_edit_payment'}}") 
+                            |payment
+                            i.money.icon
                         a.item(href="/user/#{current_user._id}/edit/account" class="{{isActiveRoute regex='user_edit_account'}}") 
-                            | Account
+                            | account
                             i.cog.icon
                     +image_edit key='profile_image_id' title='profile image' direct=true
                 .twelve.wide.column
@@ -36,11 +36,11 @@ template(name='user_edit_layout')
 template(name='user_edit_info')
     .ui.two.column.grid
         .column
-            +text_edit key='first_name' label='First Name' direct=true
-            +text_edit key='last_name' label='Last Name' direct=true
+            +text_edit key='first_name' label='first name' direct=true
+            +text_edit key='last_name' label='last name' direct=true
             .ui.header 
                 i.envelope.outline.icon
-                |Emails
+                |emails
             +emails_edit
         .column
             +password_edit    
@@ -62,7 +62,7 @@ template(name='user_edit_info')
 template(name='phone_editor')
     .ui.small.header    
         i.phone.icon
-        |Phone
+        |phone
     .ui.icon.fluid.input(title='Add Phone')
         i.plus.icon
         input#phone.form-control(type='phone', name='phone', value='{{newNumber}}')
@@ -83,7 +83,7 @@ template(name='phone_editor')
 
 template(name='password_edit')
     .ui.small.grey.inline.header
-        |Change Password
+        |change password
     .ui.fluid.input
         input#old_password(type='password', placeholder='old password')
     .ui.fluid.icon.input
@@ -96,16 +96,16 @@ template(name='password_edit')
             i.red.remove.icon
     if is_dev
         .ui.fluid.basic.button.send_enrollment_email
-            |Send Enrollment Email
+            |send enrollment email
     if is_admin
         .ui.fluid.basic.button.reset_password
-            |Reset Password
+            |reset password
         .ui.fluid.large.basic.button.set_password
-            | Set Password
+            | set password
     if passwords_matching        
         .ui.fluid.basic.button.change_password
             i.refresh.icon
-            | Change Password
+            | change password
             
             
             

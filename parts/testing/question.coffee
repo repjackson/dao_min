@@ -93,6 +93,7 @@ if Meteor.isClient
         is_essay: -> @question_type is 'essay'
         is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
+        is_tagging_answer: -> @question_type is 'tagging'
 
 
 
@@ -105,24 +106,38 @@ if Meteor.isClient
     Template.question_edit.onCreated ->
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
         @autorun => Meteor.subscribe 'model_docs', 'choice'
+        @autorun => Meteor.subscribe 'model_docs', 'dep'
     Template.question_edit.events
-        'click .add_question_item': ->
-            new_mi_id = Docs.insert
-                model:'question_item'
-            Router.go "/question/#{_id}/edit"
+        'click .add_dep': ->
+            new_dep_id = Docs.insert
+                model:'dep'
+                question_id: Router.current().params.doc_id
+
     Template.question_edit.helpers
         choices: ->
             Docs.find
                 model:'choice'
                 question_id:@_id
+        deps: ->
+            Docs.find
+                model:'dep'
+                question_id:Router.current().params.doc_id
+        # question_lookup_results: ->
+        #     Docs.find({
+        #         model:'question'
+        #         title: {$regex:"#{title_query}", $options: 'i'}
+        #         },{ limit:20 })
+
         multiple_choice_class: -> if @question_type is 'multiple_choice' then 'active' else ''
-        select_essay_class: -> if @question_type is 'essay' then 'active' else ''
-        select_number_class: -> if @question_type is 'number' then 'active' else ''
+        essay_class: -> if @question_type is 'essay' then 'active' else ''
+        number_class: -> if @question_type is 'number' then 'active' else ''
         text_class: -> if @question_type is 'text' then 'active' else ''
+        tagging_class: -> if @question_type is 'tagging' then 'active' else ''
         is_multiple_choice: -> @question_type is 'multiple_choice'
         is_essay: -> @question_type is 'essay'
         is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
+        is_tagging_answer: -> @question_type is 'tagging'
     Template.question_edit.events
         'click .select_multiple_choice': ->
             Docs.update Router.current().params.doc_id,
@@ -136,6 +151,9 @@ if Meteor.isClient
         'click .select_text': ->
             Docs.update Router.current().params.doc_id,
                 $set: question_type:'text'
+        'click .select_tagging': ->
+            Docs.update Router.current().params.doc_id,
+                $set: question_type:'tagging'
         'click .add_choice': ->
             console.log @
             Docs.insert
@@ -369,6 +387,14 @@ if Meteor.isServer
             # .ui.small.header biggest renter
             # .ui.small.header predicted payback duration
             # .ui.small.header predicted payback date
+
+        lookup_question: (title_query)->
+            console.log 'searching for question', title_query
+            Docs.find({
+                title: {$regex:"#{title_query}", $options: 'i'}
+                model:'question'
+                },{limit:10}).fetch()
+
 
 
 

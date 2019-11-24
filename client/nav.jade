@@ -37,25 +37,28 @@ template(name='nav')
         //-     a.icon.ui.button(href="/grid" title='admin')
         //-         i.grey.shield.large.icon
         unless logging_out
-            a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
-                if currentUser.profile_image_id
-                    img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
-                else
-                    i.user.outline.icon
-                span.mobile.hidden #{currentUser.name} 
-                //- #{currentUser.credit}
-                .menu 
-                    a.item(href="/user/#{currentUser._id}") profile
-                    //- .item credits
-                    //- .item debits
-                    //- .item tasks
-                    //- .item messages
-                    //- .item alerts
-                    //- .item settings
-                    //- .item dark mode
-                    a#logout.ui.button(href='#')
-                        | leave
-                        i.sign.out.grey.icon
+            a.ui.button(href="/user/#{currentUser._id}")
+                i.user.outline.icon
+                span #{currentUser.name} 
+            //- a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
+            //-     if currentUser.profile_image_id
+            //-         img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
+            //-     else
+            //-         i.user.outline.icon
+            //-     span.mobile.hidden #{currentUser.name} 
+            //-     //- #{currentUser.credit}
+            //-     .menu 
+            //-         a.item(href="/user/#{currentUser._id}") profile
+            //-         //- .item credits
+            //-         //- .item debits
+            //-         //- .item tasks
+            //-         //- .item messages
+            //-         //- .item alerts
+            //-         //- .item settings
+            //-         //- .item dark mode
+            //-         a#logout.ui.button(href='#')
+            //-             | leave
+            //-             i.sign.out.grey.icon
         if logging_out
             .ui.button
                 i.loading.circle.notch.icon

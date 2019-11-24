@@ -12,10 +12,10 @@ body {
 }
 
 /* .ui.image:not(.avatar), .label,  img:not(.avatar) { */
-/* img {
+img {
     filter: invert(1) !important;
-} */
-/* .invert {
+}
+.invert {
     filter: invert(1) !important;
 }
 i.green.icon, i.red.icon{
@@ -45,7 +45,7 @@ i.green.icon, i.red.icon{
 }
 
 .ui.segment:not(.circular){
-    /* border-radius: 7px !important; */
+    border-radius: 7px !important;
 }
 
 .label{

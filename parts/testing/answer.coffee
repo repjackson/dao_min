@@ -24,6 +24,11 @@ if Meteor.isClient
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
         @autorun => Meteor.subscribe 'question_from_answer_session', Router.current().params.doc_id
         @autorun => Meteor.subscribe 'question_choices_from_answer_session_id', Router.current().params.doc_id
+    Template.answer_session_edit.onRendered ->
+        Meteor.setTimeout ->
+            $('.progress').progress()
+        , 1000
+
     Template.answer_session_edit.events
         'click .cancel_answer_session': ->
             if confirm 'cancel answer?'
@@ -41,13 +46,44 @@ if Meteor.isClient
             Meteor.call 'calculate_answer', Router.current().params.doc_id, ->
                 Session.set 'loading', false
             # (href="/answer_session/#{_id}/view" title='save')
+        'keyup .new_tag': (e,t)->
+            if e.which is 13
+                tag = t.$('.new_tag').val().trim().toLowerCase()
+                question = Docs.findOne Router.current().params.doc_id
+                Docs.update question._id,
+                    $addToSet:tags:tag
+                t.$('.new_tag').val('')
+
+        'click .remove_tag': (e,t)->
+            tag = @valueOf()
+            question = Docs.findOne Router.current().params.doc_id
+
+            Docs.update question._id,
+                $pull: tags: element
+            t.$('.new_tag').focus()
+            t.$('.new_tag').val(element)
+
+
     Template.answer_session_edit.helpers
+        matching_tags_amount: ->
+            console.log @
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            union_set = _.intersection answer_session.tags, question.required_answer_tags
+            console.log union_set
+            union_set.length
+        matching_tags_percent: ->
+            console.log @
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            union_set = _.intersection answer_session.tags, question.required_answer_tags
+            console.log union_set
+            result = (union_set.length / question.required_answer_tags.length).toFixed(2)*100
         choice_select_class: ->
             classes = ''
             answer_session = Docs.findOne Router.current().params.doc_id
             if answer_session.complete
                 classes+='disabled'
-
             if answer_session.choice_selection_id is @_id
                 classes+='active'
             classes
@@ -76,6 +112,8 @@ if Meteor.isClient
                 @text_answer
             else if question.question_type is 'essay'
                 @essay_answer
+            else if question.question_type is 'tagging'
+                @tags
             # if Template.parentData().
             # answer_session = Docs.findOne Router.current().params.doc_id
             # answer_session.choice_selection_id
@@ -84,7 +122,7 @@ if Meteor.isClient
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'multiple_choice'
-        is_essay: ->
+        is_essay_answer: ->
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'essay'
@@ -96,6 +134,10 @@ if Meteor.isClient
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'text'
+        is_tagging_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'tagging'
 
     Template.answer_session_view.onCreated ->
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
@@ -282,7 +324,13 @@ if Meteor.isServer
                         Docs.update question._id,
                             $addToSet:
                                 answered_user_ids: Meteor.userId()
-
+                when 'tagging'
+                    Docs.update answer_session_id,
+                        $set:
+                            complete: true
+                    Docs.update question._id,
+                        $addToSet:
+                            answered_user_ids: Meteor.userId()
                 when 'essay'
                     Docs.update answer_session_id,
                         $set:

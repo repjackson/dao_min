@@ -29,13 +29,13 @@ template(name='question_cloud')
     //- i.grey.tags.icon
     //- .ui.inline.header tags
     if selected_question_tags
-        #clear_tags.ui.active.icon.large.button
+        #clear_tags.ui.active.icon.button
             i.remove.icon
         each selected_question_tags
-            .unselect_question_tag.ui.active.large.button
+            .unselect_question_tag.ui.active.button
                 strong #{this}
     each all_question_tags
-        .ui.compact.large.button.select_question_tag(class=cloud_tag_class) 
+        .ui.compact.button.select_question_tag(class=cloud_tag_class) 
             strong #{this.name}
 
 
@@ -47,6 +47,8 @@ template(name='question_segment')
         .content
             a.ui.header(href="/question/#{_id}/view") #{title}
             div
+            if image_id
+                +image_view key='image_id' icon='image' label='image' direct=true
             each tags
                 .ui.basic.label #{this}
             div
@@ -66,16 +68,16 @@ template(name='question_segment')
                     if question.has_correct_answer
                         .item #{incorrect_count} incorrect 
                         .item #{correct_count} correct 
+                        .item correct users
+                            each correct_user_ids
+                                |#{this}
+                        .item incorrect users
+                            each incorrect_user_ids
+                                |#{this}
                 if is_multiple_choice    
                     //- .item #{choice_count} choices
                     each answer_selections 
                         .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                .item correct users
-                    each correct_user_ids
-                        |#{this}
-                .item incorrect users
-                    each incorrect_user_ids
-                        |#{this}
                 .item upvoting users
                     each upvoter_ids
                         |#{this}
@@ -109,6 +111,9 @@ template(name='question_view')
                     +voting_full
                 .six.wide.column
                     .ui.header #{title}
+                    if image_id
+                        +image_view key='image_id' icon='image' label='image' direct=true
+            
                     if show_before_test
                         .ui.header 
                             |choices
@@ -128,10 +133,23 @@ template(name='question_view')
                         if has_correct_answer
                             .item #{incorrect_count} incorrect 
                             .item #{correct_count} correct 
+                            .item correct users
+                                each correct_user_ids
+                                    |#{this}
+                            .item incorrect users
+                                each incorrect_user_ids
+                                    |#{this}
                         if is_multiple_choice    
                             .item #{choice_count} choices
                             each answer_selections 
                                 .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
+                        .item upvoting users
+                            each upvoter_ids
+                                |#{this}
+                        .item downvoting users
+                            each downvoter_ids
+                                |#{this}
+                    
                 .six.wide.column
                     if can_answer
                         .ui.fluid.button.new_answer_session

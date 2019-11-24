@@ -54,12 +54,15 @@ template(name='answer_session_edit')
                             i.ban.icon
                             |cancel
                 .eight.wide.column
-                    with parent_question
+                    with question
                         .ui.header.f7 #{title}
+                    with question 
+                        +image_view key='image_id' label='image' direct=true
+
                     if is_multiple_choice
                         each choices
                             .ui.large.fluid.button.select_choice(class=choice_select_class)
-                                .ui.header !{content}
+                                .ui.small.header !{content}
                     else if is_number_test
                         if complete 
                             .ui.small.grey.header your answer
@@ -74,7 +77,7 @@ template(name='answer_session_edit')
                                 +text_view key='text_answer' label='answer' direct=true
                         else 
                             +text_edit key='text_answer' label='answer' direct=true
-                    else if is_essay
+                    else if is_essay_answer
                         if complete 
                             .ui.small.grey.header your answer
                             .ui.segment 
@@ -84,6 +87,31 @@ template(name='answer_session_edit')
                             +call_watson mode='text' key='essay_answer'
                             if watson 
                                 +watson_view
+                    else if is_tagging_answer
+                        .ui.inline.small.grey.header tags
+                        |#{tags.length} your tags
+                        .ui.icon.input
+                            i.plus.icon
+                            input.new_tag(type='text' autofocus="")
+                            //- +clear_value                
+                        each tags
+                            .ui.large.basic.label
+                                i.delete.icon.remove_tag
+                                |#{this}
+                        .ui.divider
+                        |#{matching_tags_amount} matching tags #{matching_tags_percent}%
+                        .ui.progress(data-percent=matching_tags_percent title="{{to_percent matching_tags_percent}}% matched")
+                            .bar
+                            .progress
+                                .label {{matching_tags_percent}}% matched 
+
+                        .ui.divider
+                        with question 
+                            |#{tags.length} original tags
+                            each required_answer_tags
+                                .ui.large.basic.label
+                                    |#{this}
+                        //- +array_edit key='tags' label='tags' direct=true
                 .four.wide.column
                     unless complete
                         if has_answered
@@ -96,22 +124,23 @@ template(name='answer_session_edit')
                             if question.has_correct_answer
                                 if is_correct_answer
                                     //- i.checkmark.icon
-                                    |right 
+                                    .ui.header correct 
                                 else 
                                     //- i.remove.icon 
-                                    | wrong
+                                    .ui.header incorrect
                             div
                         else 
-                            if is_correct_answer
-                                .ui.header 
-                                    i.checkmark.icon
-                                    |right 
-                            else 
-                                .ui.header 
-                                    i.remove.icon 
-                                    | wrong
-                            div
-                        a.ui.button(href="/answer_session/#{_id}/view")
+                            if question.has_correct_answer
+                                if is_correct_answer
+                                    .ui.header 
+                                        i.checkmark.icon
+                                        | correct 
+                                else 
+                                    .ui.header 
+                                        i.remove.icon 
+                                        | incorrect
+                                div
+                        a.ui.fluid.large.button(href="/answer_session/#{_id}/view")
                             |answer details
 
 
@@ -127,20 +156,21 @@ template(name='answer_session_view')
                         |question
                         //- |#{question.title}
                     .ui.small.header by #{_author_username} #{when}
-                    
-                    +image_view key='answer_session_image_id' label='image' direct=true
+                    with question 
+                        +image_view key='image_id' label='image' direct=true
                     if is_dev
                         a.ui.fluid.button(href="/answer_session/#{_id}/edit")
                             i.shield.icon
                             |edit
-                    if is_correct_answer
-                        .ui.header correct
-                    else
-                        .ui.header incorrect
+                    if question.has_correct_answer
+                        if is_correct_answer
+                            .ui.header correct
+                        else
+                            .ui.header incorrect
                         
                 .twelve.wide.column
                     .ui.grey.header viewing answer session
-                    with parent_question
+                    with question
                         .ui.header.f7 #{title}
                     if is_multiple_choice
                         each choices

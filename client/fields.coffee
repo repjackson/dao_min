@@ -328,22 +328,22 @@ Template.text_edit.events
 #             Docs.update page_doc._id,
 #                 $set:slug:res
 #
-# Template.phone_edit.events
-#     'blur .edit_phone': (e,t)->
-#         val = t.$('.edit_phone').val()
-#         if @direct
-#             parent = Template.parentData()
-#         else
-#             parent = Template.parentData(5)
-#
-#         doc = Docs.findOne parent._id
-#         user = Meteor.users.findOne parent._id
-#         if doc
-#             Docs.update parent._id,
-#                 $set:"#{@key}":val
-#         else if user
-#             Meteor.users.update parent._id,
-#                 $set:"#{@key}":val
+Template.phone_edit.events
+    'blur .edit_phone': (e,t)->
+        val = t.$('.edit_phone').val()
+        if @direct
+            parent = Template.parentData()
+        else
+            parent = Template.parentData(5)
+
+        doc = Docs.findOne parent._id
+        user = Meteor.users.findOne parent._id
+        if doc
+            Docs.update parent._id,
+                $set:"#{@key}":val
+        else if user
+            Meteor.users.update parent._id,
+                $set:"#{@key}":val
 #
 #
 Template.boolean_edit.helpers
@@ -361,7 +361,7 @@ Template.boolean_edit.events
             parent = Template.parentData()
         else
             parent = Template.parentData(5)
-        console.log @
+        # console.log @
         # $(e.currentTarget).closest('.button').transition('pulse', 100)
 
         doc = Docs.findOne parent._id
@@ -1039,58 +1039,53 @@ Template.number_edit.events
 #
 #
 #
-# Template.project_lookup.onCreated ->
-#     # @autorun => Meteor.subscribe 'model_docs', 'guest'
-#     @doc_results = new ReactiveVar
-# Template.project_lookup.helpers
-#     doc_results: -> Template.instance().doc_results.get()
-# Template.project_lookup.events
-#     'click .clear_results': (e,t)->
-#         t.doc_results.set null
-#     'keyup .project_title_lookup': (e,t)->
-#         search_value = $(e.currentTarget).closest('.project_title_lookup').val().trim()
-#         if search_value.length is 0
-#             t.doc_results.set null
-#         else if search_value
-#             Meteor.call 'lookup_project', search_value, (err,res)=>
-#                 if err then console.error err
-#                 else
-#                     # console.log res
-#                     t.doc_results.set res
-#     'click .select_doc': (e,t) ->
-#         # session_document = Docs.findOne Session.get('session_document')
-#         # if @direct
-#         #     parent = Template.parentData(1)
-#         # else
-#         #     parent = Template.parentData(5)
-#         minute = Docs.findOne _id: Router.current().params.doc_id
-#         project = @
-#         project_update = Template.parentData()
-#         # Docs.update minute._id,
-#         #     $addToSet:new_business_ids:@_id
-#         Docs.update project_update._id,
-#             $set:
-#                 parent_id: project._id
-#                 project_id: project._id
-#         t.doc_results.set null
-#         $('.project_title_lookup').val ''
-#
-#     'click .pull_user': ->
-#         if confirm "Remove #{@username}?"
-#             page_doc = Docs.findOne Router.current().params.id
-#             parent = Template.parentData(5)
-#             doc = Docs.findOne parent._id
-#             user = Meteor.users.findOne parent._id
-#             if doc
-#                 Docs.update parent._id,
-#                     $pull:"#{@key}":@_id
-#             else if user
-#                 Meteor.users.update parent._id,
-#                     $pull:"#{@key}":@_id
-#             # Meteor.call 'unassign_user', page_doc._id, @
-#
-#
-#
+Template.question_lookup.onCreated ->
+    # @autorun => Meteor.subscribe 'model_docs', 'guest'
+    @doc_results = new ReactiveVar
+Template.question_lookup.helpers
+    doc_results: -> Template.instance().doc_results.get()
+Template.question_lookup.events
+    'click .clear_results': (e,t)->
+        t.doc_results.set null
+    'keyup .question_title_lookup': (e,t)->
+        search_value = $(e.currentTarget).closest('.question_title_lookup').val().trim()
+        if search_value.length is 0
+            t.doc_results.set null
+        else if search_value
+            Meteor.call 'lookup_question', search_value, (err,res)=>
+                if err then console.error err
+                else
+                    # console.log res
+                    t.doc_results.set res
+    'click .select_doc': (e,t) ->
+        ref = @
+        dep = Template.currentData()
+        console.log 'ref', @
+        question = Template.parentData()
+        console.log 'dep', dep
+        Docs.update dep._id,
+            $set:
+                title: ref.title
+                ref_id: ref._id
+        t.doc_results.set null
+        $('.project_title_lookup').val ''
+
+    # 'click .pull_user': ->
+    #     if confirm "Remove #{@username}?"
+    #         page_doc = Docs.findOne Router.current().params.id
+    #         parent = Template.parentData(5)
+    #         doc = Docs.findOne parent._id
+    #         user = Meteor.users.findOne parent._id
+    #         if doc
+    #             Docs.update parent._id,
+    #                 $pull:"#{@key}":@_id
+    #         else if user
+    #             Meteor.users.update parent._id,
+    #                 $pull:"#{@key}":@_id
+    #         # Meteor.call 'unassign_user', page_doc._id, @
+
+
+
 #
 #
 #     Template.signature_view.events

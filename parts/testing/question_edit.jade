@@ -2,19 +2,23 @@ template(name='question_edit')
     with current_doc
         .ui.stackable.padded.grid
             .row
-                .three.wide.column 
-                    .ui.header 
+                .sixteen.wide.column 
+                    .ui.inline.header 
                         | edit '#{title}' question
-                    a.ui.big.fluid.button(href="/question/#{_id}/view" title='save')
+                    a.ui.big.button(href="/question/#{_id}/view" title='save')
                         |save
                     +remove_button
-                .six.wide.column 
-                    +text_edit key='title' label='title' direct=true
+            .row
+                .eight.wide.column 
+                    +textarea_edit key='title' label='title' direct=true
                     +array_edit key='tags' label='tags' direct=true
                     div
                     +boolean_edit key='has_description' label='has description' direct=true
                     if has_description
                         +textarea_edit key='description' label='description' icon='content' direct=true
+                    +boolean_edit key='has_hint' label='has hint' direct=true
+                    if has_description
+                        +textarea_edit key='hint' label='hint' icon='content' direct=true
                     +boolean_edit key='has_image' label='has image' direct=true
                     if has_image
                         +image_edit key='image_id' icon='image' label='image' direct=true
@@ -26,23 +30,40 @@ template(name='question_edit')
                         +number_edit key='answer_limit' label='answer limit' direct=true
                     if is_multiple_choice
                         +boolean_edit key='show_before_test' label='show choices before test' direct=true
-                .seven.wide.column
+                    .ui.header dependencies  
+                    +boolean_edit key='has_deps' label='has dependencies' direct=true
+                    div
+                    if has_deps
+                        .ui.button.add_dep
+                            |add dep
+                        each deps
+                            .ui.segment 
+                                if title 
+                                    .ui.small.header #{title}
+                                else 
+                                    +question_lookup
+                .eight.wide.column
                     .ui.header question type
                     .ui.button.select_multiple_choice(class=multiple_choice_class)
                         |multiple choice
-                    .ui.button.select_essay(class=select_essay_class)
+                    .ui.button.select_essay(class=essay_class)
                         |essay
-                    .ui.button.select_number(class=select_number_class)
+                    .ui.button.select_number(class=number_class)
                         |number
                     .ui.button.select_text(class=text_class)
                         |text
+                    .ui.button.select_tagging(class=tagging_class)
+                        |tagging
+                    .ui.button.select_tagging(class=tagging_class)
+                        |yes/no
+                    .ui.button.select_tagging(class=tagging_class)
+                        |true/false
                     .ui.divider
                     if is_multiple_choice
                         .ui.button.add_choice
                             i.plus.icon
                             |choice
                         +boolean_edit key='has_correct_answer' label='has correct answer' direct=true
-                        //- +boolean_edit key='single_answer' label='single answer' direct=true
                         div.scrolling
                             each choices
                                 .ui.segment(class=answer_segment_class)
@@ -55,9 +76,8 @@ template(name='question_edit')
                                     +remove_button
                     else if is_number_test
                         +boolean_edit key='has_correct_answer' label='has correct answer' direct=true
-                        +boolean_edit key='single_answer' label='single answer' direct=true
                         div
-                        if single_answer
+                        if has_correct_answer
                             +number_edit key='required_answer' label='number answer' direct=true    
                         div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
                     else if is_essay
@@ -65,11 +85,59 @@ template(name='question_edit')
                         //- div
                         //- if single_answer
                         //- 
-                        //- +array_edit key='required_answer_tags' label='required answer tags' direct=true    
                     else if is_text_answer
                         +boolean_edit key='has_correct_answer' label='has correct answer' direct=true
-                        +boolean_edit key='single_answer' label='single answer' direct=true
                         div
-                        if single_answer
+                        if has_correct_answer
                             +text_edit key='required_answer' label='required answer' direct=true    
                         div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
+                    else if is_tagging_answer
+                        +array_edit key='required_answer_tags' label='required answer tags' direct=true    
+
+
+
+
+template(name='question_lookup')
+    //- .ui.form
+        //- .ui.inline.header
+        //-     if icon
+        //-         i.grey.icon(class=icon)
+        //-     if title
+        //-         |#{title}
+        //-     else if label
+        //-         |#{label}
+        //-     else if key
+        //-         |#{key}
+        //-     else
+        //-         |#{this}
+    unless field_value
+        .ui.input
+            input.question_title_lookup(type='text' placeholder='lookup question' autocomplete="off")
+        //- input#multi_doc_select_input(type='text' placeholder="Lookup #{ref_model}.." autocomplete="off")
+    each selections
+        .ui.basic.label
+            |#{title}
+    if doc_results
+        .ui.middle.aligned.selection.animated.list
+            each doc_results
+                .select_doc.item
+                    .ui.inline.small.grey.header
+                        strong #{title}
+                    div
+        //- +clear_value                
+        //- .ui.list
+        //-     each field_value
+        //-         // |#{this}
+        //-         +user_card
+        //-         .ui.large.button
+        //-             |#{first_name} #{last_name}
+                //- with user_from_id
+                //-     .item
+                //-         .right.floated.content
+                //-             i.pull_user.remove.link.icon
+                //-         .image
+                //-             img.ui.avatar.image(src="{{c.url image_id width=100 height=100 gravity='face' crop='fill'}}")
+                //-         .content
+                //-             h4.ui.header
+                //-                 |#{first_name} #{last_name}
+                //-                 @#{username}
