@@ -83,6 +83,30 @@ if Meteor.isClient
         'click #clear_question_tags': -> selected_question_tags.clear()
 
 
+    Template.question_segment.onCreated ->
+        # console.log @
+        @autorun => Meteor.subscribe('answer_sessions_from_question_id', @data._id)
+        @autorun => Meteor.subscribe('my_answer_from_question_id', @data._id)
+
+    Template.question_segment.events
+        'click .choose_true': ->
+            Docs.insert
+                complete: true
+                model:'answer_session'
+                boolean_choice:true
+                question_id: @_id
+            Docs.update @_id,
+                $addToSet:
+                    answered_user_ids: Meteor.userId()
+        'click .choose_false': ->
+            Docs.insert
+                complete: true
+                model:'answer_session'
+                boolean_choice:false
+                question_id: @_id
+            Docs.update @_id,
+                $addToSet:
+                    answered_user_ids: Meteor.userId()
 
     Template.question_segment.helpers
         choices: ->
@@ -94,6 +118,16 @@ if Meteor.isClient
         is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
         is_tagging_answer: -> @question_type is 'tagging'
+        is_boolean_answer: -> @question_type is 'boolean'
+        my_answer: ->
+            Docs.findOne
+                model:'answer_session'
+                question_id: @_id
+                _author_id: Meteor.userId()
+        question_answers: ->
+            Docs.findOne
+                model:'answer_session'
+                question_id: @_id
 
 
 
@@ -128,37 +162,30 @@ if Meteor.isClient
         #         title: {$regex:"#{title_query}", $options: 'i'}
         #         },{ limit:20 })
 
-        multiple_choice_class: -> if @question_type is 'multiple_choice' then 'active' else ''
-        essay_class: -> if @question_type is 'essay' then 'active' else ''
-        number_class: -> if @question_type is 'number' then 'active' else ''
-        text_class: -> if @question_type is 'text' then 'active' else ''
-        tagging_class: -> if @question_type is 'tagging' then 'active' else ''
         is_multiple_choice: -> @question_type is 'multiple_choice'
         is_essay: -> @question_type is 'essay'
         is_number_test: -> @question_type is 'number'
         is_text_answer: -> @question_type is 'text'
         is_tagging_answer: -> @question_type is 'tagging'
+        is_boolean_answer: -> @question_type is 'boolean'
     Template.question_edit.events
-        'click .select_multiple_choice': ->
-            Docs.update Router.current().params.doc_id,
-                $set: question_type:'multiple_choice'
-        'click .select_essay': ->
-            Docs.update Router.current().params.doc_id,
-                $set: question_type:'essay'
-        'click .select_number': ->
-            Docs.update Router.current().params.doc_id,
-                $set: question_type:'number'
-        'click .select_text': ->
-            Docs.update Router.current().params.doc_id,
-                $set: question_type:'text'
-        'click .select_tagging': ->
-            Docs.update Router.current().params.doc_id,
-                $set: question_type:'tagging'
         'click .add_choice': ->
             console.log @
             Docs.insert
                 model:'choice'
                 question_id:@_id
+
+
+
+    Template.question_type_selector.helpers
+        question_selection_button_class: -> if Template.parentData().question_type is @slug then 'active' else ''
+    Template.question_type_selector.events
+        'click .select_question_type': ->
+            Docs.update Router.current().params.doc_id,
+                $set: question_type:@slug
+
+
+
 
 
     Template.question_view.onCreated ->
@@ -253,6 +280,13 @@ if Meteor.isClient
 
 
 if Meteor.isServer
+    Meteor.publish 'my_answer_from_question_id', (question_id)->
+        Docs.find
+            model:'answer_session'
+            question_id:question_id
+            _author_id: Meteor.userId()
+
+
     Meteor.publish 'answer_sessions_from_question_id', (question_id)->
         Docs.find
             model:'answer_session'

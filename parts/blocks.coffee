@@ -432,7 +432,7 @@ if Meteor.isClient
         set_key_value_class: ->
             parent = Template.parentData()
             # console.log parent
-            if parent["#{@key}"] is @value then 'green' else ''
+            if parent["#{@key}"] is @value then 'active' else ''
 
 
 

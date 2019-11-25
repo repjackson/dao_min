@@ -1,12 +1,14 @@
 template(name='nav')
-    a.ui.button(href='/' class="{{isActivePath '/'}}" class=facet_tags) 
-        |search
-        //- i.yin.yang.large.icon
+    //- a.ui.button(href='/' class="{{isActivePath '/'}}" class=facet_tags) 
+    //-     |search
+    //-     //- i.yin.yang.large.icon
     a.ui.button(href='/questions' class=facet_tags)
-        |questions
+        //- |questions
+        |dao
+        //- i.yin.yang.icon
     unless currentUser
         a.ui.button(href='/login') 
-            | enter
+            | login
         a.ui.button(href='/register')
             | register
     if currentUser
@@ -38,7 +40,7 @@ template(name='nav')
         //-         i.grey.shield.large.icon
         unless logging_out
             a.ui.button(href="/user/#{currentUser._id}")
-                i.user.outline.icon
+                //- i.user.outline.icon
                 span #{currentUser.name} 
             //- a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
             //-     if currentUser.profile_image_id

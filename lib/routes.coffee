@@ -28,7 +28,7 @@ Router.route '*', -> @render 'not_found'
 
 Router.route '/', (->
     @layout 'layout'
-    @render 'home'
+    @render 'questions'
     ), name:'home'
 
 Router.route '/subs', (->

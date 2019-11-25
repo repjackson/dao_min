@@ -111,6 +111,11 @@ template(name='answer_session_edit')
                             each required_answer_tags
                                 .ui.large.basic.label
                                     |#{this}
+                    else if is_boolean_answer
+                        +key_value_edit key='boolean_choice' value=true label='yes'
+                        +key_value_edit key='boolean_choice' value=false label='no'
+                        //- .ui.button.select_boolean_true yes
+                        //- .ui.button.select_boolean_false no
                         //- +array_edit key='tags' label='tags' direct=true
                 .four.wide.column
                     unless complete

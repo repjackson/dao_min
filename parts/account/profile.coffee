@@ -30,12 +30,11 @@ if Meteor.isClient
     Template.profile_layout.onCreated ->
         @autorun -> Meteor.subscribe 'user_from_id', Router.current().params.user_id
         @autorun -> Meteor.subscribe 'user_events', Router.current().params.user_id
-        @autorun -> Meteor.subscribe 'student_stats', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_stats', Router.current().params.user_id
     Template.profile_layout.onRendered ->
         Meteor.setTimeout ->
             $('.button').popup()
         , 2000
-        Session.setDefault 'view_side', false
 
     Template.profile_layout.helpers
         route_slug: -> "user_#{@slug}"
@@ -45,48 +44,69 @@ if Meteor.isClient
             Docs.find {
                 model:'user_section'
             }, sort:title:1
-        student_classrooms: ->
-            user = Meteor.users.findOne Router.current().params.user_id
-            Docs.find
-                model:'classroom'
-                student_ids: $in: [user._id]
-
         ssd: ->
             user = Meteor.users.findOne Router.current().params.user_id
             Docs.findOne
-                model:'student_stats'
+                model:'user_stats'
                 user_id:user._id
-        view_side: -> Session.get 'view_side'
-        main_column_class: ->
-            if Session.get 'view_side'
-                'fourteen wide column'
-            else
-                'sixteen wide column'
+
+    Template.user_dashboard.onCreated ->
+        @autorun -> Meteor.subscribe 'user_answered_questions', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_unanswered_questions', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_correct_answers', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_incorrect_answers', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_liked_questions', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_disliked_questions', Router.current().params.user_id
+
+
+    Template.profile_layout.events
+        'click .recalc_stats': ->
+            Meteor.call 'calc_user_stats', Router.current().params.user_id
+
+
     Template.user_dashboard.helpers
         ssd: ->
             user = Meteor.users.findOne Router.current().params.user_id
             Docs.findOne
-                model:'student_stats'
+                model:'user_stats'
                 user_id:user._id
 
-        student_classrooms: ->
+        user_classrooms: ->
             user = Meteor.users.findOne Router.current().params.user_id
             Docs.find
                 model:'classroom'
-                student_ids: $in: [user._id]
-        user_events: ->
+                user_ids: $in: [user._id]
+        answered_questions: ->
             Docs.find {
-                model:'classroom_event'
+                model:'question'
+                answered_user_ids: $in:[Meteor.userId()]
             }, sort: _timestamp: -1
-        user_credits: ->
+        unanswered_questions: ->
             Docs.find {
-                model:'classroom_event'
-                event_type:'credit'
+                model:'question'
+                answered_user_ids: $nin:[Meteor.userId()]
             }, sort: _timestamp: -1
-        user_debits: ->
+        incorrect_answers: ->
             Docs.find {
-                model:'classroom_event'
-                event_type:'debit'
+                model:'answer_session'
+                is_correct_answer:false
+                _author_id: Router.current().params.user_id
+            }, sort: _timestamp: -1
+        correct_answers: ->
+            Docs.find {
+                model:'answer_session'
+                is_correct_answer:true
+                _author_id: Router.current().params.user_id
+            }, sort: _timestamp: -1
+        liked_questions: ->
+            Docs.find {
+                model:'question'
+                upvoter_ids:$in:[Meteor.userId()]
+            }, sort: _timestamp: -1
+        disliked_questions: ->
+            Docs.find {
+                model:'question'
+                downvoter_ids:$in:[Meteor.userId()]
             }, sort: _timestamp: -1
         user_models: ->
             user = Meteor.users.findOne Router.current().params.user_id
@@ -104,8 +124,8 @@ if Meteor.isClient
 
         'click .toggle_size': ->
             Session.set 'view_side', !Session.get('view_side')
-        'click .recalc_student_stats': ->
-            Meteor.call 'recalc_student_stats', Router.current().params.user_id
+        'click .recalc_user_stats': ->
+            Meteor.call 'recalc_user_stats', Router.current().params.user_id
         'click .set_delta_model': ->
             Meteor.call 'set_delta_facets', @slug, null, true
 
@@ -135,36 +155,69 @@ if Meteor.isClient
 
 
 if Meteor.isServer
-    Meteor.publish 'user_events', (username)->
-        user = Meteor.users.findOne username:username
+    Meteor.publish 'user_events', (user_id)->
+        user = Meteor.users.findOne user_id
         Docs.find
             model:'classroom_event'
             user_id:user._id
 
-    Meteor.publish 'student_stats', (username)->
-        user = Meteor.users.findOne username:username
+    Meteor.publish 'user_answered_questions', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'question'
+            answered_user_ids: $in: [user_id]
+    Meteor.publish 'user_unanswered_questions', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'question'
+            answered_user_ids: $nin: [user_id]
+    Meteor.publish 'user_liked_questions', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'question'
+            upvoter_ids: $in: [user_id]
+    Meteor.publish 'user_disliked_questions', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'question'
+            downvoter_ids: $in: [user_id]
+    Meteor.publish 'user_correct_answers', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'answer_session'
+            _author_id: user_id
+            is_correct_answer: true
+    Meteor.publish 'user_incorrect_answers', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'answer_session'
+            _author_id: user_id
+            is_correct_answer: false
+
+    Meteor.publish 'user_stats', (user_id)->
+        user = Meteor.users.findOne user_id
         if user
             Docs.find
-                model:'student_stats'
+                model:'user_stats'
                 user_id:user._id
 
 
     Meteor.methods
-        recalc_student_stats: (username)->
-            user = Meteor.users.findOne username:username
+        recalc_user_stats: (username)->
+            user = Meteor.users.findOne user_id
             unless user
                 user = Meteor.users.findOne username
             user_id = user._id
             # console.log classroom
-            student_stats_doc = Docs.findOne
-                model:'student_stats'
+            user_stats_doc = Docs.findOne
+                model:'user_stats'
                 user_id: user_id
 
-            unless student_stats_doc
+            unless user_stats_doc
                 new_stats_doc_id = Docs.insert
-                    model:'student_stats'
+                    model:'user_stats'
                     user_id: user_id
-                student_stats_doc = Docs.findOne new_stats_doc_id
+                user_stats_doc = Docs.findOne new_stats_doc_id
 
             debits = Docs.find({
                 model:'classroom_event'
@@ -184,16 +237,16 @@ if Meteor.isServer
             for credit in credits.fetch()
                 total_credit_amount += credit.amount
 
-            student_balance = total_credit_amount-total_debit_amount
+            user_balance = total_credit_amount-total_debit_amount
 
-            # average_credit_per_student = total_credit_amount/student_count
-            # average_debit_per_student = total_debit_amount/student_count
+            # average_credit_per_user = total_credit_amount/user_count
+            # average_debit_per_user = total_debit_amount/user_count
 
 
-            Docs.update student_stats_doc._id,
+            Docs.update user_stats_doc._id,
                 $set:
                     credit_count: credit_count
                     debit_count: debit_count
                     total_credit_amount: total_credit_amount
                     total_debit_amount: total_debit_amount
-                    student_balance: student_balance
+                    user_balance: user_balance

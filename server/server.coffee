@@ -34,10 +34,10 @@ Docs.allow
     remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
 
 
-Subreddits.allow
-    insert: (userId, doc) -> true
-    update: (userId, doc) -> true
-    remove: (userId, doc) -> true
+# Subreddits.allow
+#     insert: (userId, doc) -> true
+#     update: (userId, doc) -> true
+#     remove: (userId, doc) -> true
 
 
 # SyncedCron.add({
@@ -80,5 +80,5 @@ if Meteor.isProduction
     SyncedCron.start()
 
 
-Meteor.publish 'subreddits', ->
-    Subreddits.find()
+# Meteor.publish 'subreddits', ->
+#     Subreddits.find()

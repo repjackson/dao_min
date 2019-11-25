@@ -3,55 +3,58 @@ template(name='profile_layout')
     with current_user
         .ui.stackable.padded.grid
             .row
-                .four.wide.column
+                .sixteen.wide.column
                     //- .ui.fluid.button.toggle_size
                     //-     i.bars.icon
                     img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
-                    .ui.center.aligned.basic.segment
+                    //- .ui.center.aligned.basic.segment
                         //- a(href="/user/#{user._id}")
-                        .ui.center.aligned.header
-                            | #{user.first_name} #{user.last_name}
-                            //- .ui.small.header @#{user.username}        
-                        //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
-                        //-     //- i.globe.icon
-                        //-     +ismall name='globe' 
-                        //-     |log out other clients
+                    .ui.center.aligned.inline.header.recalc_stats
+                        |#{current_user.name}'s dashboard
+            
+                    .ui.center.aligned.inline.header
+                        | #{user.first_name} #{user.last_name}
+                    .ui.small.inline.header @#{user.username}        
+                    //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
+                    //-     //- i.globe.icon
+                    //-     +ismall name='globe' 
+                    //-     |log out other clients
                     
-                    .ui.fluid.vertical.large.menu
-                        a.item(href="/user/#{user._id}/money" class="{{isActiveRoute regex=user_money}}")
-                            i.money.grey.icon
-                            |money
-                        a.item(href="/user/#{user._id}/tags" class="{{isActiveRoute regex=user_tags}}")
-                            i.tags.icon
-                            |tags
-                        a.item(href="/user/#{user._id}/social" class="{{isActiveRoute regex=user_social}}")
-                            i.chat.icon
-                            |social
-                        a.item(href="/user/#{user._id}/offers" class="{{isActiveRoute regex=user_social}}")
-                            i.chat.icon
-                            |offers
-                        a.item(href="/user/#{user._id}/messages" class="{{isActiveRoute regex=user_mail}}")
-                            i.envelope.icon
-                            |messages
-                        a.item(href="/user/#{user._id}/posts" class="{{isActiveRoute regex=user_posts}}")
-                            i.blog.icon
-                            |posts
+                    //- .ui.fluid.vertical.large.menu
+                        //- a.item(href="/user/#{user._id}/money" class="{{isActiveRoute regex=user_money}}")
+                        //-     i.money.grey.icon
+                        //-     |money
+                        //- a.item(href="/user/#{user._id}/tags" class="{{isActiveRoute regex=user_tags}}")
+                        //-     i.tags.icon
+                        //-     |tags
+                        //- a.item(href="/user/#{user._id}/social" class="{{isActiveRoute regex=user_social}}")
+                        //-     i.chat.icon
+                        //-     |social
+                        //- a.item(href="/user/#{user._id}/offers" class="{{isActiveRoute regex=user_social}}")
+                        //-     i.chat.icon
+                        //-     |offers
+                        //- a.item(href="/user/#{user._id}/messages" class="{{isActiveRoute regex=user_mail}}")
+                        //-     i.envelope.icon
+                        //-     |messages
+                        //- a.item(href="/user/#{user._id}/posts" class="{{isActiveRoute regex=user_posts}}")
+                        //-     i.blog.icon
+                        //-     |posts
                     if is_current_user
-                        a.ui.large.fluid.button(href="/user/#{current_user._id}/edit")
-                            i.cog.grey.icon
-                            |profile
-                        a.ui.fluid.button.logout(href="#")
-                            i.sign.out.alternate.icon
+                        a.ui.button(href="/user/#{current_user._id}/edit")
+                            //- i.cog.grey.icon
+                            |settings
+                        a.ui.button.logout(href="#")
+                            //- i.sign.out.alternate.icon
                             |log out
 
-                    if is_admin
-                        .ui.basic.segment
-                            .ui.header 
-                                i.shield.icon
-                                |roles
-                            each roles
-                                .ui.basic.label #{this}
-                .twelve.wide.column
+                    //- if is_admin
+                    //-     .ui.basic.segment
+                    //-         .ui.header 
+                    //-             i.shield.icon
+                    //-             |roles
+                    //-         each roles
+                    //-             .ui.basic.label #{this}
+                .sixteen.wide.column
                     //- each user_sections
                     //-     a.ui.button(href="/user/#{user._id}/")
                     //-         //- i.icon(class=icon)
@@ -63,11 +66,72 @@ template(name='profile_layout')
                     
 template(name='user_dashboard')                    
     .ui.stackable.padded.grid
-        .row
-            .sixteen.wide.column
-                .ui.center.aligned.header.recalc_student_stats
-                    i.dashboard.icon
-                    |#{current_user.name}'s dashboard
+        .three.column.row
+            .column
+                .ui.header answered questions 
+                each current_user.answered_cloud
+                    .ui.label #{name}
+                        //- small #{count}
+                .ui.link.list
+                    each answered_questions
+                        a.item(href="/question/#{_id}/view") #{title}
+            .column
+                .ui.header unanswered questions 
+                each current_user.unanswered_cloud
+                    .ui.label #{name}
+                        //- small #{count}
+                .ui.link.list
+                    each unanswered_questions
+                        a.item(href="/question/#{_id}/view") #{title}
+            .column
+                .ui.header correct answers 
+                each current_user.correct_cloud
+                    .ui.label #{name}
+                        //- small #{count}                
+                .ui.link.list
+                    each correct_answers
+                        a.item(href="/question/#{_id}/view") #{title} #{when}
+            .column
+                .ui.header incorrect answers 
+                each current_user.incorrect_cloud
+                    .ui.label #{name}
+                        //- small #{count}                
+                .ui.link.list
+                    each incorrect_answers
+                        a.item(href="/question/#{_id}/view") #{title} #{when}
+            .column
+                .ui.header yes answers 
+                each current_user.yes_cloud
+                    .ui.label #{name}
+                        //- small #{count}                
+                .ui.link.list
+                    each yes_answers
+                        a.item(href="/question/#{_id}/view") #{title} #{when}
+            .column
+                .ui.header no answers 
+                each current_user.no_cloud
+                    .ui.label #{name}
+                        //- small #{count}                
+                .ui.link.list
+                    each no_answers
+                        a.item(href="/question/#{_id}/view") #{title} #{when}
+            .column
+                .ui.header liked questions 
+                each current_user.liked_cloud
+                    .ui.label #{name}
+                        //- small #{count}                
+                .ui.link.list
+                    each liked_questions
+                        a.item(href="/question/#{_id}/view") #{title}
+            .column
+                .ui.header disliked questions 
+                each current_user.disliked_cloud
+                    .ui.label #{name}
+                        //- small #{count}
+                .ui.link.list
+                    each disliked_questions
+                        a.item(href="/question/#{_id}/view") #{title}
+                
         
         
         

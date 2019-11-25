@@ -56,12 +56,14 @@ if Meteor.isClient
 
         'click .remove_tag': (e,t)->
             tag = @valueOf()
-            question = Docs.findOne Router.current().params.doc_id
+            answer_session = Docs.findOne Router.current().params.doc_id
 
-            Docs.update question._id,
+            Docs.update answer_session._id,
                 $pull: tags: element
             t.$('.new_tag').focus()
             t.$('.new_tag').val(element)
+
+
 
 
     Template.answer_session_edit.helpers
@@ -114,6 +116,8 @@ if Meteor.isClient
                 @essay_answer
             else if question.question_type is 'tagging'
                 @tags
+            else if question.question_type is 'boolean'
+                @boolean_choice
             # if Template.parentData().
             # answer_session = Docs.findOne Router.current().params.doc_id
             # answer_session.choice_selection_id
@@ -138,6 +142,10 @@ if Meteor.isClient
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             question.question_type is 'tagging'
+        is_boolean_answer: ->
+            answer_session = Docs.findOne Router.current().params.doc_id
+            question = Docs.findOne answer_session.question_id
+            question.question_type is 'boolean'
 
     Template.answer_session_view.onCreated ->
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
@@ -332,6 +340,13 @@ if Meteor.isServer
                         $addToSet:
                             answered_user_ids: Meteor.userId()
                 when 'essay'
+                    Docs.update answer_session_id,
+                        $set:
+                            complete: true
+                    Docs.update question._id,
+                        $addToSet:
+                            answered_user_ids: Meteor.userId()
+                when 'boolean'
                     Docs.update answer_session_id,
                         $set:
                             complete: true

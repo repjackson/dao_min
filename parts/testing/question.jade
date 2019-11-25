@@ -1,13 +1,14 @@
 template(name='questions')
     .ui.stackable.padded.grid
         .row
-            .six.wide.column
-                .ui.inline.header 
-                    |questions
-                .ui.icon.button.add_question(title='add question')
+            .six.wide.right.aligned.column
+                +nav
+                //- .ui.inline.header 
+                //-     |questions
+                .ui.icon.circular.button.add_question(title='add question')
                     i.plus.icon
                 +question_cloud
-            .ten.wide.column
+            .ten.wide.column.scrolling
                 if currentUser
                     |view 
                     .ui.button.view_answered(class=view_answered_class) answered
@@ -21,13 +22,11 @@ template(name='questions')
 
 template(name='question_cloud')
     div
-    //- #cloud
-        //- .ui.left.icon.input
-        //-     i.search.icon
-        //-     +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
-        // .ui.hidden.fitted.divider
-    //- i.grey.tags.icon
-    //- .ui.inline.header tags
+    #cloud
+        .ui.left.icon.input
+            i.search.icon
+            input#search(type='text' placeholder='search')
+            //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
     if selected_question_tags
         #clear_tags.ui.active.icon.button
             i.remove.icon
@@ -52,17 +51,23 @@ template(name='question_segment')
             each tags
                 .ui.basic.label #{this}
             div
+            if is_boolean_answer
+                if my_answer 
+                    |you answered #{my_answer.boolean_choice}
+                else 
+                    .ui.button.choose_true yes
+                    .ui.button.choose_false no
             if show_before_test
-                .ui.header 
-                    |choices
+                //- .ui.header 
+                //-     |choices
                 .ui.large.bulleted.list
                     each choices
                         .item
                             |!{content}
             if my_answer
-                .ui.header my answer
+                //- .ui.header your answer
                 with my_answer
-                    .ui.small.header #{when} by #{_author_username}
+                    .ui.small.header #{choice_content }#{when} by #{_author_username}
             .ui.list 
                 .item #{answer_count} answers
                     if question.has_correct_answer
@@ -78,10 +83,10 @@ template(name='question_segment')
                     //- .item #{choice_count} choices
                     each answer_selections 
                         .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                .item upvoting users
+                .item upvoters
                     each upvoter_ids
                         |#{this}
-                .item downvoting users
+                .item downvoters
                     each downvoter_ids
                         |#{this}
             if points 
@@ -98,7 +103,6 @@ template(name='question_view')
             .row
                 .four.wide.column
                     a.ui.fluid.button(href="/questions")
-                        i.chevron.left.icon
                         |questions
                     .ui.header question view 
                     +image_view key='question_image_id' label='image' direct=true
@@ -160,7 +164,7 @@ template(name='question_view')
                         each answer_sessions
                             a.item(href="/answer_session/#{_id}/view")
                                 .content 
-                                    .header #{number_answer} #{text_answer} #{choice_selection_content}
+                                    .header #{number_answer} #{text_answer} #{choice_selection_content} #{boolean_choice}
                                     .description
                                         |#{when} by #{_author_username}
                                         if is_correct_answer

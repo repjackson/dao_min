@@ -32,32 +32,25 @@ template(name='question_edit')
                         +boolean_edit key='show_before_test' label='show choices before test' direct=true
                     .ui.header dependencies  
                     +boolean_edit key='has_deps' label='has dependencies' direct=true
-                    div
                     if has_deps
                         .ui.button.add_dep
-                            |add dep
+                            |add dependency
                         each deps
                             .ui.segment 
                                 if title 
                                     .ui.small.header #{title}
+                                    +text_edit key='required_answer' label='required answer' direct=true
                                 else 
                                     +question_lookup
+                                +remove_button
                 .eight.wide.column
                     .ui.header question type
-                    .ui.button.select_multiple_choice(class=multiple_choice_class)
-                        |multiple choice
-                    .ui.button.select_essay(class=essay_class)
-                        |essay
-                    .ui.button.select_number(class=number_class)
-                        |number
-                    .ui.button.select_text(class=text_class)
-                        |text
-                    .ui.button.select_tagging(class=tagging_class)
-                        |tagging
-                    .ui.button.select_tagging(class=tagging_class)
-                        |yes/no
-                    .ui.button.select_tagging(class=tagging_class)
-                        |true/false
+                    +question_type_selector slug='multiple_choice' label='multiple choice'
+                    +question_type_selector slug='essay' label='essay'
+                    +question_type_selector slug='number' label='number'
+                    +question_type_selector slug='text' label='text'
+                    +question_type_selector slug='tagging' label='tagging'
+                    +question_type_selector slug='boolean' label='boolean'
                     .ui.divider
                     if is_multiple_choice
                         .ui.button.add_choice
@@ -93,7 +86,13 @@ template(name='question_edit')
                         div if single answer then answer will be marked right or wrong, otherwise just used to collect answers
                     else if is_tagging_answer
                         +array_edit key='required_answer_tags' label='required answer tags' direct=true    
-
+                    else if is_boolean_answer
+                        +key_value_edit key='boolean_type' value='yes_no' label='yes/no'
+                        +key_value_edit key='boolean_type' value='true_false' label='true/false'
+                
+template(name='question_type_selector')
+    .ui.button.select_question_type(class=question_selection_button_class)
+        |#{label}
 
 
 
