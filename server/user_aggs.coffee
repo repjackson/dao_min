@@ -167,6 +167,8 @@ Meteor.methods
         match.model = 'question'
         match._id = $in: question_ids
         incorrect_cloud = Meteor.call 'user_stats_agg', match
+        incorrect_list = _.pluck(incorrect_cloud, 'name')
+
         # incorrect_questions = Docs.find(
         #     _id:$in:incorrect_cloud
         # ).fetch()
@@ -177,6 +179,7 @@ Meteor.methods
             $set:
                 incorrect_cloud:incorrect_cloud
                 incorrect_count:incorrect_count
+                incorrect_list: incorrect_list
 
 
 

@@ -34,7 +34,8 @@ template(name='user_correct')
             .column
                 .ui.header your overlap
                 .ui.button.calc_correct_overlap calc
-                each correct_list_overlap
+                .ui.header #{union_doc.correct_points} correct points
+                each union_doc.correct_list
                     .ui.label #{this}
                 each union_doc.correct_cloud
                     .ui.label #{name} #{count}
@@ -43,7 +44,39 @@ template(name='user_correct')
                 .ui.header #{currentUser.correct_count} correct answers 
                 each currentUser.correct_cloud
                     .ui.label #{name}
-
                 .ui.header most matched users
+
+
 template(name='user_incorrect')
-    .ui.header user incorrect
+    .ui.center.aligned.header user incorrect
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.incorrect_count} incorrect answers 
+                each current_user.incorrect_cloud
+                    .ui.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each incorrect_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_incorrect_overlap calc
+                .ui.header #{union_doc.incorrect_points} incorrect points
+                each union_doc.incorrect_list
+                    .ui.label #{this}
+                each union_doc.incorrect_cloud
+                    .ui.label #{name} 
+                        small #{count}
+            .column
+                .ui.header your incorrect
+                .ui.header #{currentUser.incorrect_count} incorrect answers 
+                each currentUser.incorrect_cloud
+                    .ui.label #{name}
+                        small #{count}
+                .ui.header most matched users
