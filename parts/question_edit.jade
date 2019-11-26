@@ -5,8 +5,9 @@ template(name='question_edit')
                 .ten.wide.center.aligned.column 
                     .ui.header 
                         | edit '#{title}'
-                    a.ui.big.button(href="/question/#{_id}/view" title='save')
-                        |save
+                    a.ui.big.icon.circular.button(href="/question/#{_id}/view" title='save')
+                        //- |save
+                        i.large.checkmark.icon
                     +remove_button
             .centered.row
                 .ten.wide.column 

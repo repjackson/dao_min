@@ -315,8 +315,6 @@ if Meteor.isServer
         selected_question_tags
         view_answered
         view_unanswered
-        view_correct
-        view_incorrect
         )->
         self = @
         match = {}
@@ -324,16 +322,11 @@ if Meteor.isServer
         # console.log selected_question_tags
         # console.log view_answered
         # console.log view_unanswered
-        # console.log view_correct
-        # console.log view_incorrect
         if view_answered
             match.answered_user_ids = $in:[Meteor.userId()]
         if view_unanswered
-            match.answered_user_ids = $nin:[Meteor.userId()]
-        if view_correct
-            match.correct_user_ids = $in:[Meteor.userId()]
-        if view_incorrect
-            match.incorrect_user_ids = $in:[Meteor.userId()]
+            match.upvoted_ids = $nin:[Meteor.userId()]
+            match.downvoted_ids = $nin:[Meteor.userId()]
 
 
         # if selected_target_id
@@ -366,15 +359,11 @@ if Meteor.isServer
         selected_question_tags
         view_answered
         view_unanswered
-        view_correct
-        view_incorrect
         )->
 
         # console.log selected_question_tags
         # console.log view_answered
         # console.log view_unanswered
-        # console.log view_correct
-        # console.log view_incorrect
         # console.log filter
         self = @
         match = {}
@@ -383,15 +372,11 @@ if Meteor.isServer
         if view_answered
             match.answered_user_ids = $in:[Meteor.userId()]
         if view_unanswered
-            match.answered_user_ids = $nin:[Meteor.userId()]
-        if view_correct
-            match.correct_user_ids = $in:[Meteor.userId()]
-        if view_incorrect
-            match.incorrect_user_ids = $in:[Meteor.userId()]
-
-        # if filter is 'shop'
-        #     match.active = true
+            match.upvoted_ids = $nin:[Meteor.userId()]
+            match.downvoted_ids = $nin:[Meteor.userId()]
         if selected_question_tags.length > 0 then match.tags = $all: selected_question_tags
+
+
         match.model = 'question'
         Docs.find match,
             sort:_timestamp:1

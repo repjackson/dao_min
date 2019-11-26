@@ -89,6 +89,13 @@ if Meteor.isClient
         'click .downvote': (e,t)->
             $(e.currentTarget).closest('.button').transition('pulse',200)
             Meteor.call 'downvote', @
+    Template.voting_full.helpers
+        upvote_class: ->
+            # console.log @
+            if Meteor.userId() in @upvoter_ids then 'green' else 'outline'
+        downvote_class: ->
+            # console.log @
+            if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
 
 
 
