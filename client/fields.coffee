@@ -1060,9 +1060,9 @@ Template.question_lookup.events
     'click .select_doc': (e,t) ->
         ref = @
         dep = Template.currentData()
-        console.log 'ref', @
+        # console.log 'ref', @
         question = Template.parentData()
-        console.log 'dep', dep
+        # console.log 'dep', dep
         Docs.update dep._id,
             $set:
                 title: ref.title

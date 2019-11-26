@@ -52,10 +52,13 @@ Meteor.methods
         match.downvoter_ids = $in:[Meteor.userId()]
         disliked_count = Docs.find(match).count()
         disliked_cloud = Meteor.call 'user_stats_agg', match
+        disliked_list = _.pluck(disliked_cloud, 'name')
+
         Meteor.users.update user_id,
             $set:
                 disliked_cloud:disliked_cloud
                 disliked_count:disliked_count
+                disliked_list:disliked_list
 
 
 
@@ -80,16 +83,19 @@ Meteor.methods
         match.model = 'question'
         match._id = $in: question_ids
         yes_cloud = Meteor.call 'user_stats_agg', match
-        yes_questions = Docs.find(
-            _id:$in:question_ids
-        ).fetch()
+        # yes_questions = Docs.find(
+        #     _id:$in:question_ids
+        # ).fetch()
         # console.log yes_questions
+        yes_list = _.pluck(yes_cloud, 'name')
+
 
         # console.log 'yes cloud', yes_cloud
         Meteor.users.update user_id,
             $set:
                 yes_cloud:yes_cloud
                 yes_count:yes_count
+                yes_list:yes_list
 
     calc_user_no_answer_cloud: (user_id)->
         user = Meteor.users.findOne user_id
@@ -109,9 +115,11 @@ Meteor.methods
         match.model = 'question'
         match._id = $in: question_ids
         no_cloud = Meteor.call 'user_stats_agg', match
-        no_questions = Docs.find(
-            _id:$in:question_ids
-        ).fetch()
+        no_list = _.pluck(no_cloud, 'name')
+
+        # no_questions = Docs.find(
+        #     _id:$in:question_ids
+        # ).fetch()
         # console.log no_questions
 
         # console.log 'no cloud', no_cloud
@@ -119,6 +127,7 @@ Meteor.methods
             $set:
                 no_cloud:no_cloud
                 no_count:no_count
+                no_list:no_list
 
     calc_user_correct_answer_cloud: (user_id)->
         user = Meteor.users.findOne user_id

@@ -1,13 +1,5 @@
 template(name='user_authored')
     .ui.header user authored
-template(name='user_no')
-    .ui.header user no
-template(name='user_disliked')
-    .ui.header user disliked
-template(name='user_liked')
-    .ui.header user liked
-template(name='user_yes')
-    .ui.header user yes
 template(name='user_answered')
     .ui.header user answered
     
@@ -77,6 +69,147 @@ template(name='user_incorrect')
                 .ui.header your incorrect
                 .ui.header #{currentUser.incorrect_count} incorrect answers 
                 each currentUser.incorrect_cloud
+                    .ui.label #{name}
+                        small #{count}
+                .ui.header most matched users
+                
+                
+template(name='user_yes')
+    .ui.center.aligned.header user yes
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.yes_count} yes answers 
+                each current_user.yes_cloud
+                    .ui.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each yes_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_yes_overlap calc
+                .ui.header #{union_doc.yes_points} yes points
+                //- each union_doc.yes_list
+                //-     .ui.label #{this}
+                each union_doc.yes_cloud
+                    .ui.label #{name} 
+                        small #{count}
+            .column
+                .ui.header your yes
+                .ui.header #{currentUser.yes_count} yes answers 
+                each currentUser.yes_cloud
+                    .ui.label #{name}
+                        small #{count}
+                .ui.header most matched users
+                
+                
+template(name='user_no')
+    .ui.center.aligned.header user no
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.no_count} no answers 
+                each current_user.no_cloud
+                    .ui.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each no_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_no_overlap calc
+                .ui.header #{union_doc.no_points} no points
+                //- each union_doc.no_list
+                //-     .ui.label #{this}
+                each union_doc.no_cloud
+                    .ui.label #{name} 
+                        small #{count}
+            .column
+                .ui.header your no
+                .ui.header #{currentUser.no_count} no answers 
+                each currentUser.no_cloud
+                    .ui.label #{name}
+                        small #{count}
+                .ui.header most matched users
+
+
+
+template(name='user_disliked')
+    .ui.center.aligned.header user disliked
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.disliked_count} disliked answers 
+                each current_user.disliked_cloud
+                    .ui.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each disliked_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_disliked_overlap calc
+                .ui.header #{union_doc.disliked_points} disliked points
+                //- each union_doc.disliked_list
+                //-     .ui.label #{this}
+                each union_doc.disliked_cloud
+                    .ui.label #{name} 
+                        small #{count}
+            .column
+                .ui.header your disliked
+                .ui.header #{currentUser.disliked_count} disliked answers 
+                each currentUser.disliked_cloud
+                    .ui.label #{name}
+                        small #{count}
+                .ui.header most matched users
+                
+                
+template(name='user_liked')
+    .ui.center.aligned.header user liked
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.liked_count} liked answers 
+                each current_user.liked_cloud
+                    .ui.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each liked_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_liked_overlap calc
+                .ui.header #{union_doc.liked_points} liked points
+                //- each union_doc.liked_list
+                //-     .ui.label #{this}
+                each union_doc.liked_cloud
+                    .ui.label #{name} 
+                        small #{count}
+            .column
+                .ui.header your liked
+                .ui.header #{currentUser.liked_count} liked answers 
+                each currentUser.liked_cloud
                     .ui.label #{name}
                         small #{count}
                 .ui.header most matched users

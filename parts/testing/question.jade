@@ -13,9 +13,9 @@ template(name='questions')
                     |view 
                     .ui.button.view_answered(class=view_answered_class) answered
                     .ui.button.view_unanswered(class=view_unanswered_class) unanswered
-                    if view_answered_class
-                        .ui.button.view_correct(class=view_correct_class) got correct
-                        .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
+                    //- if view_answered_class
+                    //-     .ui.button.view_correct(class=view_correct_class) got correct
+                    //-     .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
                     //- div
                     //- .ui.button.view_has_correct_answer(class=view_has_correct_answer_class) has correct answer
                     //- |type 
@@ -29,10 +29,10 @@ template(name='questions')
 
 template(name='question_cloud')
     div
-    #cloud
-        .ui.left.icon.input
-            i.search.icon
-            input#search(type='text' placeholder='search')
+    //- #cloud
+        //- .ui.left.icon.input
+        //-     i.search.icon
+        //-     input#search(type='text' placeholder='search')
             //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
     if selected_question_tags
         #clear_question_tags.ui.active.icon.button
@@ -55,8 +55,8 @@ template(name='question_segment')
             div
             if image_id
                 +image_view key='image_id' icon='image' label='image' direct=true
-            each tags
-                .ui.basic.label #{this}
+            //- each tags
+            //-     .ui.basic.label #{this}
             div
             if is_boolean_answer
                 if my_answer 
@@ -64,40 +64,43 @@ template(name='question_segment')
                 else 
                     .ui.button.choose_true yes
                     .ui.button.choose_false no
-            if show_before_test
-                //- .ui.header 
-                //-     |choices
-                .ui.large.bulleted.list
-                    each choices
-                        .item
-                            |!{content}
+            //- if show_before_test
+            //-     //- .ui.header 
+            //-     //-     |choices
+            //-     .ui.large.bulleted.list
+            //-         each choices
+            //-             .item
+            //-                 |!{content}
             if my_answer
                 //- .ui.header your answer
                 with my_answer
                     .ui.small.header #{choice_content }#{when} by #{_author_username}
-            .ui.list 
-                .item #{answer_count} answers
-                    if question.has_correct_answer
-                        .item #{incorrect_count} incorrect 
-                        .item #{correct_count} correct 
-                        .item correct users
-                            each correct_user_ids
-                                |#{this}
-                        .item incorrect users
-                            each incorrect_user_ids
-                                |#{this}
-                if is_multiple_choice    
-                    //- .item #{choice_count} choices
-                    each answer_selections 
-                        .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                .item upvoters
-                    each upvoter_ids
-                        |#{this}
-                .item downvoters
-                    each downvoter_ids
-                        |#{this}
-            if points 
-                span #{points} points (#{upvotes} up, #{downvotes} down)
+            //- .ui.list 
+            //-     .item #{answer_count} answers
+            //-         if question.has_correct_answer
+            //-             .item #{incorrect_count} incorrect 
+            //-             .item #{correct_count} correct 
+            //-             .item correct users
+            //-                 each correct_user_ids
+            //-                     |#{this}
+            //-             .item incorrect users
+            //-                 each incorrect_user_ids
+            //-                     |#{this}
+            //-     if is_multiple_choice    
+            //-         //- .item #{choice_count} choices
+            //-         each answer_selections 
+            //-             .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
+                //- if upvoter_ids
+                //-     i.grey.thumbs.up.outline.icon(title='upvoters')
+                //-     each upvoter_ids
+                //-         +user_info this
+                //- if downvoter_ids
+                //-     i.grey.thumbs.down.outline.icon(title='downvoters')
+                //-     each downvoter_ids
+                //-         +user_info this
+            //- if points 
+            //-     .ui.circular.label #{points}
+            //-     | (#{upvotes} / #{downvotes})
         a.ui.large.button(href="/question/#{_id}/view")
             |view
         
@@ -118,10 +121,10 @@ template(name='question_view')
                             |edit
                     each tags 
                         .ui.basic.label #{this}
-                    .ui.small.header settings 
-                        if has_answer_limit
-                            p answer limit #{answer_limit}
-                    +voting_full
+                    //- .ui.small.header settings 
+                    //-     if has_answer_limit
+                    //-         p answer limit #{answer_limit}
+                    //- +voting_full
                 .six.wide.column
                     .ui.header #{title}
                     if image_id
@@ -156,15 +159,15 @@ template(name='question_view')
                             .item #{choice_count} choices
                             each answer_selections 
                                 .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                        .item upvoting users
-                            each upvoter_ids
-                                +user_info this
-                                //- |#{this}
-                        .item downvoting users
-                            each downvoter_ids
-                                +user_info this
-                                //- |#{this}
-                    +comments
+                        //- .item upvoting users
+                        //-     each upvoter_ids
+                        //-         +user_info this
+                        //-         //- |#{this}
+                        //- .item downvoting users
+                        //-     each downvoter_ids
+                        //-         +user_info this
+                        //-         //- |#{this}
+                    //- +comments
                 .six.wide.column
                     if can_answer
                         .ui.fluid.button.new_answer_session
@@ -184,20 +187,20 @@ template(name='question_view')
                                             i.remove.large.icon(title='incorrect')
                             if can_edit
                                 +remove_button
-                    .ui.inline.header
-                        | bounties
-                    .ui.icon.circular.button.offer_bounty(title='offer bounty')
-                        i.plus.icon
-                    each bounties
-                        .ui.segment
-                            a.ui.header(href="/bounty/#{_id}/view")
-                                |#{when}
-                            div
-                            +number_view key='total_amount' label='total amount' direct=true
-                            div
-                            +number_view key='amount_per_answer' label='amount per answer' direct=true
-                        if can_accept 
-                            .ui.green.button.accept accept
+                    //- .ui.inline.header
+                    //-     | bounties
+                    //- .ui.icon.circular.button.offer_bounty(title='offer bounty')
+                    //-     i.plus.icon
+                    //- each bounties
+                    //-     .ui.segment
+                    //-         a.ui.header(href="/bounty/#{_id}/view")
+                    //-             |#{when}
+                    //-         div
+                    //-         +number_view key='total_amount' label='total amount' direct=true
+                    //-         div
+                    //-         +number_view key='amount_per_answer' label='amount per answer' direct=true
+                    //-     if can_accept 
+                    //-         .ui.green.button.accept accept
 
 template(name='question_stats')
     //- .ui.accordion

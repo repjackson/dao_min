@@ -9,30 +9,30 @@ template(name='user_edit_layout')
                     //- .ui.small.inline.header @#{current_user._id}
                     a.ui.fluid.basic.large.button(href="/user/#{current_user._id}/") 
                         strong save
-                    .ui.vertical.fluid.big.menu
-                        a.item(href="/user/#{current_user._id}/edit/info" class="{{isActiveRoute regex='user_edit_info'}}") 
-                            | info
-                        a.item(href="/user/#{current_user._id}/edit/friends" class="{{isActiveRoute regex='user_edit_friends'}}") 
-                            |friends
+                    //- .ui.vertical.fluid.big.menu
+                    //-     a.item(href="/user/#{current_user._id}/edit/info" class="{{isActiveRoute regex='user_edit_info'}}") 
+                    //-         | info
+                        //- a.item(href="/user/#{current_user._id}/edit/friends" class="{{isActiveRoute regex='user_edit_friends'}}") 
+                        //-     |friends
                         //- a.item(href="/user/#{current_user._id}/edit/styles" class="{{isActiveRoute regex='user_edit_styles'}}") 
                         //-     |styles
                         //-     i.brush.icon
                         //- a.item(href="/user/#{current_user._id}/edit/alerts" class="{{isActiveRoute regex='user_edit_alerts'}}") 
                         //-     |alerts
                         //-     i.bell.icon
-                        a.item(href="/user/#{current_user._id}/edit/payment" class="{{isActiveRoute regex='user_edit_payment'}}") 
-                            |payment
-                        a.item(href="/user/#{current_user._id}/edit/account" class="{{isActiveRoute regex='user_edit_account'}}") 
-                            | account
-                    +image_edit key='profile_image_id' title='profile image' direct=true
+                        //- a.item(href="/user/#{current_user._id}/edit/payment" class="{{isActiveRoute regex='user_edit_payment'}}") 
+                        //-     |payment
+                        //- a.item(href="/user/#{current_user._id}/edit/account" class="{{isActiveRoute regex='user_edit_account'}}") 
+                        //-     | account
+                    //- +image_edit key='profile_image_id' title='profile image' direct=true
                 .twelve.wide.column
                     +yield
 
 template(name='user_edit_info')
     .ui.two.column.grid
         .column
-            +text_edit key='first_name' label='first name' direct=true
-            +text_edit key='last_name' label='last name' direct=true
+            //- +text_edit key='first_name' label='first name' direct=true
+            //- +text_edit key='last_name' label='last name' direct=true
             .ui.header 
                 |emails
             +emails_edit
@@ -47,8 +47,8 @@ template(name='user_edit_info')
             //-         +text_edit key='parent_code' label='parent code' direct=true
             //-         +number_edit key='credit' label='credit' icon='money' direct=true
             
-            .spacer
-            +phone_edit key='phone' label='Phone' icon='telephone' direct=true
+            //- .spacer
+            //- +phone_edit key='phone' label='Phone' icon='telephone' direct=true
             //- +array_edit key='tags' label='tags' direct=true
 
 
