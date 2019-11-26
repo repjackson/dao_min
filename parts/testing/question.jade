@@ -8,7 +8,7 @@ template(name='questions')
                 .ui.icon.circular.button.add_question(title='add question')
                     i.plus.icon
                 +question_cloud
-            .ten.wide.column.scrolling
+            .ten.wide.column
                 if currentUser
                     |view 
                     .ui.button.view_answered(class=view_answered_class) answered
@@ -22,8 +22,9 @@ template(name='questions')
                     //- .ui.button.view_all_types(class=view_all_class) all
                     //- .ui.button.view_boolean(class=view_boolean_class) yes/no
                     //- .ui.button.view_multiple_choice(class=view_multiple_choice_class) multiple choice                    
-                each questions
-                    +question_segment
+                .scrolling    
+                    each questions
+                        +question_segment
 
 
 template(name='question_cloud')

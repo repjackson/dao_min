@@ -34,6 +34,10 @@ if Meteor.isClient
         'click .add_question': ->
             new_question_id = Docs.insert
                 model:'question'
+                has_answer_limit: true
+                answer_limit: 1
+                question_type: 'boolean'
+                boolean_type: 'yes_no'
             Router.go "/question/#{new_question_id}/edit"
         'click .view_answered': ->
             if Session.equals('view_answered',true)
@@ -41,7 +45,6 @@ if Meteor.isClient
             else
                 Session.set('view_answered', true)
                 Session.set('view_unanswered', false)
-
         'click .view_unanswered': ->
             if Session.equals('view_unanswered',true)
                 Session.set('view_unanswered', false)

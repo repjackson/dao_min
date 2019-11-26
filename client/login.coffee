@@ -63,10 +63,7 @@ Template.login.events
                         })
                     else
                         # Router.go "/user/#{username}"
-                        if Meteor.user().roles and 'admin' in Meteor.user().roles
-                            Router.go "/admin"
-                        else
-                            Router.go "/user/#{Meteor.user().username}"
+                        Router.go "/user/#{Meteor.user()._id}"
 
 
 Template.login.helpers

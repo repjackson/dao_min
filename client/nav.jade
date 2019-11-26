@@ -5,14 +5,16 @@ template(name='nav')
                 //- a.ui.button(href='/' class="{{isActivePath '/'}}" class=facet_tags) 
                 //-     |search
                 //-     //- i.yin.yang.large.icon
-                a.ui.icon.button(href='/questions' class=facet_tags)
+                a.ui.icon.circular.large.button(href='/questions')
                     //- |questions
                     //- |dao
                     i.yin.yang.icon
+                a.ui.icon.circular.large.button(href='/users')
+                    i.users.icon
                 unless currentUser
-                    a.ui.button(href='/login') 
+                    a.ui.circular.button(href='/login') 
                         | login
-                    a.ui.button(href='/register')
+                    a.ui.circular.button(href='/register')
                         | register
                 if currentUser
                     //- a.icon.large.ui.button(href='/chat' title='chat')
@@ -42,7 +44,7 @@ template(name='nav')
                     //-     a.icon.ui.button(href="/grid" title='admin')
                     //-         i.grey.shield.large.icon
                     unless logging_out
-                        a.ui.button(href="/user/#{currentUser._id}")
+                        a.ui.large.circular.button(href="/user/#{currentUser._id}")
                             //- i.user.outline.icon
                             span #{currentUser.name} 
                         //- a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)

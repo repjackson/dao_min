@@ -3,9 +3,7 @@ template(name='profile_layout')
     with current_user
         .ui.stackable.padded.grid
             .row
-                .sixteen.wide.column
-                    //- .ui.fluid.button.toggle_size
-                    //-     i.bars.icon
+                .three.wide.column
                     img.ui.centered.small.circular.profile_image.image(src="{{c.url current_user.profile_image_id height=200 width=200 gravity='face' crop='fill'}}")
                     //- .ui.center.aligned.basic.segment
                         //- a(href="/user/#{user._id}")
@@ -17,28 +15,33 @@ template(name='profile_layout')
                     .ui.small.inline.header @#{user.username}        
                     //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
                     //-     //- i.globe.icon
-                    //-     +ismall name='globe' 
                     //-     |log out other clients
                     
-                    //- .ui.fluid.vertical.large.menu
-                        //- a.item(href="/user/#{user._id}/money" class="{{isActiveRoute regex=user_money}}")
-                        //-     i.money.grey.icon
-                        //-     |money
-                        //- a.item(href="/user/#{user._id}/tags" class="{{isActiveRoute regex=user_tags}}")
-                        //-     i.tags.icon
-                        //-     |tags
-                        //- a.item(href="/user/#{user._id}/social" class="{{isActiveRoute regex=user_social}}")
-                        //-     i.chat.icon
-                        //-     |social
-                        //- a.item(href="/user/#{user._id}/offers" class="{{isActiveRoute regex=user_social}}")
-                        //-     i.chat.icon
-                        //-     |offers
-                        //- a.item(href="/user/#{user._id}/messages" class="{{isActiveRoute regex=user_mail}}")
-                        //-     i.envelope.icon
-                        //-     |messages
-                        //- a.item(href="/user/#{user._id}/posts" class="{{isActiveRoute regex=user_posts}}")
-                        //-     i.blog.icon
-                        //-     |posts
+                    .ui.fluid.vertical.menu
+                        a.item(href="/user/#{user._id}/authored" class="{{isActiveRoute regex=user_authored}}")
+                            |authored
+                        a.item(href="/user/#{user._id}/correct" class="{{isActiveRoute regex=user_correct}}")
+                            |correct
+                        a.item(href="/user/#{user._id}/incorrect" class="{{isActiveRoute regex=user_incorrect}}")
+                            |incorrect
+                        a.item(href="/user/#{user._id}/liked" class="{{isActiveRoute regex=user_liked}}")
+                            |liked
+                        a.item(href="/user/#{user._id}/disliked" class="{{isActiveRoute regex=user_disliked}}")
+                            |disliked
+                        a.item(href="/user/#{user._id}/answered" class="{{isActiveRoute regex=user_answered}}")
+                            |answered
+                        a.item(href="/user/#{user._id}/yes" class="{{isActiveRoute regex=user_yes}}")
+                            |yes
+                        a.item(href="/user/#{user._id}/no" class="{{isActiveRoute regex=user_no}}")
+                            |no
+                        a.item(href="/user/#{user._id}/tags" class="{{isActiveRoute regex=user_tags}}")
+                            |tags
+                        a.item(href="/user/#{user._id}/social" class="{{isActiveRoute regex=user_social}}")
+                            |social
+                        a.item(href="/user/#{user._id}/offers" class="{{isActiveRoute regex=user_social}}")
+                            |offers
+                        a.item(href="/user/#{user._id}/messages" class="{{isActiveRoute regex=user_mail}}")
+                            |messages
                     if is_current_user
                         a.ui.button(href="/user/#{current_user._id}/edit")
                             //- i.cog.grey.icon
@@ -54,7 +57,7 @@ template(name='profile_layout')
                     //-             |roles
                     //-         each roles
                     //-             .ui.basic.label #{this}
-                .sixteen.wide.column
+                .thirteen.wide.column
                     //- each user_sections
                     //-     a.ui.button(href="/user/#{user._id}/")
                     //-         //- i.icon(class=icon)
@@ -68,69 +71,137 @@ template(name='user_dashboard')
     .ui.stackable.padded.grid
         .three.column.row
             .column
-                .ui.header answered questions 
+                .ui.header #{current_user.answered_count} answered questions 
                 each current_user.answered_cloud
                     .ui.label #{name}
                         //- small #{count}
-                .ui.link.list
-                    each answered_questions
-                        a.item(href="/question/#{_id}/view") #{title}
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each answered_questions
+                                .item 
+                                    .content 
+                                        .header #{title}
+                                        .meta 
+                                            small #{when}
             .column
-                .ui.header unanswered questions 
+                .ui.header #{current_user.unanswered_count} unanswered questions 
                 each current_user.unanswered_cloud
                     .ui.label #{name}
                         //- small #{count}
-                .ui.link.list
-                    each unanswered_questions
-                        a.item(href="/question/#{_id}/view") #{title}
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each unanswered_questions
+                                .item
+                                    .content 
+                                        .header #{title}
+                                        .meta 
+                                            small #{when}
             .column
-                .ui.header correct answers 
+                .ui.header #{current_user.correct_count} correct answers 
                 each current_user.correct_cloud
                     .ui.label #{name}
-                        //- small #{count}                
-                .ui.link.list
-                    each correct_answers
-                        a.item(href="/question/#{_id}/view") #{title} #{when}
+                        //- small #{count}    
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each correct_answers
+                                a.item(href="/answer_session/#{_id}/view") 
+                                    .content 
+                                        .header #{question.title}
+                                        .meta 
+                                            small #{when}
             .column
-                .ui.header incorrect answers 
+                .ui.header #{current_user.incorrect_count} incorrect answers 
                 each current_user.incorrect_cloud
                     .ui.label #{name}
-                        //- small #{count}                
-                .ui.link.list
-                    each incorrect_answers
-                        a.item(href="/question/#{_id}/view") #{title} #{when}
+                        //- small #{count}    
+                        
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each incorrect_answers
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
             .column
-                .ui.header yes answers 
+                .ui.header #{current_user.yes_count} yes answers 
                 each current_user.yes_cloud
                     .ui.label #{name}
-                        //- small #{count}                
-                .ui.link.list
-                    each yes_answers
-                        a.item(href="/question/#{_id}/view") #{title} #{when}
+                    //- small #{count}    
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each yes_answers
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
             .column
-                .ui.header no answers 
+                .ui.header #{current_user.no_count} no answers 
                 each current_user.no_cloud
                     .ui.label #{name}
-                        //- small #{count}                
-                .ui.link.list
-                    each no_answers
-                        a.item(href="/question/#{_id}/view") #{title} #{when}
+                    //- small #{count}       
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each no_answers
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
             .column
-                .ui.header liked questions 
+                .ui.header #{current_user.liked_count} liked questions 
                 each current_user.liked_cloud
                     .ui.label #{name}
-                        //- small #{count}                
-                .ui.link.list
-                    each liked_questions
-                        a.item(href="/question/#{_id}/view") #{title}
+                        //- small #{count}  
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each liked_questions
+                                .content 
+                                    .header #{title}
+                                    .meta 
+                                        small #{when}
             .column
-                .ui.header disliked questions 
+                .ui.header #{current_user.disliked_count} disliked questions 
                 each current_user.disliked_cloud
                     .ui.label #{name}
                         //- small #{count}
-                .ui.link.list
-                    each disliked_questions
-                        a.item(href="/question/#{_id}/view") #{title}
+                .ui.fluid.accordion 
+                    .title 
+                        |list
+                        i.dropdown.icon
+                    .content
+                        .ui.link.list
+                            each disliked_questions
+                                .content 
+                                    .header #{title}
+                                    .meta 
+                                        small #{when}
                 
         
         

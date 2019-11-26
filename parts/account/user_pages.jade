@@ -1,0 +1,49 @@
+template(name='user_authored')
+    .ui.header user authored
+template(name='user_no')
+    .ui.header user no
+template(name='user_disliked')
+    .ui.header user disliked
+template(name='user_liked')
+    .ui.header user liked
+template(name='user_yes')
+    .ui.header user yes
+template(name='user_answered')
+    .ui.header user answered
+    
+    
+    
+    
+template(name='user_correct')
+    .ui.center.aligned.header user correct
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.correct_count} correct answers 
+                each current_user.correct_cloud
+                    .ui.label #{name}
+                        //- small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each correct_answers
+                            a.item(href="/answer_session/#{_id}/view") 
+                                .content 
+                                    .header #{question.title}
+                                    .meta 
+                                        small #{when}
+            .column
+                .ui.header your overlap
+                .ui.button.calc_correct_overlap calc
+                each correct_list_overlap
+                    .ui.label #{this}
+                each union_doc.correct_cloud
+                    .ui.label #{name} #{count}
+            .column
+                .ui.header your correct
+                .ui.header #{currentUser.correct_count} correct answers 
+                each currentUser.correct_cloud
+                    .ui.label #{name}
+
+                .ui.header most matched users
+template(name='user_incorrect')
+    .ui.header user incorrect

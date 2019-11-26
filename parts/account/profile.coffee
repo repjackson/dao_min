@@ -15,6 +15,38 @@ if Meteor.isClient
         @layout 'profile_layout'
         @render 'user_offers'
         ), name:'user_offers'
+    Router.route '/user/:user_id/incorrect', (->
+        @layout 'profile_layout'
+        @render 'user_incorrect'
+        ), name:'user_incorrect'
+    Router.route '/user/:user_id/correct', (->
+        @layout 'profile_layout'
+        @render 'user_correct'
+        ), name:'user_correct'
+    Router.route '/user/:user_id/authored', (->
+        @layout 'profile_layout'
+        @render 'user_authored'
+        ), name:'user_authored'
+    Router.route '/user/:user_id/answered', (->
+        @layout 'profile_layout'
+        @render 'user_answered'
+        ), name:'user_answered'
+    Router.route '/user/:user_id/liked', (->
+        @layout 'profile_layout'
+        @render 'user_liked'
+        ), name:'user_liked'
+    Router.route '/user/:user_id/disliked', (->
+        @layout 'profile_layout'
+        @render 'user_disliked'
+        ), name:'user_disliked'
+    Router.route '/user/:user_id/yes', (->
+        @layout 'profile_layout'
+        @render 'user_yes'
+        ), name:'user_yes'
+    Router.route '/user/:user_id/no', (->
+        @layout 'profile_layout'
+        @render 'user_no'
+        ), name:'user_no'
     Router.route '/user/:user_id/dashboard', (->
         @layout 'profile_layout'
         @render 'user_dashboard'
@@ -35,6 +67,9 @@ if Meteor.isClient
         # Meteor.setTimeout ->
         #     $('.button').popup()
         # , 2000
+        Meteor.setTimeout ->
+            $('.accordion').accordion()
+        , 1000
 
     Template.profile_layout.helpers
         user: ->
@@ -130,12 +165,10 @@ if Meteor.isClient
             #     animation: 'jiggle'
             #     duration: 750
             # )
-
         'click .recalc_user_stats': ->
             Meteor.call 'recalc_user_stats', Router.current().params.user_id
         'click .logout_other_clients': ->
             Meteor.logoutOtherClients()
-
         'click .logout': ->
             Session.set 'logging_out', true
             Router.go '/login'
@@ -147,66 +180,41 @@ if Meteor.isClient
 
 
 
-    Template.user_actions.onCreated ->
-        # @autorun -> Meteor.subscribe 'model_docs', 'user_action'
-    Template.user_actions.helpers
-        user_actions: ->
-            Docs.find
-                model:'user_action'
-
-
-
-
-
 
 
 if Meteor.isServer
-    Meteor.publish 'user_events', (user_id)->
-        user = Meteor.users.findOne user_id
-        Docs.find
-            model:'classroom_event'
-            user_id:user._id
-
     Meteor.publish 'user_answered_questions', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'question'
             answered_user_ids: $in: [user_id]
     Meteor.publish 'user_unanswered_questions', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'question'
             answered_user_ids: $nin: [user_id]
     Meteor.publish 'user_liked_questions', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'question'
             upvoter_ids: $in: [user_id]
     Meteor.publish 'user_disliked_questions', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'question'
             downvoter_ids: $in: [user_id]
     Meteor.publish 'user_correct_answers', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'answer_session'
             _author_id: user_id
             is_correct_answer: true
     Meteor.publish 'user_incorrect_answers', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'answer_session'
             _author_id: user_id
             is_correct_answer: false
     Meteor.publish 'user_no_answers', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'answer_session'
             _author_id: user_id
             boolean_choice: false
     Meteor.publish 'user_yes_answers', (user_id)->
-        user = Meteor.users.findOne user_id
         Docs.find
             model:'answer_session'
             _author_id: user_id
@@ -218,53 +226,3 @@ if Meteor.isServer
             Docs.find
                 model:'user_stats'
                 user_id:user._id
-
-
-    Meteor.methods
-        recalc_user_stats: (username)->
-            user = Meteor.users.findOne user_id
-            unless user
-                user = Meteor.users.findOne username
-            user_id = user._id
-            # console.log classroom
-            user_stats_doc = Docs.findOne
-                model:'user_stats'
-                user_id: user_id
-
-            unless user_stats_doc
-                new_stats_doc_id = Docs.insert
-                    model:'user_stats'
-                    user_id: user_id
-                user_stats_doc = Docs.findOne new_stats_doc_id
-
-            debits = Docs.find({
-                model:'classroom_event'
-                event_type:'debit'
-                user_id:user_id})
-            debit_count = debits.count()
-            total_debit_amount = 0
-            for debit in debits.fetch()
-                total_debit_amount += debit.amount
-
-            credits = Docs.find({
-                model:'classroom_event'
-                event_type:'credit'
-                user_id:user_id})
-            credit_count = credits.count()
-            total_credit_amount = 0
-            for credit in credits.fetch()
-                total_credit_amount += credit.amount
-
-            user_balance = total_credit_amount-total_debit_amount
-
-            # average_credit_per_user = total_credit_amount/user_count
-            # average_debit_per_user = total_debit_amount/user_count
-
-
-            Docs.update user_stats_doc._id,
-                $set:
-                    credit_count: credit_count
-                    debit_count: debit_count
-                    total_credit_amount: total_credit_amount
-                    total_debit_amount: total_debit_amount
-                    user_balance: user_balance

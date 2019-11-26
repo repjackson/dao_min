@@ -35,7 +35,7 @@ if Meteor.isClient
                 Docs.remove @_id
                 Router.go "/question/#{@question_id}/view"
         'click .select_choice': ->
-            console.log @
+            # console.log @
             Docs.update Router.current().params.doc_id,
                 $set:
                     choice_selection_id: @_id
@@ -68,18 +68,18 @@ if Meteor.isClient
 
     Template.answer_session_edit.helpers
         matching_tags_amount: ->
-            console.log @
+            # console.log @
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             union_set = _.intersection answer_session.tags, question.required_answer_tags
-            console.log union_set
+            # console.log union_set
             union_set.length
         matching_tags_percent: ->
-            console.log @
+            # console.log @
             answer_session = Docs.findOne Router.current().params.doc_id
             question = Docs.findOne answer_session.question_id
             union_set = _.intersection answer_session.tags, question.required_answer_tags
-            console.log union_set
+            # console.log union_set
             result = (union_set.length / question.required_answer_tags.length).toFixed(2)*100
         choice_select_class: ->
             classes = ''

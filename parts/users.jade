@@ -1,0 +1,7 @@
+template(name='users')
+    .ui.padded.stackable.grid
+        .row 
+            .sixteen.wide.column
+                .ui.header users
+                each users 
+                    a.ui.large.button(href="/user/#{_id}") #{username}
