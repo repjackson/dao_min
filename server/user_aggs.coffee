@@ -6,6 +6,8 @@ Meteor.methods
         Meteor.call 'calc_user_disliked_question_cloud', user_id
         Meteor.call 'calc_user_correct_answer_cloud', user_id
         Meteor.call 'calc_user_incorrect_answer_cloud', user_id
+        Meteor.call 'calc_user_yes_answer_cloud', user_id
+        Meteor.call 'calc_user_no_answer_cloud', user_id
 
     calc_user_answered_question_cloud: (user_id)->
         user = Meteor.users.findOne user_id
@@ -53,10 +55,19 @@ Meteor.methods
 
     calc_user_yes_answer_cloud: (user_id)->
         user = Meteor.users.findOne user_id
+        yes_answers = Docs.find({
+            model:'answer_session'
+            boolean_choice: true
+            _author_id: user_id
+            }).fetch()
+        question_ids = []
+        for answer in yes_answers
+            question_ids.push answer._id
+        console.log question_ids
+
         match = {}
-        match.model = 'answer_session'
-        match._author_id = user_id
-        match.boolean_choice = true
+        match.model = 'question'
+        match._id = $in: question_ids
         yes_cloud = Meteor.call 'user_stats_agg', match
         Meteor.users.update user_id,
             $set: yes_cloud:yes_cloud

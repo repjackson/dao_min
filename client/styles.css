@@ -24,10 +24,10 @@ i.green.icon, i.red.icon{
 
 .ui.green.button, .ui.red.button{
     filter: invert(1) !important;
-} */
+}
 
 .button {
-    transition: all .5s !important;
+    transition: all .25s !important;
     font-family: 'Ubuntu', sans-serif !important;
 }
 
@@ -245,7 +245,7 @@ i.green.icon, i.red.icon{
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }
 .global_container{
-    transition: transform .5s; /* Animation */
+    transition: transform .25s; /* Animation */
     /* padding-top: 5em !important; */
     /* box-shadow: 0 2px 2px 2px rgba(50, 50, 100, 0.1) !important; */
 }
@@ -391,7 +391,7 @@ textarea{
 
 
 .button, .selector, .card, body, .item{
-    animation: fadein 1s;
+    animation: fadein .25s;
     /* -webkit-transition: opacity 2s ease-out; */
     /* animation: fadeout 1s; */
 }
@@ -419,11 +419,11 @@ textarea{
 
 
 .segment, .input, .header {
-  animation: fadein .5s;
+  animation: fadein .25s;
 }
 
 .icon.item {
-  animation: fadein .5s;
+  animation: fadein .25s;
 }
 
 @keyframes fadein {

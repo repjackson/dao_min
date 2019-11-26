@@ -1,6 +1,5 @@
 @Docs = new Meteor.Collection 'docs'
 @Tags = new Meteor.Collection 'tags'
-@Subreddits = new Meteor.Collection 'subreddits'
 
 @Question_tags = new Meteor.Collection 'question_tags'
 @Test_tags = new Meteor.Collection 'test_tags'

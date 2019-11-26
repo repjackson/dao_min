@@ -51,7 +51,6 @@ template(name='answer_session_edit')
                 .four.wide.column
                     unless complete
                         .ui.fluid.button.cancel_answer_session
-                            i.ban.icon
                             |cancel
                 .eight.wide.column
                     with question
@@ -122,7 +121,6 @@ template(name='answer_session_edit')
                         if has_answered
                             .ui.big.fluid.button.submit_answer(class=loading_class)
                                 |submit
-                                i.right.chevron.icon
                     if complete 
                         .ui.header complete
                         if is_multiple_choice

@@ -249,7 +249,7 @@ if Meteor.isServer
                             console.log 'true'
                             Docs.update answer_session_id,
                                 $set:
-                                    correct_answer: true
+                                    is_correct_answer: true
                                     complete: true
                             Docs.update question._id,
                                 $addToSet:

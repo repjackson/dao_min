@@ -14,7 +14,7 @@ if Meteor.isClient
 
 
     Template.questions.onRendered ->
-        @autorun => Meteor.subscribe 'model_docs', 'choice'
+        # @autorun => Meteor.subscribe 'model_docs', 'choice'
         @autorun -> Meteor.subscribe('question_facet_docs',
             selected_question_tags.array()
             Session.get('view_answered')
@@ -35,9 +35,19 @@ if Meteor.isClient
             new_question_id = Docs.insert
                 model:'question'
             Router.go "/question/#{new_question_id}/edit"
-        'click .view_answered': -> Session.set('view_answered', !Session.get('view_answered'))
+        'click .view_answered': ->
+            if Session.equals('view_answered',true)
+                Session.set('view_answered', false)
+            else
+                Session.set('view_answered', true)
+                Session.set('view_unanswered', false)
+
         'click .view_unanswered': ->
-            Session.set('view_unanswered', !Session.get('view_unanswered'))
+            if Session.equals('view_unanswered',true)
+                Session.set('view_unanswered', false)
+            else
+                Session.set('view_unanswered', true)
+                Session.set('view_answered', false)
         'click .view_correct': ->
             if Session.equals 'view_correct',true
                 Session.set('view_correct', false)
@@ -85,8 +95,8 @@ if Meteor.isClient
 
     Template.question_segment.onCreated ->
         # console.log @
-        @autorun => Meteor.subscribe('answer_sessions_from_question_id', @data._id)
-        @autorun => Meteor.subscribe('my_answer_from_question_id', @data._id)
+        # @autorun => Meteor.subscribe('answer_sessions_from_question_id', @data._id)
+        # @autorun => Meteor.subscribe('my_answer_from_question_id', @data._id)
 
     Template.question_segment.events
         'click .choose_true': ->
@@ -139,8 +149,8 @@ if Meteor.isClient
         , 1000
     Template.question_edit.onCreated ->
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
-        @autorun => Meteor.subscribe 'model_docs', 'choice'
-        @autorun => Meteor.subscribe 'model_docs', 'dep'
+        @autorun => Meteor.subscribe 'question_docs', Router.current().params.doc_id
+        # @autorun => Meteor.subscribe 'model_docs', 'dep'
     Template.question_edit.events
         'click .add_dep': ->
             new_dep_id = Docs.insert
@@ -189,8 +199,8 @@ if Meteor.isClient
 
 
     Template.question_view.onCreated ->
-        @autorun => Meteor.subscribe 'model_docs', 'bounty'
-        @autorun => Meteor.subscribe 'model_docs', 'choice'
+        # @autorun => Meteor.subscribe 'model_docs', 'bounty'
+        # @autorun => Meteor.subscribe 'model_docs', 'choice'
         @autorun => Meteor.subscribe 'answer_sessions_from_question_id', Router.current().params.doc_id
         @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
     Template.question_view.onRendered ->
@@ -286,6 +296,9 @@ if Meteor.isServer
             question_id:question_id
             _author_id: Meteor.userId()
 
+    Meteor.publish 'question_docs', (question_id)->
+        Docs.find
+            question_id: question_id
 
     Meteor.publish 'answer_sessions_from_question_id', (question_id)->
         Docs.find
@@ -377,8 +390,9 @@ if Meteor.isServer
         #     match.active = true
         if selected_question_tags.length > 0 then match.tags = $all: selected_question_tags
         match.model = 'question'
-        Docs.find match, sort:_timestamp:-1
-
+        Docs.find match,
+            sort:_timestamp:1
+            limit: 5
 
 
 

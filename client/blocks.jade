@@ -3,7 +3,7 @@ template(name='comments')
         |comments
     div
     if currentUser
-        .ui.fluid.icon.big.transparent.input
+        .ui.fluid.icon.input
             i.plus.icon
             input.add_comment(model='text' placeholder='add')
     .ui.comments
@@ -172,7 +172,7 @@ template(name='big_user_card')
 
 
 template(name='user_info')
-    a.ui.compact.button(href="/user/#{user.username}/")
+    a.ui.compact.button(href="/user/#{user._id}/")
         if user.image_id
             img.ui.avatar.inline.image(src="{{c.url user.image_id width=300 height=300 gravity='face' crop='fill'}}")
         else if user.image_id
@@ -262,17 +262,17 @@ template(name='voting_full')
         i.thumbs.down.outline.icon(class=downvote_class)
         //- |dislike
     if points
-        .ui.large.basic.label(title='points') #{points} pts
-        .ui.large.basic.label(title='anon points') #{anon_points} anon pts
+        .ui.basic.label(title='points') #{points} pts
+        .ui.basic.label(title='anon points') #{anon_points} anon pts
     if upvoter_ids
         .ui.small.grey.header 
-            i.thumbs.up.outline.icon
+            //- i.thumbs.up.outline.icon
             |upvoters
         each upvoter_ids
             +user_info
     if downvoter_ids
         .ui.small.grey.header 
-            i.thumbs.up.outline.icon
+            //- i.thumbs.up.outline.icon
             |downvoters
         each downvoter_ids
             +user_info

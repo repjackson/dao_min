@@ -32,18 +32,13 @@ if Meteor.isClient
         @autorun -> Meteor.subscribe 'user_events', Router.current().params.user_id
         @autorun -> Meteor.subscribe 'user_stats', Router.current().params.user_id
     Template.profile_layout.onRendered ->
-        Meteor.setTimeout ->
-            $('.button').popup()
-        , 2000
+        # Meteor.setTimeout ->
+        #     $('.button').popup()
+        # , 2000
 
     Template.profile_layout.helpers
-        route_slug: -> "user_#{@slug}"
         user: ->
             Meteor.users.findOne Router.current().params.user_id
-        user_sections: ->
-            Docs.find {
-                model:'user_section'
-            }, sort:title:1
         ssd: ->
             user = Meteor.users.findOne Router.current().params.user_id
             Docs.findOne
@@ -117,24 +112,21 @@ if Meteor.isClient
 
     Template.profile_layout.events
         'click .profile_image': (e,t)->
-            $(e.currentTarget).closest('.profile_image').transition(
-                animation: 'jiggle'
-                duration: 750
-            )
+            # $(e.currentTarget).closest('.profile_image').transition(
+            #     animation: 'jiggle'
+            #     duration: 750
+            # )
 
-        'click .toggle_size': ->
-            Session.set 'view_side', !Session.get('view_side')
         'click .recalc_user_stats': ->
             Meteor.call 'recalc_user_stats', Router.current().params.user_id
-        'click .set_delta_model': ->
-            Meteor.call 'set_delta_facets', @slug, null, true
-
         'click .logout_other_clients': ->
             Meteor.logoutOtherClients()
 
         'click .logout': ->
+            Session.set 'logging_out', true
             Router.go '/login'
             Meteor.logout()
+            Session.set 'logging_out', false
 
 
 
@@ -142,7 +134,7 @@ if Meteor.isClient
 
 
     Template.user_actions.onCreated ->
-        @autorun -> Meteor.subscribe 'model_docs', 'user_action'
+        # @autorun -> Meteor.subscribe 'model_docs', 'user_action'
     Template.user_actions.helpers
         user_actions: ->
             Docs.find

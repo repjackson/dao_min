@@ -2,7 +2,7 @@ template(name='questions')
     .ui.stackable.padded.grid
         .row
             .six.wide.right.aligned.column
-                +nav
+                //- +nav
                 //- .ui.inline.header 
                 //-     |questions
                 .ui.icon.circular.button.add_question(title='add question')
@@ -16,6 +16,12 @@ template(name='questions')
                     if view_answered_class
                         .ui.button.view_correct(class=view_correct_class) got correct
                         .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
+                    div
+                    .ui.button.view_has_correct_answer(class=view_has_correct_answer_class) has correct answer
+                    |type 
+                    .ui.button.view_all_types(class=view_all_class) all
+                    .ui.button.view_boolean(class=view_boolean_class) yes/no
+                    .ui.button.view_multiple_choice(class=view_multiple_choice_class) multiple choice                    
                 each questions
                     +question_segment
 
@@ -28,7 +34,7 @@ template(name='question_cloud')
             input#search(type='text' placeholder='search')
             //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
     if selected_question_tags
-        #clear_tags.ui.active.icon.button
+        #clear_question_tags.ui.active.icon.button
             i.remove.icon
         each selected_question_tags
             .unselect_question_tag.ui.active.button
@@ -106,18 +112,19 @@ template(name='question_view')
                         |questions
                     .ui.header question view 
                     +image_view key='question_image_id' label='image' direct=true
-                    a.ui.fluid.button(href="/question/#{_id}/edit")
-                        |edit
+                    if can_edit
+                        a.ui.fluid.button(href="/question/#{_id}/edit")
+                            |edit
+                    each tags 
+                        .ui.basic.label #{this}
                     .ui.small.header settings 
                         if has_answer_limit
                             p answer limit #{answer_limit}
-                    +comments
                     +voting_full
                 .six.wide.column
                     .ui.header #{title}
                     if image_id
                         +image_view key='image_id' icon='image' label='image' direct=true
-            
                     if show_before_test
                         .ui.header 
                             |choices
@@ -129,31 +136,34 @@ template(name='question_view')
                         .ui.header my answer
                         with my_answer
                             .ui.small.header #{when} by #{_author_username}
-                    .ui.header stats
-                    .ui.button.calc_stats
-                        |calc stats
+                    .ui.inline.header stats
+                    .ui.icon.circular.small.button.calc_stats
+                        i.refresh.icon
                     .ui.list 
+                        .item #{view_count} views
                         .item #{answer_count} answers
                         if has_correct_answer
                             .item #{incorrect_count} incorrect 
                             .item #{correct_count} correct 
                             .item correct users
                                 each correct_user_ids
-                                    |#{this}
+                                    +user_info this
                             .item incorrect users
                                 each incorrect_user_ids
-                                    |#{this}
+                                    +user_info this
                         if is_multiple_choice    
                             .item #{choice_count} choices
                             each answer_selections 
                                 .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
                         .item upvoting users
                             each upvoter_ids
-                                |#{this}
+                                +user_info this
+                                //- |#{this}
                         .item downvoting users
                             each downvoter_ids
-                                |#{this}
-                    
+                                +user_info this
+                                //- |#{this}
+                    +comments
                 .six.wide.column
                     if can_answer
                         .ui.fluid.button.new_answer_session
@@ -171,11 +181,11 @@ template(name='question_view')
                                             i.checkmark.large.icon(title='correct')
                                         else 
                                             i.remove.large.icon(title='incorrect')
-                                        if is_admin 
-                                            +remove_button
+                            if can_edit
+                                +remove_button
                     .ui.inline.header
                         | bounties
-                    .ui.icon.button.offer_bounty(title='offer bounty')
+                    .ui.icon.circular.button.offer_bounty(title='offer bounty')
                         i.plus.icon
                     each bounties
                         .ui.segment

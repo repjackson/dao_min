@@ -36,6 +36,13 @@ Template.registerHelper 'choices',
         model:'choice'
         question_id:@_id
 
+Template.registerHelper 'can_edit', () ->
+    if Meteor.userId()
+        if Meteor.user().roles and 'admin' in Meteor.user().roles
+            true
+        else if @_author_id is Meteor.userId()
+            true
+            
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]

@@ -2,27 +2,27 @@ Meteor.methods
     clean_tags: ()->
 
 
-    check_subreddit: (sub)->
-        console.log 'checking subreddit', sub
-        existing =
-            Subreddits.findOne(title:sub)
-        if existing
-            console.log 'found sub', existing
-            Meteor.call 'pull_subreddit', sub
-        else
-            console.log 'no existing sub found'
-            HTTP.get("http://reddit.com/r/#{sub}.json", (err,res)=>
-                if err
-                    console.log "no sub found error", sub
-                else
-                    if res.data.dist > 1
-                        Subreddits.insert
-                            title:sub
-                        console.log 'success, added sub to list', sub
-                        Meteor.call 'pull_subreddit', sub
-                    else
-                        console.log 'dist not enough'
-            )
+    # check_subreddit: (sub)->
+    #     console.log 'checking subreddit', sub
+    #     existing =
+    #         Subreddits.findOne(title:sub)
+    #     if existing
+    #         console.log 'found sub', existing
+    #         Meteor.call 'pull_subreddit', sub
+    #     else
+    #         console.log 'no existing sub found'
+    #         HTTP.get("http://reddit.com/r/#{sub}.json", (err,res)=>
+    #             if err
+    #                 console.log "no sub found error", sub
+    #             else
+    #                 if res.data.dist > 1
+    #                     Subreddits.insert
+    #                         title:sub
+    #                     console.log 'success, added sub to list', sub
+    #                     Meteor.call 'pull_subreddit', sub
+    #                 else
+    #                     console.log 'dist not enough'
+    #         )
         # return response.content
 
 
@@ -32,8 +32,8 @@ Meteor.methods
         console.log 'tag doc count', tag_doc_count
         Docs.update({tags:$in:[tag]}, {$pull:tags:tag}, {multi:true})
 
-    remove_subreddit: (subreddit)->
-        Docs.remove({subreddit:subreddit})
+    # remove_subreddit: (subreddit)->
+    #     Docs.remove({subreddit:subreddit})
 
     import_site: (site)->
         existing_doc = Docs.findOne url:site

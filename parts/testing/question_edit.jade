@@ -17,7 +17,7 @@ template(name='question_edit')
                     if has_description
                         +textarea_edit key='description' label='description' icon='content' direct=true
                     +boolean_edit key='has_hint' label='has hint' direct=true
-                    if has_description
+                    if has_hint
                         +textarea_edit key='hint' label='hint' icon='content' direct=true
                     +boolean_edit key='has_image' label='has image' direct=true
                     if has_image
