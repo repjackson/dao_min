@@ -84,8 +84,8 @@ template(name='answer_session_edit')
                         else 
                             +textarea_edit key='essay_answer' label='answer' direct=true
                             +call_watson mode='text' key='essay_answer'
-                            if watson 
-                                +watson_view
+                            //- if watson 
+                            //-     +watson_view
                     else if is_tagging_answer
                         .ui.inline.small.grey.header tags
                         |#{tags.length} your tags
@@ -189,7 +189,7 @@ template(name='answer_session_view')
                     else if is_essay
                         .ui.segment 
                             +textarea_view key='essay_answer' label='answer' direct=true
-                            if watson 
-                                +watson_view
+                            //- if watson 
+                            //-     +watson_view
 
                     +comments

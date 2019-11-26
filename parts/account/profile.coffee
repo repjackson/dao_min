@@ -52,6 +52,8 @@ if Meteor.isClient
         @autorun -> Meteor.subscribe 'user_incorrect_answers', Router.current().params.user_id
         @autorun -> Meteor.subscribe 'user_liked_questions', Router.current().params.user_id
         @autorun -> Meteor.subscribe 'user_disliked_questions', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_no_answers', Router.current().params.user_id
+        @autorun -> Meteor.subscribe 'user_yes_answers', Router.current().params.user_id
 
 
     Template.profile_layout.events
@@ -91,6 +93,18 @@ if Meteor.isClient
             Docs.find {
                 model:'answer_session'
                 is_correct_answer:true
+                _author_id: Router.current().params.user_id
+            }, sort: _timestamp: -1
+        no_answers: ->
+            Docs.find {
+                model:'answer_session'
+                boolean_choice:false
+                _author_id: Router.current().params.user_id
+            }, sort: _timestamp: -1
+        yes_answers: ->
+            Docs.find {
+                model:'answer_session'
+                boolean_choice:true
                 _author_id: Router.current().params.user_id
             }, sort: _timestamp: -1
         liked_questions: ->
@@ -185,6 +199,18 @@ if Meteor.isServer
             model:'answer_session'
             _author_id: user_id
             is_correct_answer: false
+    Meteor.publish 'user_no_answers', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'answer_session'
+            _author_id: user_id
+            boolean_choice: false
+    Meteor.publish 'user_yes_answers', (user_id)->
+        user = Meteor.users.findOne user_id
+        Docs.find
+            model:'answer_session'
+            _author_id: user_id
+            boolean_choice: true
 
     Meteor.publish 'user_stats', (user_id)->
         user = Meteor.users.findOne user_id

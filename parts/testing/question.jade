@@ -16,12 +16,12 @@ template(name='questions')
                     if view_answered_class
                         .ui.button.view_correct(class=view_correct_class) got correct
                         .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
-                    div
-                    .ui.button.view_has_correct_answer(class=view_has_correct_answer_class) has correct answer
-                    |type 
-                    .ui.button.view_all_types(class=view_all_class) all
-                    .ui.button.view_boolean(class=view_boolean_class) yes/no
-                    .ui.button.view_multiple_choice(class=view_multiple_choice_class) multiple choice                    
+                    //- div
+                    //- .ui.button.view_has_correct_answer(class=view_has_correct_answer_class) has correct answer
+                    //- |type 
+                    //- .ui.button.view_all_types(class=view_all_class) all
+                    //- .ui.button.view_boolean(class=view_boolean_class) yes/no
+                    //- .ui.button.view_multiple_choice(class=view_multiple_choice_class) multiple choice                    
                 each questions
                     +question_segment
 
