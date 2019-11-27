@@ -2,10 +2,7 @@ template(name='questions')
     .ui.stackable.padded.grid
         .row
             .eight.wide.right.aligned.column
-                //- +nav
-                //- .ui.inline.header 
-                //-     |questions
-                .ui.icon.circular.button.add_question(title='add question')
+                .ui.icon.button.add_question(title='add question')
                     i.plus.icon
                 +question_cloud
             .eight.wide.column
@@ -13,15 +10,6 @@ template(name='questions')
                     |view 
                     .ui.button.view_answered(class=view_answered_class) answered
                     .ui.button.view_unanswered(class=view_unanswered_class) unanswered
-                    //- if view_answered_class
-                    //-     .ui.button.view_correct(class=view_correct_class) got correct
-                    //-     .ui.button.view_incorrect(class=view_incorrect_class) got incorrect
-                    //- div
-                    //- .ui.button.view_has_correct_answer(class=view_has_correct_answer_class) has correct answer
-                    //- |type 
-                    //- .ui.button.view_all_types(class=view_all_class) all
-                    //- .ui.button.view_boolean(class=view_boolean_class) yes/no
-                    //- .ui.button.view_multiple_choice(class=view_multiple_choice_class) multiple choice                    
                 .scrolling    
                     each questions
                         +question_segment
@@ -38,23 +26,24 @@ template(name='question_cloud')
         #clear_tags.ui.active.icon.button
             i.remove.icon
         each selected_tags
-            .unselect_question_tag.ui.active.button
+            .unselect_tag.ui.active.button
                 strong #{this}
     each all_tags
-        .ui.compact.button.select_question_tag(class=cloud_tag_class) 
+        .ui.compact.button.select_tag(class=cloud_tag_class) 
             strong #{this.name}
 
 
 
 template(name='question_segment')
     //- .ui.card    
-    .ui.segment
+    .ui.basic.segment
         .content
             a.ui.header(href="/question/#{_id}/view") #{title}
             div
             //- each tags
             //-     .ui.basic.label #{this}
             div
+            //- +remove_button
             +voting_full
             //- if my_answer
             //-     //- .ui.header your answer
@@ -82,125 +71,59 @@ template(name='question_view')
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column
-                    //- a.ui.fluid.button(href="/questions")
-                    //-     |questions
-                    //- .ui.header question view 
-                    //- +image_view key='question_image_id' label='image' direct=true
                     .ui.large.header #{title}
                     if can_edit
                         a.ui.icon.circular.button(href="/question/#{_id}/edit")
                             i.pencil.icon
+                        +remove_button
                     each tags 
                         .ui.basic.label #{this}
-                    //- .ui.small.header settings 
-                    //-     if has_answer_limit
-                    //-         p answer limit #{answer_limit}
-                    //- +voting_full
                     +voting_full
-                    //- if image_id
-                    //-     +image_view key='image_id' icon='image' label='image' direct=true
-                    //- if show_before_test
-                    //-     .ui.header 
-                    //-         |choices
-                    //-     each choices
-                    //-         .ui.segment(class=answer_segment_class)
-                    //-             .ui.header 
-                    //-                 |!{content}
-                    //- if my_answer
-                    //-     .ui.header my answer
-                    //-     with my_answer
-                    //-         .ui.small.header #{when} by #{_author_username}
-                    //- 
-                    //- .ui.inline.header stats
-                    //- 
-                    //- .ui.icon.circular.small.button.calc_stats
-                    //-     i.refresh.icon
-                    //- .ui.list 
-                    //- 
-                    //-     .item #{view_count} views
-                    //-     .item #{answer_count} answers
-                    //-     if has_correct_answer
-                    //-         .item #{incorrect_count} incorrect 
-                    //-         .item #{correct_count} correct 
-                    //-         .item correct users
-                    //-             each correct_user_ids
-                    //-                 +user_info this
-                    //-         .item incorrect users
-                    //-             each incorrect_user_ids
-                    //-                 +user_info this
-                    //-     if is_multiple_choice    
-                    //-         .item #{choice_count} choices
-                    //-         each answer_selections 
-                    //-             .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                        //- .item upvoting users
-                        //-     each upvoter_ids
-                        //-         +user_info this
-                        //-         //- |#{this}
-                        //- .item downvoting users
-                        //-     each downvoter_ids
-                        //-         +user_info this
-                        //-         //- |#{this}
-                    //- +comments
-                    //- if can_answer
-                    //-     .ui.fluid.button.new_answer_session
-                    //-         |answer
-                    .ui.header
-                        |all answers
-                    .ui.link.list
-                        each answer_sessions
-                            a.item(href="/answer_session/#{_id}/view")
-                                .content 
-                                    .header #{number_answer} #{text_answer} #{choice_selection_content} #{boolean_choice}
-                                    .description
-                                        |#{when} by #{_author_username}
-                                        if is_correct_answer
-                                            i.checkmark.large.icon(title='correct')
-                                        else 
-                                            i.remove.large.icon(title='incorrect')
-                            if can_edit
-                                +remove_button
-                    //- .ui.inline.header
-                    //-     | bounties
-                    //- .ui.icon.circular.button.offer_bounty(title='offer bounty')
-                    //-     i.plus.icon
-                    //- each bounties
-                    //-     .ui.segment
-                    //-         a.ui.header(href="/bounty/#{_id}/view")
-                    //-             |#{when}
-                    //-         div
-                    //-         +number_view key='total_amount' label='total amount' direct=true
-                    //-         div
-                    //-         +number_view key='amount_per_answer' label='amount per answer' direct=true
-                    //-     if can_accept 
-                    //-         .ui.green.button.accept accept
+            .centered.row
+                .ten.wide.column            
+                    .ui.header stats
+                    .ui.icon.circular.small.button.calc_stats
+                        i.refresh.icon
+                    .ui.list 
+                        .item #{view_count} views
+                        .item #{vote_count} votes
+                        .item upvoters
+                            each upvoter_ids
+                                +user_info this
+                        .item downvoters
+                            each downvoter_ids
+                                +user_info this
 
-template(name='question_stats')
-    //- .ui.accordion
-    //-     .title
-    .ui.header.refresh_question_stats
-        i.line.chart.icon
-        |stats
-    //- i.dropdown.icon
-    //- .content
-    .ui.big.list
-        .item #{views} views
-        .item #{reservation_count} reservations
-        .item #{total_earnings}c/#{total_question_hours}hrs total
-        .item #{average_question_cost}c / #{average_question_duration}hrs avg question
-        //- .item question ranking # reservations
-        //- .item question ranking $ earned
-        //- .item # different renters
-        //- .item avg daily earnings
-        //- .item avg weekly earnings
-        //- .item avg monthly earnings
-        //- .item biggest renter
-        //- .item predicted payback duration 
-        //- .item predicted payback date 
+template(name='question_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .ten.wide.center.aligned.column 
+                    .ui.header 
+                        | edit '#{title}'
+                    a.ui.big.icon.circular.button(href="/question/#{_id}/view" title='save')
+                        //- |save
+                        i.large.checkmark.icon
+                    +remove_button
+            .centered.row
+                .ten.wide.column 
+                    .ui.inline.grey.header question
+                    .ui.fluid.big.input
+                        input.edit_title(type='text' value=title autocomplete="off")
+                    .ui.hidden.divider
+                    .ui.inline.grey.header tags
+                    div
+                    .ui.icon.input
+                        i.plus.icon
+                        input.new_tag(type='text' autocomplete="off")
+                    each tags
+                        .ui.large.basic.label
+                            i.delete.icon.remove_element
+                            |#{this}
+                
 
-    //-     //- .ui.header res slot exists
-    //-     +reservation_slot_template
-    //- else
-    //-     if is_product_author
-    //-         .ui.button.new_slot
-    //-             |new slot
-        
+
+
+template(name='remove_button')
+    .ui.icon.circular.button.remove
+        i.remove.icon

@@ -49,12 +49,6 @@ if Meteor.isClient
             Docs.findOne
                 model:'user_stats'
                 user_id:user._id
-
-        user_classrooms: ->
-            user = Meteor.users.findOne Router.current().params.user_id
-            Docs.find
-                model:'classroom'
-                user_ids: $in: [user._id]
         answered_questions: ->
             Docs.find {
                 model:'question'

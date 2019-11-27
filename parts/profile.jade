@@ -8,11 +8,10 @@ template(name='profile_layout')
                     //- .ui.center.aligned.basic.segment
                         //- a(href="/user/#{user._id}")
                     .ui.center.aligned.inline.header.recalc_stats
-                        |#{current_user.name}'s dashboard
+                        |#{current_user.username}'s dashboard
             
                     .ui.center.aligned.inline.header
                         | #{user.first_name} #{user.last_name}
-                    .ui.small.inline.header @#{user.username}        
                     //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
                     //-     //- i.globe.icon
                     //-     |log out other clients

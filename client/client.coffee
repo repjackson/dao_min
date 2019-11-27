@@ -82,9 +82,6 @@ Template.registerHelper 'current_doc', ->
 
 
 
-Template.registerHelper 'question', () ->
-    Docs.findOne @question_id
-
 Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->
     if Meteor.user() and Meteor.user().roles
@@ -109,10 +106,10 @@ Template.registerHelper 'publish_when', () -> moment(@publish_date).fromNow()
 
 Template.voting_full.events
     'click .upvote': (e,t)->
-        $(e.currentTarget).closest('.button').transition('pulse',200)
+        # $(e.currentTarget).closest('.button').transition('pulse',200)
         Meteor.call 'upvote', @
     'click .downvote': (e,t)->
-        $(e.currentTarget).closest('.button').transition('pulse',200)
+        # $(e.currentTarget).closest('.button').transition('pulse',200)
         Meteor.call 'downvote', @
 Template.voting_full.helpers
     upvote_class: ->

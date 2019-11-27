@@ -87,8 +87,8 @@ if Meteor.isClient
     Template.question_cloud.events
         'click .unselect_target': -> Session.set('selected_target_id',null)
         'click .select_target': -> Session.set('selected_target_id',@_id)
-        'click .select_question_tag': -> selected_tags.push @name
-        'click .unselect_question_tag': -> selected_tags.remove @valueOf()
+        'click .select_tag': -> selected_tags.push @name
+        'click .unselect_tag': -> selected_tags.remove @valueOf()
         'click #clear_tags': -> selected_tags.clear()
 
 
@@ -112,6 +112,33 @@ if Meteor.isClient
         @autorun => Meteor.subscribe 'question_docs', Router.current().params.doc_id
         # @autorun => Meteor.subscribe 'model_docs', 'dep'
     Template.question_edit.events
+        'blur .edit_title': (e,t)->
+            val = t.$('.edit_title').val().trim().toLowerCase()
+            Docs.update Router.current().params.doc_id,
+                $set:title:val
+        'keyup .edit_title': (e,t)->
+            if e.which is 13
+                val = t.$('.edit_title').val().trim().toLowerCase()
+                Docs.update Router.current().params.doc_id,
+                    $set:title:val
+
+
+
+        'keyup .new_tag': (e,t)->
+            if e.which is 13
+                tag_val = t.$('.new_tag').val().trim().toLowerCase()
+                Docs.update Router.current().params.doc_id,
+                    $addToSet:"tags":tag_val
+                t.$('.new_tag').val('')
+
+        'click .remove_element': (e,t)->
+            element = @valueOf()
+            doc = Docs.findOne parent._id
+            Docs.update Router.current().params.doc_id,
+                $pull:tags:element
+
+            t.$('.new_tag').focus()
+            t.$('.new_tag').val(element)
 
     Template.question_edit.helpers
 
@@ -134,9 +161,10 @@ if Meteor.isClient
             Meteor.call 'calc_question_stats', Router.current().params.doc_id
 
 
-    Template.question_stats.events
-        'click .refresh_question_stats': ->
-            Meteor.call 'refresh_question_stats', @_id
+    Template.remove_button.events
+        'click .remove': ->
+            if confirm 'delete?'
+                Docs.remove @_id
 
 
 
