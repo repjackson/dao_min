@@ -48,3 +48,43 @@ template(name='not_found')
 
 template(name='tag_result')
     .ui.small.header #{name}
+
+
+
+template(name='user_info')
+    a.ui.compact.button(href="/user/#{user._id}/")
+        if user.image_id
+            img.ui.avatar.inline.image(src="{{c.url user.image_id width=300 height=300 gravity='face' crop='fill'}}")
+        //- .visible.content
+        |@#{user.username}
+        //- .hidden.content
+        //-     |view
+        //-     i.right.chevron.icon
+
+
+
+template(name='voting_full')
+    div
+    //- .ui.inline.header 
+    //-     |voting
+    .ui.big.icon.circular.button.upvote(title='upvote')
+        i.thumbs.up.large.icon(class=upvote_class)
+        //- |like
+    .ui.big.icon.circular.button.downvote(title='downvote')
+        i.thumbs.down.large.icon(class=downvote_class)
+        //- |dislike
+    //- if points
+    //-     .ui.basic.label(title='points') #{points} pts
+    //-     .ui.basic.label(title='anon points') #{anon_points} anon pts
+    //- if upvoter_ids
+    //-     .ui.small.grey.inline.header 
+    //-         //- i.thumbs.up.outline.icon
+    //-         |upvoters
+    //-     each upvoter_ids
+    //-         +user_info
+    //- if downvoter_ids
+    //-     .ui.small.grey.inline.header 
+    //-         //- i.thumbs.up.outline.icon
+    //-         |downvoters
+    //-     each downvoter_ids
+    //-         +user_info

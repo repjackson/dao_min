@@ -19,8 +19,8 @@ if Meteor.isClient
             selected_question_tags.array()
             Session.get('view_answered')
             Session.get('view_unanswered')
-            Session.get('view_correct')
-            Session.get('view_incorrect')
+            Session.get('view_up')
+            Session.get('view_down')
         )
     Template.questions.helpers
         questions: ->
@@ -28,16 +28,12 @@ if Meteor.isClient
                 model:'question'
         view_answered_class: -> if Session.equals('view_answered',true) then 'active' else ''
         view_unanswered_class: -> if Session.equals('view_unanswered',true) then 'active' else ''
-        view_correct_class: -> if Session.equals('view_correct',true) then 'active' else ''
-        view_incorrect_class: -> if Session.equals('view_incorrect',true) then 'active' else ''
+        view_up_class: -> if Session.equals('view_up',true) then 'active' else ''
+        view_down_class: -> if Session.equals('view_down',true) then 'active' else ''
     Template.questions.events
         'click .add_question': ->
             new_question_id = Docs.insert
                 model:'question'
-                has_answer_limit: true
-                answer_limit: 1
-                question_type: 'boolean'
-                boolean_type: 'yes_no'
             Router.go "/question/#{new_question_id}/edit"
         'click .view_answered': ->
             if Session.equals('view_answered',true)
@@ -51,28 +47,28 @@ if Meteor.isClient
             else
                 Session.set('view_unanswered', true)
                 Session.set('view_answered', false)
-        'click .view_correct': ->
-            if Session.equals 'view_correct',true
-                Session.set('view_correct', false)
+        'click .view_up': ->
+            if Session.equals 'view_up',true
+                Session.set('view_up', false)
             else
                 Session.set('view_answered', true)
                 Session.set('view_unanswered', false)
-                Session.set('view_correct', true)
-        'click .view_incorrect': ->
-            if Session.equals 'view_incorrect',true
-                Session.set('view_incorrect', false)
+                Session.set('view_up', true)
+        'click .view_down': ->
+            if Session.equals 'view_down',true
+                Session.set('view_down', false)
             else
                 Session.set('view_answered', true)
                 Session.set('view_unanswered', false)
-                Session.set('view_incorrect', true)
+                Session.set('view_down', true)
 
     Template.question_cloud.onCreated ->
         @autorun -> Meteor.subscribe('question_tags',
             selected_question_tags.array()
             Session.get('view_answered')
             Session.get('view_unanswered')
-            Session.get('view_correct')
-            Session.get('view_incorrect')
+            Session.get('view_up')
+            Session.get('view_down')
         )
 
         # @autorun -> Meteor.subscribe('model_docs', 'target')

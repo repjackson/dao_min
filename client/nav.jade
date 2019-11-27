@@ -2,70 +2,20 @@ template(name='nav')
     .ui.grid
         .row
             .center.aligned.sixteen.wide.column
-                //- a.ui.button(href='/' class="{{isActivePath '/'}}" class=facet_tags) 
-                //-     |search
-                //-     //- i.yin.yang.large.icon
-                a.ui.icon.circular.large.button(href='/questions')
-                    //- |questions
-                    //- |dao
+                a.ui.icon.large.button(href='/')
                     i.yin.yang.icon
-                a.ui.icon.circular.large.button(href='/users')
+                a.ui.icon.large.button(href='/users')
                     i.users.icon
                 unless currentUser
-                    a.ui.circular.button(href='/login') 
+                    a.ui.button(href='/login') 
                         | login
-                    a.ui.circular.button(href='/register')
+                    a.ui.button(href='/register')
                         | register
                 if currentUser
-                    //- a.icon.large.ui.button(href='/chat' title='chat')
-                    //-     i.chat.outline.grey.large.icon
-                    //- a.icon.large.ui.button(href='/m/event' title='events')
-                    //-     i.calendar.outline.grey.large.icon
-                    //- a.icon.large.ui.button(href='/m/task' title='tasks')
-                    //-     i.tasks.grey.large.icon
-                    //- a.icon.large.ui.button(href='/mail' title='mail')
-                    //-     i.envelope.outline.grey.large.icon
-                    //- a.ui.simple.dropdown.ui.button(href='/alerts')
-                    //-     if unread_alert_count
-                    //-         i.bell.yellow.icon
-                    //-     else 
-                    //-         i.bell.grey.outline.large.icon
-                    //-     .menu 
-                    //-         if unread_alert_count
-                    //-             .ui.button alert
-                    //-             .ui.button alert
-                    //-             .ui.button alert
-                    //-             .ui.button alert
-                    //-         else
-                    //-             .ui.button no alerts
-                    //- if is_admin
-                    //-     //- a.icon.ui.button(href="/grid")
-                    //-     //-     i.grey.th.large.icon
-                    //-     a.icon.ui.button(href="/grid" title='admin')
-                    //-         i.grey.shield.large.icon
                     unless logging_out
-                        a.ui.large.circular.button(href="/user/#{currentUser._id}")
+                        a.ui.large.button(href="/user/#{currentUser._id}")
                             //- i.user.outline.icon
                             span #{currentUser.name} 
-                        //- a.ui.dropdown.ui.button(href="/user/#{currentUser._id}" class=user_nav_button_class)
-                        //-     if currentUser.profile_image_id
-                        //-         img.ui.avatar.inline.image(src="{{c.url currentUser.profile_image_id width=100 height=100 gravity='face' crop='fill'}}")
-                        //-     else
-                        //-         i.user.outline.icon
-                        //-     span.mobile.hidden #{currentUser.name} 
-                        //-     //- #{currentUser.credit}
-                        //-     .menu 
-                        //-         a.item(href="/user/#{currentUser._id}") profile
-                        //-         //- .item credits
-                        //-         //- .item debits
-                        //-         //- .item tasks
-                        //-         //- .item messages
-                        //-         //- .item alerts
-                        //-         //- .item settings
-                        //-         //- .item dark mode
-                        //-         a#logout.ui.button(href='#')
-                        //-             | leave
-                        //-             i.sign.out.grey.icon
                     if logging_out
                         .ui.button
                             i.loading.circle.notch.icon

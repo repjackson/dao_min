@@ -1,56 +1,15 @@
-template(name='user_authored')
-    .ui.header user authored
-template(name='user_answered')
-    .ui.header user answered
-    
-    
-    
-    
-template(name='user_correct')
-    .ui.center.aligned.header user correct
+template(name='user_down')
+    .ui.center.aligned.header user down
     .ui.stackable.grid 
         .three.column.row
             .column
-                .ui.header #{current_user.correct_count} correct answers 
-                each current_user.correct_cloud
-                    .ui.label #{name}
-                        //- small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each correct_answers
-                            a.item(href="/answer_session/#{_id}/view") 
-                                .content 
-                                    .header #{question.title}
-                                    .meta 
-                                        small #{when}
-            .column
-                .ui.header your overlap
-                .ui.button.calc_correct_overlap calc
-                .ui.header #{union_doc.correct_points} correct points
-                each union_doc.correct_list
-                    .ui.label #{this}
-                each union_doc.correct_cloud
-                    .ui.label #{name} #{count}
-            .column
-                .ui.header your correct
-                .ui.header #{currentUser.correct_count} correct answers 
-                each currentUser.correct_cloud
-                    .ui.label #{name}
-                .ui.header most matched users
-
-
-template(name='user_incorrect')
-    .ui.center.aligned.header user incorrect
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{current_user.incorrect_count} incorrect answers 
-                each current_user.incorrect_cloud
+                .ui.header #{current_user.down_count} down answers 
+                each current_user.down_cloud
                     .ui.label #{name}
                         small #{count}    
                 .scrolling
                     .ui.link.list
-                        each incorrect_answers
+                        each down_answers
                             a.item(href="/answer_session/#{_id}/view") 
                                 .content 
                                     .header #{question.title}
@@ -58,69 +17,34 @@ template(name='user_incorrect')
                                         small #{when}
             .column
                 .ui.header your overlap
-                .ui.button.calc_incorrect_overlap calc
-                .ui.header #{union_doc.incorrect_points} incorrect points
-                each union_doc.incorrect_list
-                    .ui.label #{this}
-                each union_doc.incorrect_cloud
-                    .ui.label #{name} 
-                        small #{count}
-            .column
-                .ui.header your incorrect
-                .ui.header #{currentUser.incorrect_count} incorrect answers 
-                each currentUser.incorrect_cloud
-                    .ui.label #{name}
-                        small #{count}
-                .ui.header most matched users
-                
-                
-template(name='user_yes')
-    .ui.center.aligned.header user yes
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{current_user.yes_count} yes answers 
-                each current_user.yes_cloud
-                    .ui.label #{name}
-                        small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each yes_answers
-                            a.item(href="/answer_session/#{_id}/view") 
-                                .content 
-                                    .header #{question.title}
-                                    .meta 
-                                        small #{when}
-            .column
-                .ui.header your overlap
-                .ui.button.calc_yes_overlap calc
-                .ui.header #{union_doc.yes_points} yes points
-                //- each union_doc.yes_list
+                .ui.button.calc_down_overlap calc
+                .ui.header #{union_doc.down_points} down points
+                //- each union_doc.down_list
                 //-     .ui.label #{this}
-                each union_doc.yes_cloud
+                each union_doc.down_cloud
                     .ui.label #{name} 
                         small #{count}
             .column
-                .ui.header your yes
-                .ui.header #{currentUser.yes_count} yes answers 
-                each currentUser.yes_cloud
+                .ui.header your down
+                .ui.header #{currentUser.down_count} down answers 
+                each currentUser.down_cloud
                     .ui.label #{name}
                         small #{count}
                 .ui.header most matched users
                 
                 
-template(name='user_no')
-    .ui.center.aligned.header user no
+template(name='user_up')
+    .ui.center.aligned.header user up
     .ui.stackable.grid 
         .three.column.row
             .column
-                .ui.header #{current_user.no_count} no answers 
-                each current_user.no_cloud
+                .ui.header #{current_user.up_count} up answers 
+                each current_user.up_cloud
                     .ui.label #{name}
                         small #{count}    
                 .scrolling
                     .ui.link.list
-                        each no_answers
+                        each up_answers
                             a.item(href="/answer_session/#{_id}/view") 
                                 .content 
                                     .header #{question.title}
@@ -128,88 +52,17 @@ template(name='user_no')
                                         small #{when}
             .column
                 .ui.header your overlap
-                .ui.button.calc_no_overlap calc
-                .ui.header #{union_doc.no_points} no points
-                //- each union_doc.no_list
+                .ui.button.calc_up_overlap calc
+                .ui.header #{union_doc.up_points} up points
+                //- each union_doc.up_list
                 //-     .ui.label #{this}
-                each union_doc.no_cloud
+                each union_doc.up_cloud
                     .ui.label #{name} 
                         small #{count}
             .column
-                .ui.header your no
-                .ui.header #{currentUser.no_count} no answers 
-                each currentUser.no_cloud
-                    .ui.label #{name}
-                        small #{count}
-                .ui.header most matched users
-
-
-
-template(name='user_disliked')
-    .ui.center.aligned.header user disliked
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{current_user.disliked_count} disliked answers 
-                each current_user.disliked_cloud
-                    .ui.label #{name}
-                        small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each disliked_answers
-                            a.item(href="/answer_session/#{_id}/view") 
-                                .content 
-                                    .header #{question.title}
-                                    .meta 
-                                        small #{when}
-            .column
-                .ui.header your overlap
-                .ui.button.calc_disliked_overlap calc
-                .ui.header #{union_doc.disliked_points} disliked points
-                //- each union_doc.disliked_list
-                //-     .ui.label #{this}
-                each union_doc.disliked_cloud
-                    .ui.label #{name} 
-                        small #{count}
-            .column
-                .ui.header your disliked
-                .ui.header #{currentUser.disliked_count} disliked answers 
-                each currentUser.disliked_cloud
-                    .ui.label #{name}
-                        small #{count}
-                .ui.header most matched users
-                
-                
-template(name='user_liked')
-    .ui.center.aligned.header user liked
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{current_user.liked_count} liked answers 
-                each current_user.liked_cloud
-                    .ui.label #{name}
-                        small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each liked_answers
-                            a.item(href="/answer_session/#{_id}/view") 
-                                .content 
-                                    .header #{question.title}
-                                    .meta 
-                                        small #{when}
-            .column
-                .ui.header your overlap
-                .ui.button.calc_liked_overlap calc
-                .ui.header #{union_doc.liked_points} liked points
-                //- each union_doc.liked_list
-                //-     .ui.label #{this}
-                each union_doc.liked_cloud
-                    .ui.label #{name} 
-                        small #{count}
-            .column
-                .ui.header your liked
-                .ui.header #{currentUser.liked_count} liked answers 
-                each currentUser.liked_cloud
+                .ui.header your up
+                .ui.header #{currentUser.up_count} up answers 
+                each currentUser.up_cloud
                     .ui.label #{name}
                         small #{count}
                 .ui.header most matched users

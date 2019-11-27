@@ -1,13 +1,8 @@
 @selected_tags = new ReactiveArray []
-@selected_shop_tags = new ReactiveArray []
-@selected_bug_tags = new ReactiveArray []
-@selected_task_tags = new ReactiveArray []
 @selected_question_tags = new ReactiveArray []
 
 
 
-Template.registerHelper 'first_letter', (user) ->
-    @first_name[..0]+'.'
 Template.registerHelper 'facet_tags', () ->
     if Session.get('loading', true) then 'disabled' else ''
 Template.registerHelper 'first_initial', (user) ->
@@ -31,10 +26,6 @@ Template.registerHelper 'loading_class', () ->
     else
         ''
 
-Template.registerHelper 'choices',
-    Docs.find
-        model:'choice'
-        question_id:@_id
 
 Template.registerHelper 'can_edit', () ->
     if Meteor.userId()
@@ -42,7 +33,7 @@ Template.registerHelper 'can_edit', () ->
             true
         else if @_author_id is Meteor.userId()
             true
-            
+
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'ten_tags', () -> @tags[..10]
 Template.registerHelper 'five_tags', () -> @tags[..4]
@@ -90,29 +81,10 @@ Template.registerHelper 'current_doc', ->
 
 
 
-Template.home.events
-    'click .import_subreddit': ->
-        subreddit = $('.subreddit').val()
-        Meteor.call 'pull_subreddit', subreddit
-    'keyup .subreddit': (e,t)->
-        if e.which is 13
-            subreddit = $('.subreddit').val()
-            Meteor.call 'pull_subreddit', subreddit
-    'click .import_site': ->
-        site = $('.site').val()
-        Meteor.call 'import_site', site
-    'click .toggle_dev': ->
-        Session.set('dev',!Session.get('dev'))
-    'click .delete_doc': ->
-        Docs.remove @_id
 
 # Stripe.setPublishableKey Meteor.settings.public.stripe_publishable
 
 
-Template.registerHelper 'current_model', (input) ->
-    Docs.findOne
-        model:'model'
-        slug: Router.current().params.model_slug
 
 Template.registerHelper 'question', () ->
     Docs.findOne @question_id
@@ -127,17 +99,8 @@ Template.registerHelper 'is_admin', () ->
 Template.registerHelper 'when', () -> moment(@_timestamp).fromNow()
 Template.registerHelper 'from_now', (input) -> moment(input).fromNow()
 Template.registerHelper 'cal_time', (input) -> moment(input).calendar()
-Template.registerHelper 'current_delta', () -> Docs.findOne model:'delta'
 Template.registerHelper 'author', () -> Meteor.users.findOne @_author_id
-Template.registerHelper 'decode', (input)->
-    doc = new DOMParser().parseFromString(input, "text/html");
-    doc.documentElement.textContent;
 
-Template.registerHelper 'decoded_html', (input)->
-    # console.log @
-    # console.log @html
-    doc = new DOMParser().parseFromString(@html, "text/html");
-    doc.documentElement.textContent;
 
 Template.registerHelper 'nl2br', (text)->
     nl2br = (text + '').replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1' + '<br>' + '$2')
@@ -146,97 +109,26 @@ Template.registerHelper 'nl2br', (text)->
 Template.registerHelper 'in_dev', -> Meteor.isDevelopment
 
 Template.registerHelper 'publish_when', () -> moment(@publish_date).fromNow()
-Template.registerHelper 'calculated_size', (metric) ->
-    # console.log metric
-    # console.log typeof parseFloat(@relevance)
-    # console.log typeof (@relevance*100).toFixed()
-    whole = parseInt(@["#{metric}"]*10)
-    # console.log whole
 
-    if whole is 2 then 'f2'
-    else if whole is 3 then 'f3'
-    else if whole is 4 then 'f4'
-    else if whole is 5 then 'f5'
-    else if whole is 6 then 'f6'
-    else if whole is 7 then 'f7'
-    else if whole is 8 then 'f8'
-    else if whole is 9 then 'f9'
-    else if whole is 10 then 'f10'
-Template.registerHelper 'fields', () ->
-    model = Docs.findOne
-        model:'model'
-        slug:Router.current().params.model_slug
-    if model
-        match = {}
-        # if Meteor.user()
-        #     match.view_roles = $in:Meteor.user().roles
-        match.model = 'field'
-        match.parent_id = model._id
-        # console.log model
-        cur = Docs.find match,
-            sort:rank:1
-        # console.log cur.fetch()
-        cur
 
-Template.registerHelper 'edit_fields', () ->
-    model = Docs.findOne
-        model:'model'
-        slug:Router.current().params.model_slug
-    if model
-        Docs.find {
-            model:'field'
-            parent_id:model._id
-            edit_roles:$in:Meteor.user().roles
-        }, sort:rank:1
-
-Template.registerHelper 'sortable_fields', () ->
-    model = Docs.findOne
-        model:'model'
-        slug:Router.current().params.model_slug
-    if model
-        Docs.find {
-            model:'field'
-            parent_id:model._id
-            sortable:true
-        }, sort:rank:1
+Template.voting_full.events
+    'click .upvote': (e,t)->
+        $(e.currentTarget).closest('.button').transition('pulse',200)
+        Meteor.call 'upvote', @
+    'click .downvote': (e,t)->
+        $(e.currentTarget).closest('.button').transition('pulse',200)
+        Meteor.call 'downvote', @
+Template.voting_full.helpers
+    upvote_class: ->
+        # console.log @
+        if Meteor.userId() in @upvoter_ids then 'green' else 'outline'
+    downvote_class: ->
+        # console.log @
+        if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
 
 
 
-Template.registerHelper 'page_doc', ->
-    doc = Docs.findOne Router.current().params.doc_id
-    if doc then doc
-
-Template.registerHelper 'field_value', () ->
-    # console.log @
-    parent = Template.parentData()
-    parent5 = Template.parentData(5)
-    parent6 = Template.parentData(6)
-
-
-    if @direct
-        parent = Template.parentData()
-    else if parent5
-        if parent5._id
-            parent = Template.parentData(5)
-    else if parent6
-        if parent6._id
-            parent = Template.parentData(6)
-    if parent
-        parent["#{@key}"]
-
-
-Template.registerHelper 'sorted_field_values', () ->
-    # console.log @
-    parent = Template.parentData()
-    parent5 = Template.parentData(5)
-    parent6 = Template.parentData(6)
-
-
-    if @direct
-        parent = Template.parentData()
-    else if parent5._id
-        parent = Template.parentData(5)
-    else if parent6._id
-        parent = Template.parentData(6)
-    if parent
-        _.sortBy parent["#{@key}"], 'number'
+Template.user_info.onCreated ->
+    @autorun => Meteor.subscribe 'user_from_id', @data
+Template.user_info.helpers
+    user: -> Meteor.users.findOne @valueOf()

@@ -59,46 +59,18 @@ template(name='question_segment')
             //-     .ui.basic.label #{this}
             div
             +voting_full
-            //- if is_boolean_answer
-            //-     if my_answer 
-            //-         |you answered #{my_answer.boolean_choice}
-            //-     else 
-            //-         .ui.button.choose_true yes
-            //-         .ui.button.choose_false no
-            //- if show_before_test
-            //-     //- .ui.header 
-            //-     //-     |choices
-            //-     .ui.large.bulleted.list
-            //-         each choices
-            //-             .item
-            //-                 |!{content}
-            if my_answer
-                //- .ui.header your answer
-                with my_answer
-                    .ui.small.header #{choice_content }#{when} by #{_author_username}
-            //- .ui.list 
-            //-     .item #{answer_count} answers
-            //-         if question.has_correct_answer
-            //-             .item #{incorrect_count} incorrect 
-            //-             .item #{correct_count} correct 
-            //-             .item correct users
-            //-                 each correct_user_ids
-            //-                     |#{this}
-            //-             .item incorrect users
-            //-                 each incorrect_user_ids
-            //-                     |#{this}
-            //-     if is_multiple_choice    
-            //-         //- .item #{choice_count} choices
-            //-         each answer_selections 
-            //-             .item #{choice_content}: #{choice_selection_count} (#{choice_percent}%)
-                //- if upvoter_ids
-                //-     i.grey.thumbs.up.outline.icon(title='upvoters')
-                //-     each upvoter_ids
-                //-         +user_info this
-                //- if downvoter_ids
-                //-     i.grey.thumbs.down.outline.icon(title='downvoters')
-                //-     each downvoter_ids
-                //-         +user_info this
+            //- if my_answer
+            //-     //- .ui.header your answer
+            //-     with my_answer
+            //-         .ui.small.header #{choice_content }#{when} by #{_author_username}
+            //- if upvoter_ids
+            //-     i.grey.thumbs.up.outline.icon(title='upvoters')
+            //-     each upvoter_ids
+            //-         +user_info this
+            //- if downvoter_ids
+            //-     i.grey.thumbs.down.outline.icon(title='downvoters')
+            //-     each downvoter_ids
+            //-         +user_info this
             //- if points 
             //-     .ui.circular.label #{points}
             //-     | (#{upvotes} / #{downvotes})

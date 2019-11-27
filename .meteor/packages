@@ -24,7 +24,6 @@ shell-server@0.4.0
 accounts-base@1.4.5
 momentjs:moment
 matb33:collection-hooks
-mizzao:autocomplete
 mquandalle:jade
 underscore@1.0.10
 reactive-var@1.0.11
@@ -32,11 +31,6 @@ lepozepo:cloudinary
 coffeescript
 froala:editor-reactive@=2.4.2
 ecmascript@0.13.0
-percolate:synced-cron
 modules@0.14.0
 http@1.4.2
 session@1.2.0
-flowkey:hotkeys
-zimme:active-route
-reywood:publish-composite
-yasinuslu:json-view
