@@ -2,7 +2,7 @@ if Meteor.isClient
     Router.route '/user/:user_id', (->
         @layout 'profile_layout'
         @render 'user_dashboard'
-        ), name:'profile_layout'
+        ), name:'user_dashboard'
     Router.route '/user/:user_id/up', (->
         @layout 'profile_layout'
         @render 'user_up'
@@ -11,17 +11,10 @@ if Meteor.isClient
         @layout 'profile_layout'
         @render 'user_down'
         ), name:'user_down'
-    Router.route '/user/:user_id/dashboard', (->
-        @layout 'profile_layout'
-        @render 'user_dashboard'
-        ), name:'user_dashboard'
 
 
-    Template.profile_layout.onCreated ->
-        # @autorun -> Meteor.subscribe 'model_docs', 'classroom'
     Template.profile_layout.onCreated ->
         @autorun -> Meteor.subscribe 'user_from_id', Router.current().params.user_id
-        @autorun -> Meteor.subscribe 'user_events', Router.current().params.user_id
         @autorun -> Meteor.subscribe 'user_stats', Router.current().params.user_id
     Template.profile_layout.onRendered ->
         # Meteor.setTimeout ->
@@ -77,7 +70,6 @@ if Meteor.isClient
                 model:'question'
                 downvoter_ids:$in:[Meteor.userId()]
             }, sort: _timestamp: -1
-        user_models: ->
 
 
     Template.profile_layout.events
@@ -103,10 +95,8 @@ if Meteor.isServer
         Docs.find
             model:'question'
             answered_user_ids: $in: [user_id]
-    Meteor.publish 'user_unanswered_questions', (user_id)->
-        Docs.find
-            model:'question'
-            answered_user_ids: $nin: [user_id]
+    Meteor.publish 'user_from_id', (user_id)->
+        Meteor.users.find user_id
     Meteor.publish 'user_up_questions', (user_id)->
         Docs.find
             model:'question'

@@ -10,15 +10,15 @@ template(name='user_down')
                 .scrolling
                     .ui.link.list
                         each down_answers
-                            a.item(href="/answer_session/#{_id}/view") 
+                            a.item(href="/question/#{_id}/view") 
                                 .content 
-                                    .header #{question.title}
+                                    .header #{title}
                                     .meta 
                                         small #{when}
             .column
                 .ui.header your overlap
                 .ui.button.calc_down_overlap calc
-                .ui.header #{union_doc.down_points} down points
+                .ui.header #{union_doc.down_points} down matching points
                 //- each union_doc.down_list
                 //-     .ui.label #{this}
                 each union_doc.down_cloud
@@ -45,9 +45,9 @@ template(name='user_up')
                 .scrolling
                     .ui.link.list
                         each up_answers
-                            a.item(href="/answer_session/#{_id}/view") 
+                            a.item(href="/question/#{_id}/view") 
                                 .content 
-                                    .header #{question.title}
+                                    .header #{title}
                                     .meta 
                                         small #{when}
             .column
