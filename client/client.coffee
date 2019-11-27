@@ -1,13 +1,9 @@
 @selected_tags = new ReactiveArray []
-@selected_question_tags = new ReactiveArray []
 
 
 
 Template.registerHelper 'facet_tags', () ->
     if Session.get('loading', true) then 'disabled' else ''
-Template.registerHelper 'first_initial', (user) ->
-    @first_name[..2]+'.'
-    # moment(input).fromNow()
 Template.registerHelper 'logging_out', () -> Session.get 'logging_out'
 Template.registerHelper 'current_user', () ->  Meteor.users.findOne Router.current().params.user_id
 Template.registerHelper 'is_current_user', () ->

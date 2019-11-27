@@ -1,9 +1,6 @@
 @Docs = new Meteor.Collection 'docs'
 @Tags = new Meteor.Collection 'tags'
 
-@Question_tags = new Meteor.Collection 'question_tags'
-@Test_tags = new Meteor.Collection 'test_tags'
-
 Docs.before.insert (userId, doc)->
     if Meteor.user()
         doc._author_id = Meteor.userId()
@@ -34,24 +31,7 @@ Docs.before.insert (userId, doc)->
 
 
 Meteor.users.helpers
-    name: ->
-        if @nickname
-            "#{@nickname}"
-        else if @first_name and @last_name
-            "#{@first_name} #{@last_name}"
-        else
-            "#{@username}"
 
-if Meteor.isClient
-    # console.log $
-    $.cloudinary.config
-        cloud_name:"facet"
-
-if Meteor.isServer
-    Cloudinary.config
-        cloud_name: 'facet'
-        api_key: Meteor.settings.cloudinary_key
-        api_secret: Meteor.settings.cloudinary_secret
 
 
 Docs.helpers
@@ -68,9 +48,7 @@ if Meteor.isServer
             else
                 userId and doc._author_id is userId
         update: (userId, doc) ->
-            if doc.model in ['calculator_doc','credit_type', 'debit_type']
-                true
-            else if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+            if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
                 true
             else
                 doc._author_id is userId
@@ -84,13 +62,10 @@ if Meteor.isServer
     #         Docs.find id
     #     else if user
     #         Meteor.users.find id
-    Meteor.publish 'docs', (selected_tags, filter)->
-        # console.log selected_tags
-        # console.log filter
+    Meteor.publish 'docs', (selected_tags)->
         self = @
         match = {}
-        if selected_tags.length > 0 then match.tags = $all: selected_tags
-        if filter then match.model = filter
+        if selected_tags.length > 0 then match.tags = $all:selected_tags
 
         Docs.find match, sort:_timestamp:-1
 

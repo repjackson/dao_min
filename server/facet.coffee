@@ -1,10 +1,8 @@
-Meteor.publish 'tags', (
-    selected_tags
-    )->
-    console.log selected_tags
+Meteor.publish 'tags', ( selected_tags)->
+    console.log
     self = @
     match = {}
-    # match.tags = $all: selected_tags
+    # match.tags = $all:
     if selected_tags.length > 0 then match.tags = $all: selected_tags
 
     cloud = Docs.aggregate [
@@ -28,12 +26,10 @@ Meteor.publish 'tags', (
 
 
 
-Meteor.publish 'facet_docs', (
-        selected_tags
-    )->
+Meteor.publish 'facet_docs', (selected_tags)->
     self = @
     match = {}
-    if selected_tags.length > 0 then match.tags = $all: selected_tags
+    if selected_tags.length > 0 then match.tags = $all:selected_tags
     count = Docs.find(match).count()
     console.log 'count', count
     if selected_tags.length > 0
