@@ -144,6 +144,14 @@ template(name='user_dashboard')
                         .item #{title}
                         //- .meta 
                             //- small #{when}
+                .ui.header up matching
+                .ui.large.list
+                each up_union_docs
+                    .item
+                        |#{up_points} up
+                        each other_user_ids
+                            +user_info this
+                    
             .column
                 .ui.header #{current_user.down_count} 
                     i.chevron.down.icon
@@ -154,6 +162,13 @@ template(name='user_dashboard')
                 .ui.link.list
                     each downvotes
                         .item #{title}
+                .ui.header down matching
+                .ui.large.list
+                each down_union_docs
+                    .item
+                        |#{down_points} down
+                        each other_user_ids
+                            +user_info this
 
 
 template(name='user_down')

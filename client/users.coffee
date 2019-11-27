@@ -16,8 +16,6 @@ Router.route '/register', (->
     @layout 'layout'
     @render 'register'
     ), name:'register'
-
-
 Template.register.onCreated ->
     Session.set 'username', null
 Template.register.events
@@ -73,8 +71,6 @@ Template.register.events
         #                 Session.set 'username', "#{username}"
         #         else
         #             Router.go '/'
-
-
 Template.register.helpers
     can_register: ->
         # Session.get('first_name') and Session.get('last_name') and Session.get('email')
@@ -86,6 +82,25 @@ Template.register.helpers
 
 
 
+
+Template.user_dashboard.onCreated ->
+    @autorun -> Meteor.subscribe 'model_docs', 'union'
+Template.user_dashboard.helpers
+    up_union_docs: ->
+        Docs.find {
+            user_ids: $in: [Router.current().params.user_id]
+            model:'union'
+        }, sort: up_points: -1
+
+    other_user_ids: ->
+        console.log @
+        _.without(@user_ids, Router.current().params.user_id)
+
+    down_union_docs: ->
+        Docs.find {
+            user_ids: $in: [Router.current().params.user_id]
+            model:'union'
+        }, sort: down_points: -1
 
 Template.user_up.onCreated ->
     @autorun -> Meteor.subscribe 'user_up_answers', Router.current().params.user_id

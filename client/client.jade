@@ -52,11 +52,11 @@ template(name='tag_result')
 
 
 template(name='user_info')
-    a.ui.compact.button(href="/user/#{user._id}/")
+    a.ui.compact.circular.basic.button(href="/user/#{user._id}/")
         if user.image_id
             img.ui.avatar.inline.image(src="{{c.url user.image_id width=300 height=300 gravity='face' crop='fill'}}")
         //- .visible.content
-        |@#{user.username}
+        |#{user.username}
         //- .hidden.content
         //-     |view
         //-     i.right.chevron.icon
