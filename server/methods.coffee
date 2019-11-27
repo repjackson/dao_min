@@ -1,29 +1,46 @@
 Meteor.methods
-    clean_tags: ()->
+    calc_question_stats: (question_id)->
+        question = Docs.findOne question_id
 
 
-    # check_subreddit: (sub)->
-    #     console.log 'checking subreddit', sub
-    #     existing =
-    #         Subreddits.findOne(title:sub)
-    #     if existing
-    #         console.log 'found sub', existing
-    #         Meteor.call 'pull_subreddit', sub
-    #     else
-    #         console.log 'no existing sub found'
-    #         HTTP.get("http://reddit.com/r/#{sub}.json", (err,res)=>
-    #             if err
-    #                 console.log "no sub found error", sub
-    #             else
-    #                 if res.data.dist > 1
-    #                     Subreddits.insert
-    #                         title:sub
-    #                     console.log 'success, added sub to list', sub
-    #                     Meteor.call 'pull_subreddit', sub
-    #                 else
-    #                     console.log 'dist not enough'
-    #         )
-        # return response.content
+Meteor.methods
+    set_user_password: (user, password)->
+        result = Accounts.setPassword(user._id, password)
+        console.log result
+        result
+
+    create_user: (options)->
+        console.log 'creating user', options
+        Accounts.createUser options
+
+    can_submit: ->
+        username = Session.get 'username'
+        password = Session.get 'password'
+        if username
+            if password.length > 0
+                true
+            else
+                false
+
+    find_username: (username)->
+        res = Accounts.findUserByUsername(username)
+        if res
+            # console.log res
+            unless res.disabled
+                return res
+
+    new_demo_user: ->
+        current_user_count = Meteor.users.find().count()
+
+        options = {
+            username:"u#{current_user_count}"
+            password:"u#{current_user_count}"
+            }
+
+        create = Accounts.createUser options
+        new_user = Meteor.users.findOne create
+        return new_user
+
 
 
     pull_tag: (tag)->
@@ -34,15 +51,6 @@ Meteor.methods
 
     # remove_subreddit: (subreddit)->
     #     Docs.remove({subreddit:subreddit})
-
-    import_site: (site)->
-        existing_doc = Docs.findOne url:site
-        if existing_doc
-            console.log 'found existing doc', existing_doc
-        else
-            new_doc_id = Docs.insert
-                url: site
-            Meteor.call 'call_watson', new_doc_id, 'url', 'url'
 
     delete_docs_tag: (tag)->
         tag_doc_count =

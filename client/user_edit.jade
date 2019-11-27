@@ -1,0 +1,66 @@
+template(name='user_edit_layout')
+    +nav
+    with current_user          
+        .ui.stackable.padded.grid
+            .row
+                .four.wide.column
+                    .ui.center.aligned.large.inline.grey.header
+                        | #{current_user.username}
+                    //- .ui.small.inline.header @#{current_user._id}
+                    a.ui.icon.large.button(href="/user/#{current_user._id}/") 
+                        i.large.checkmark.icon
+                .twelve.wide.column
+                    +yield
+
+template(name='user_edit_info')
+    .ui.two.column.grid
+        .column
+            +password_edit    
+            //- +array_edit key='tags' label='tags' direct=true
+
+
+template(name='password_edit')
+    .ui.small.grey.inline.header
+        |change password
+    .ui.fluid.input
+        input#old_password(type='password', placeholder='old password')
+    .ui.fluid.icon.input
+        input#new_password(type='password', placeholder='new password')
+    if is_admin
+        .ui.fluid.basic.button.reset_password
+            |reset password
+        .ui.fluid.large.basic.button.set_password
+            | set password
+    if passwords_matching        
+        .ui.fluid.basic.button.change_password
+            i.refresh.icon
+            | change password
+            
+            
+            
+template(name='user_edit_account')
+    .ui.header 
+        | account
+    .ui.two.column.grid
+        .column
+            +password_edit
+            if is_admin
+                with current_user
+                    .ui.orange.basic.button.remove_user 
+                        i.remove.icon
+                        | delete user
+        .column
+            if is_admin
+                +username_edit
+            
+
+
+    
+
+template(name='username_edit')
+    .ui.small.header 
+        i.i.cursor.icon
+        |change username [#{current_user._id}]
+    .ui.icon.fluid.input
+        input.new_username(type='text' placeholder='new username...')
+        i.play.link.icon.change_username

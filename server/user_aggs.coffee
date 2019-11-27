@@ -36,7 +36,7 @@ Meteor.methods
 
 
     user_stats_agg: (match)->
-        limit=10
+        limit=20
         # console.log 'agging', match
         options = { explain:false }
         pipe =  [

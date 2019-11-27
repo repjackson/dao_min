@@ -30,12 +30,10 @@ Docs.before.insert (userId, doc)->
     return
 
 
-Meteor.users.helpers
 
 
-
-Docs.helpers
-    when: -> moment(@_timestamp).fromNow()
+# Docs.helpers
+#     when: -> moment(@_timestamp).fromNow()
 
 if Meteor.isServer
     Docs.allow
@@ -75,21 +73,27 @@ Meteor.methods
         if Meteor.userId()
             if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
                 Docs.update doc._id,
-                    $pull: downvoter_ids:Meteor.userId()
-                    $addToSet: upvoter_ids:Meteor.userId()
+                    $pull:
+                        downvoter_ids:Meteor.userId()
+                    $addToSet:
+                        upvoter_ids:Meteor.userId()
                     $inc:
                         points:2
                         upvotes:1
                         downvotes:-1
             else if doc.upvoter_ids and Meteor.userId() in doc.upvoter_ids
                 Docs.update doc._id,
-                    $pull: upvoter_ids:Meteor.userId()
+                    $pull:
+                        upvoter_ids:Meteor.userId()
+                        answer_ids:Meteor.userId()
                     $inc:
                         points:-1
                         upvotes:-1
             else
                 Docs.update doc._id,
-                    $addToSet: upvoter_ids:Meteor.userId()
+                    $addToSet:
+                        upvoter_ids:Meteor.userId()
+                        answer_ids:Meteor.userId()
                     $inc:
                         upvotes:1
                         points:1
@@ -115,13 +119,17 @@ Meteor.methods
                         upvotes:-1
             else if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
                 Docs.update doc._id,
-                    $pull: downvoter_ids:Meteor.userId()
+                    $pull:
+                        downvoter_ids:Meteor.userId()
+                        answer_ids:Meteor.userId()
                     $inc:
                         points:1
                         downvotes:-1
             else
                 Docs.update doc._id,
-                    $addToSet: downvoter_ids:Meteor.userId()
+                    $addToSet:
+                        downvoter_ids:Meteor.userId()
+                        answer_ids:Meteor.userId()
                     $inc:
                         points:-1
                         downvotes:1
