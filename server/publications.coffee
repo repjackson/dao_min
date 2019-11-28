@@ -17,10 +17,6 @@ Meteor.publish 'user_up_questions', (user_id)->
         model:'question'
         upvoter_ids: $in: [user_id]
 
-Meteor.publish 'user_down_questions', (user_id)->
-    Docs.find
-        model:'question'
-        downvoter_ids: $in: [user_id]
 
 Meteor.publish 'user_stats', (user_id)->
     user = Meteor.users.findOne user_id

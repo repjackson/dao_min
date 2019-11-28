@@ -4,8 +4,6 @@ template(name='nav')
             .center.aligned.sixteen.wide.column
                 //- a.ui.icon.big.circular.basic.button(href='/')
                 //-     i.yin.yang.large.icon
-                a.ui.icon.large.circular.basic.button(href='/users')
-                    i.user.outline.large.icon
                 .ui.icon.large.circular.basic.button.add_question(title='add question')
                     i.large.plus.icon                
                 unless currentUser
@@ -189,8 +187,8 @@ template(name='profile_layout')
                             |dashboard
                         a.item(href="/user/#{user._id}/up" class)
                             |up
-                        a.item(href="/user/#{user._id}/down")
-                            |down
+                        //- a.item(href="/user/#{user._id}/down")
+                        //-     |down
                     if is_current_user
                         a.ui.fluid.button(href="/user/#{current_user._id}/edit")
                             |settings
@@ -242,48 +240,18 @@ template(name='user_dashboard')
                     .ui.large.basic.label #{name}
                     //- small #{count}       
                 |list
-                .ui.link.large.list
-                    each downvotes
-                        .item #{title}
-                .ui.header down matching
-                .ui.large.list
-                each down_union_docs
-                    .item
-                        |#{down_points} down
-                        each other_user_ids
-                            +user_info this
+                //- .ui.link.large.list
+                //-     each downvotes
+                //-         .item #{title}
+                //- .ui.header down matching
+                //- .ui.large.list
+                //- each down_union_docs
+                //-     .item
+                //-         |#{down_points} down
+                //-         each other_user_ids
+                //-             +user_info this
 
 
-template(name='user_down')
-    .ui.center.aligned.header user down
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{current_user.down_count} down 
-                each current_user.down_cloud
-                    .ui.basic.large.label #{name}
-                        small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each down_answers
-                            a.item(href="/question/#{_id}/view") #{title}
-            .column
-                .ui.inline.header overlap
-                i.circular.refresh.link.icon.calc_down_overlap
-                .ui.header #{union_doc.down_points} down matching points
-                //- each union_doc.down_list
-                //-     .ui.basic.large.label #{this}
-                each union_doc.down_cloud
-                    .ui.basic.large.label #{name} 
-                        small #{count}
-            .column
-                .ui.header #{currentUser.down_count} down 
-                each currentUser.down_cloud
-                    .ui.basic.large.label #{name}
-                        small #{count}
-                .ui.header most matched users
-                
-                
 template(name='user_up')
     .ui.center.aligned.header user up
     .ui.stackable.grid 
@@ -313,3 +281,78 @@ template(name='user_up')
                     .ui.basic.large.label #{name}
                         small #{count}
                 .ui.header most matched users
+
+
+
+template(name='register')
+    .ui.padded.stackable.grid
+        .centered.row
+            .ten.wide.column
+                .ui.center.aligned.basic.segment
+                    a.ui.icon.button(href="/")
+                        i.large.home.icon
+                    div
+                    .ui.inline.header register
+                .ui.small.inline.header 
+                    |username
+                .ui.fluid.icon.input(class=login_class)
+                    //- if username_valid
+                    //-     i.green.checkmark.icon
+                    //- else
+                    //-     i.red.ban.icon
+                    input.username(type='text')
+                .ui.small.inline.header 
+                    | password
+                .ui.fluid.input(class=login_class)
+                    input.password(type='password')
+                if can_register
+                    //- if registering
+                    .ui.fluid.large.button.register(class=enter_class)
+                        |register '#{username}'
+                else
+                    .ui.small.header username "#{username}" found
+                    a.ui.basic.fluid.button(href='/login') 
+                        |login
+                .ui.center.aligned.basic.segment    
+                    //- .ui.small.header by registering you agree to our 
+                    //-     a(href='/p/privacy' target="_window") privacy policy
+                    unless username
+                        .ui.small.header or
+                            a.ui.basic.sign.in.button(href='/login') 
+                                i.sign.in.alternate.icon
+                                |login
+
+template(name='login')
+    .ui.padded.stackable.grid
+        .centered.row
+            .eight.wide.column
+                div
+                .ui.inline.small.header 
+                    |username
+                .ui.fluid.large.input(class=login_class)
+                    input.username(type='text')
+                .spacer
+                .ui.inline.small.header 
+                    | password
+                .ui.fluid.large.input(class=login_class)
+                    input.password(type='password')
+                //- if username
+                //- if logging_in
+                .ui.fluid.big.button.enter(title="login #{username}" class=enter_class)
+                    |login
+                    strong #{username}
+                    //- i.right.chevron.icon
+                //- else
+                //-     if username
+                //-         .ui.center.aligned.basic.segment
+                //-             .ui.header no '#{username}' user
+                //-             a.ui.button(href='/choose_persona')
+                //-                 i.user.plus.icon
+                //-                 | register
+                .ui.center.aligned.basic.segment    
+                    //- a.ui.button(href='/forgot_password')
+                    //-     i.refresh.icon
+                    //-     |forgot password
+                    a.ui.button(href='/register') 
+                        |register
+                    //- .ui.center.aligned.inline.header see the front desk to register an account

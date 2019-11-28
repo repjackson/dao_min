@@ -6,10 +6,6 @@ Router.route '/user/:user_id/edit/info', (->
     @layout 'user_edit_layout'
     @render 'user_edit_info'
     ), name:'user_edit_info'
-Router.route '/user/:user_id/edit/account', (->
-    @layout 'user_edit_layout'
-    @render 'user_edit_account'
-    ), name:'user_edit_account'
 
 Template.user_edit_layout.onCreated ->
     @autorun -> Meteor.subscribe 'user_from_id', Router.current().params.username

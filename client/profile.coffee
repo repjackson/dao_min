@@ -6,10 +6,6 @@ Router.route '/user/:user_id/up', (->
     @layout 'profile_layout'
     @render 'user_up'
     ), name:'user_up'
-Router.route '/user/:user_id/down', (->
-    @layout 'profile_layout'
-    @render 'user_down'
-    ), name:'user_down'
 
 
 Template.profile_layout.onCreated ->
@@ -26,15 +22,9 @@ Template.profile_layout.onRendered ->
 Template.profile_layout.helpers
     user: ->
         Meteor.users.findOne Router.current().params.user_id
-    ssd: ->
-        user = Meteor.users.findOne Router.current().params.user_id
-        Docs.findOne
-            model:'user_stats'
-            user_id:user._id
 
 Template.user_dashboard.onCreated ->
     @autorun -> Meteor.subscribe 'user_up_questions', Router.current().params.user_id
-    @autorun -> Meteor.subscribe 'user_down_questions', Router.current().params.user_id
 Template.user_dashboard.onRendered ->
     Meteor.call 'calc_user_stats', Router.current().params.user_id
 
@@ -59,11 +49,6 @@ Template.user_dashboard.helpers
         Docs.find {
             model:'question'
             upvoter_ids:$in:[Meteor.userId()]
-        }, sort: _timestamp: -1
-    downvotes: ->
-        Docs.find {
-            model:'question'
-            downvoter_ids:$in:[Meteor.userId()]
         }, sort: _timestamp: -1
 
 
