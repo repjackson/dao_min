@@ -17,10 +17,6 @@ Template.nav.onRendered ->
 Template.questions.onRendered ->
     @autorun -> Meteor.subscribe('facet_docs',
         selected_tags.array()
-        Session.get('view_answered')
-        Session.get('view_unanswered')
-        Session.get('view_up')
-        Session.get('view_down')
     )
 Template.questions.helpers
     questions: ->
@@ -28,10 +24,6 @@ Template.questions.helpers
             model:'question'
             answer_ids: $nin: [Meteor.userId()]
         }, limit: 1
-    # view_answered_class: -> if Session.equals('view_answered',true) then 'active' else ''
-    # view_unanswered_class: -> if Session.equals('view_unanswered',true) then 'active' else ''
-    # view_up_class: -> if Session.equals('view_up',true) then 'active' else ''
-    # view_down_class: -> if Session.equals('view_down',true) then 'active' else ''
 Template.nav.events
     'click .add_question': ->
         new_question_id = Docs.insert
@@ -41,10 +33,6 @@ Template.nav.events
 Template.question_cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
-        Session.get('view_answered')
-        Session.get('view_unanswered')
-        Session.get('view_up')
-        Session.get('view_down')
     )
 
     # @autorun -> Meteor.subscribe('model_docs', 'target')

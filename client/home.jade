@@ -13,7 +13,7 @@ template(name='nav')
                         | register
                 if currentUser
                     unless logging_out
-                        a.ui.big.circular.basic.button.recalc_stats(href="/user/#{currentUser._id}")
+                        a.ui.big.circular.basic.button.recalc_stats(href="/")
                             //- i.user.outline.icon
                             span #{currentUser.username} 
                     if logging_out
@@ -171,12 +171,12 @@ template(name='donate')
 template(name='profile_layout')
     +nav
     +questions
-    with current_user
+    with currentUser
         .ui.stackable.padded.grid
             .row
                 .three.wide.column
                     .ui.center.aligned.inline.header.recalc_stats
-                        |#{current_user.username}'s dashboard
+                        |#{currentUser.username}'s dashboard
                     .ui.center.aligned.inline.header
                         | #{user.first_name} #{user.last_name}
                     //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
@@ -189,8 +189,8 @@ template(name='profile_layout')
                             |up
                         //- a.item(href="/user/#{user._id}/down")
                         //-     |down
-                    if is_current_user
-                        a.ui.fluid.button(href="/user/#{current_user._id}/edit")
+                    if is_currentUser
+                        a.ui.fluid.button(href="/user/#{currentUser._id}/edit")
                             |settings
                         .ui.fluid.button.logout
                             |log out
@@ -200,10 +200,10 @@ template(name='profile_layout')
                     
 template(name='user_dashboard')                    
     .ui.stackable.padded.grid
-        .two.column.row
+        .one.column.row
             //- .column
-            //-     .ui.header #{current_user.answered_count} answered questions 
-            //-     each current_user.answered_cloud
+            //-     .ui.header #{currentUser.answered_count} answered questions 
+            //-     each currentUser.answered_cloud
             //-         .ui.label #{name}
             //-             //- small #{count}
             //-     div list
@@ -215,9 +215,9 @@ template(name='user_dashboard')
             //-                     .meta 
             //-                         small #{when}
             .column
-                .ui.header #{current_user.up_count} 
+                .ui.header #{currentUser.up_count} 
                     i.chevron.up.icon
-                each current_user.up_cloud
+                each currentUser.up_cloud
                     .ui.large.basic.label #{name}
                     //- small #{count}    
                 .ui.link.large.list
@@ -232,34 +232,15 @@ template(name='user_dashboard')
                             |#{up_points} up
                             each other_user_ids
                                 +user_info this
-                    
-            .column
-                .ui.header #{current_user.down_count} 
-                    i.chevron.down.icon
-                each current_user.down_cloud
-                    .ui.large.basic.label #{name}
-                    //- small #{count}       
-                |list
-                //- .ui.link.large.list
-                //-     each downvotes
-                //-         .item #{title}
-                //- .ui.header down matching
-                //- .ui.large.list
-                //- each down_union_docs
-                //-     .item
-                //-         |#{down_points} down
-                //-         each other_user_ids
-                //-             +user_info this
-
 
 template(name='user_up')
     .ui.center.aligned.header user up
     .ui.stackable.grid 
         .three.column.row
             .column
-                .ui.header #{current_user.username} 
-                    small #{current_user.up_count} up answers 
-                each current_user.up_cloud
+                .ui.header #{currentUser.username} 
+                    small #{currentUser.up_count} up answers 
+                each currentUser.up_cloud
                     .ui.basic.large.label #{name}
                         small #{count}    
                 .scrolling

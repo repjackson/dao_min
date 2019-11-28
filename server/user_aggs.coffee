@@ -1,8 +1,4 @@
 Meteor.methods
-    calc_user_stats: (user_id)->
-        Meteor.call 'calc_user_up_cloud', user_id
-        Meteor.call 'calc_user_down_cloud', user_id
-
     calc_user_up_cloud: (user_id)->
         user = Meteor.users.findOne user_id
         match = {}
@@ -17,26 +13,9 @@ Meteor.methods
                 up_count:up_count
                 up_list:up_list
 
-    calc_user_down_cloud: (user_id)->
-        user = Meteor.users.findOne user_id
-        match = {}
-        match.model = 'question'
-        match.downvoter_ids = $in:[Meteor.userId()]
-        down_count = Docs.find(match).count()
-        down_cloud = Meteor.call 'user_stats_agg', match
-        down_list = _.pluck(down_cloud, 'name')
-
-        Meteor.users.update user_id,
-            $set:
-                down_cloud:down_cloud
-                down_count:down_count
-                down_list:down_list
-
-
-
 
     user_stats_agg: (match)->
-        limit=20
+        limit=42
         # console.log 'agging', match
         options = { explain:false }
         pipe =  [

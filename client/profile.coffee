@@ -2,10 +2,6 @@ Router.route '/user/:user_id', (->
     @layout 'profile_layout'
     @render 'user_dashboard'
     ), name:'user_dashboard'
-Router.route '/user/:user_id/up', (->
-    @layout 'profile_layout'
-    @render 'user_up'
-    ), name:'user_up'
 
 
 Template.profile_layout.onCreated ->
@@ -26,12 +22,12 @@ Template.profile_layout.helpers
 Template.user_dashboard.onCreated ->
     @autorun -> Meteor.subscribe 'user_up_questions', Router.current().params.user_id
 Template.user_dashboard.onRendered ->
-    Meteor.call 'calc_user_stats', Router.current().params.user_id
+    Meteor.call 'calc_user_up_cloud', Router.current().params.user_id
 
 
 Template.nav.events
     'click .recalc_stats': ->
-        Meteor.call 'calc_user_stats', Router.current().params.user_id
+        Meteor.call 'calc_user_up_cloud', Router.current().params.user_id
 
 
 Template.user_dashboard.helpers
@@ -53,8 +49,8 @@ Template.user_dashboard.helpers
 
 
 Template.profile_layout.events
-    'click .recalc_user_stats': ->
-        Meteor.call 'recalc_user_stats', Router.current().params.user_id
+    'click .recalc_user_up_cloud': ->
+        Meteor.call 'recalc_user_up_cloud', Router.current().params.user_id
     'click .logout_other_clients': ->
         Meteor.logoutOtherClients()
     'click .logout': ->
