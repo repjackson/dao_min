@@ -42,8 +42,9 @@ Meteor.publish 'tags', (
     if selected_tags.length > 0 then match.tags = $all: selected_tags
     if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
     match.model = 'question'
-    match.answer_ids = $in:[Meteor.userId()]
-    cloud = Docs.aggregate [
+    # match.answer_ids = $in:[Meteor.userId()]
+
+    tag_cloud = Docs.aggregate [
         { $match: match }
         { $project: tags: 1 }
         { $unwind: "$tags" }
@@ -53,8 +54,7 @@ Meteor.publish 'tags', (
         { $limit: 42 }
         { $project: _id: 0, name: '$_id', count: 1 }
         ]
-
-    cloud.forEach (tag, i) ->
+    tag_cloud.forEach (tag, i) ->
         self.added 'tags', Random.id(),
             name: tag.name
             count: tag.count
@@ -65,19 +65,11 @@ Meteor.publish 'tags', (
 
 Meteor.publish 'facet_docs', (
     selected_tags
-    view_answered
-    view_unanswered
+    selected_upvoter_ids
     )->
 
-    # console.log selected_tags
-    # console.log view_answered
-    # console.log view_unanswered
     self = @
     match = {}
-    # if view_answered
-    #     match.answer_ids = $in:[Meteor.userId()]
-    # if view_unanswered
-    #     match.answer_ids = $nin:[Meteor.userId()]
     if selected_tags.length > 0 then match.tags = $all: selected_tags
     if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
 

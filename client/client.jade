@@ -17,8 +17,6 @@ template(name='layout')
     +yield
 
 
-template(name='home')
-    +user_dashboard
 
 template(name='not_found')
     .ui.basic.center.aligned.padded.segment
@@ -86,23 +84,14 @@ template(name='question_cloud')
     each all_tags
         .ui.circular.large.compact.button.select_tag(class=cloud_tag_class) 
             strong #{this.name}
-
-
-template(name='upvoter_cloud')
-    .ui.header upvoter
-    //- #cloud
-        //- .ui.left.icon.input
-        //-     i.search.icon
-        //-     input#search(type='text' placeholder='search')
-            //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
-    if selected_upvoters
-        #clear_upvoters.ui.active.icon.circular.large.compact.button
+    if selected_upvoter_ids
+        #clear_upvoter_ids.ui.active.icon.circular.large.compact.button
             i.remove.icon
-        each selected_upvoters
-            .unselect_upvoter.ui.active.circular.large.compact.button
+        each selected_upvoter_ids
+            .unselect_upvoter_id.ui.active.circular.large.compact.button
                 strong #{this}
-    each all_upvoters
-        .ui.circular.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
+    each all_upvoter_ids
+        .ui.circular.large.compact.button.select_upvoter_id(class=cloud_upvoter_id_class) 
             strong #{this.name}
 
 
@@ -112,27 +101,7 @@ template(name='question_segment')
     .ui.segment
         .content
             a.ui.header(href="/question/#{_id}/view") #{title}
-            //- each tags
-            //-     .ui.basic.label #{this}
-            //- +remove_button
             +voting_full
-            //- if my_answer
-            //-     //- .ui.header your answer
-            //-     with my_answer
-            //-         .ui.small.header #{choice_content }#{when} by #{_author_username}
-            //- if upvoter_ids
-            //-     i.grey.thumbs.up.outline.icon(title='upvoters')
-            //-     each upvoter_ids
-            //-         +user_info this
-            //- if downvoter_ids
-            //-     i.grey.thumbs.down.outline.icon(title='downvoters')
-            //-     each downvoter_ids
-            //-         +user_info this
-            //- if points 
-            //-     .ui.label #{points}
-            //-     | (#{upvotes} / #{downvotes})
-        //- a.ui.large.button(href="/question/#{_id}/view")
-        //-     |view
         
 
 
@@ -202,7 +171,7 @@ template(name='remove_button')
 
 
 
-template(name='user_dashboard')                    
+template(name='home')                    
     .ui.stackable.padded.grid
         .one.column.row
             .column
@@ -219,60 +188,10 @@ template(name='user_dashboard')
                     input.add_username(type='text' placeholder='add username')
                 each users 
                     .ui.button.add_user #{username}
-                
         .one.column.row
             .column
                 +question_cloud
-                //- .ui.inline.header
-                //-     i.thumbs.up.outline.icon
-                //-     |up tags
-                //- each currentUser.up_cloud
-                //-     .ui.large.basic.label #{name}
-                //-     //- small #{count}    
-                .ui.divider
-                .ui.header 
-                    |#{currentUser.up_count} list
-                each upvotes
-                    a.ui.basic.circular.label(href="/question/#{_id}/view") #{title}
-                        //- .meta 
-                            //- small #{when}
-                //- .ui.header up matching
-                //- .ui.large.list
-                //-     each up_union_docs
-                //-         .item
-                //-             |#{up_points} up
-                //-             each other_user_ids
-                //-                 +user_info this
 
-template(name='user_up')
-    .ui.center.aligned.header user up
-    .ui.stackable.grid 
-        .three.column.row
-            .column
-                .ui.header #{currentUser.username} 
-                    small #{currentUser.up_count} up answers 
-                each currentUser.up_cloud
-                    .ui.basic.large.label #{name}
-                        small #{count}    
-                .scrolling
-                    .ui.link.list
-                        each up_answers
-                            a.item(href="/question/#{_id}/view") #{title}
-            .column
-                .ui.inline.header overlap
-                i.refresh.circular.icon.calc_up_overlap 
-                .ui.header #{union_doc.up_points} up points
-                //- each union_doc.up_list
-                //-     .ui.basic.large.label #{this}
-                each union_doc.up_cloud
-                    .ui.basic.large.label #{name} 
-                        small #{count}
-            .column
-                .ui.header #{currentUser.username} #{currentUser.up_count} up answers 
-                each currentUser.up_cloud
-                    .ui.basic.large.label #{name}
-                        small #{count}
-                .ui.header most matched users
 
 
 

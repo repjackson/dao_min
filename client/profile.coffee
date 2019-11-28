@@ -9,10 +9,10 @@ Template.layout.onRendered ->
 Template.layout.helpers
     user: -> Meteor.users.findOne Meteor.userId()
 
-Template.user_dashboard.onCreated ->
-    @autorun -> Meteor.subscribe 'user_up_questions', Meteor.userId()
-Template.user_dashboard.onRendered ->
-    Meteor.call 'calc_user_up_cloud', Meteor.userId()
+# Template.user_dashboard.onCreated ->
+#     @autorun -> Meteor.subscribe 'user_up_questions', Meteor.userId()
+# Template.user_dashboard.onRendered ->
+#     Meteor.call 'calc_user_up_cloud', Meteor.userId()
 
 
 Template.nav.events
@@ -20,22 +20,12 @@ Template.nav.events
         Meteor.call 'calc_user_up_cloud', Meteor.userId()
 
 
-Template.user_dashboard.helpers
-    ssd: ->
-        user = Meteor.users.findOne Meteor.userId()
-        Docs.findOne
-            model:'user_stats'
-            user_id:user._id
-    # answered_questions: ->
-    #     Docs.find {
-    #         model:'question'
-    #         answered_user_ids: $in:[Meteor.userId()]
-    #     }, sort: _timestamp: -1
-    upvotes: ->
-        Docs.find {
-            model:'question'
-            upvoter_ids:$in:[Meteor.userId()]
-        }, sort: _timestamp: -1
+# Template.user_dashboard.helpers
+#     upvotes: ->
+#         Docs.find {
+#             model:'question'
+#             upvoter_ids:$in:[Meteor.userId()]
+#         }, sort: _timestamp: -1
 
 
 Template.layout.events

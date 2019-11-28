@@ -8,7 +8,7 @@ Router.route '/question/:doc_id/view', (->
     ), name:'question_view'
 
 @selected_tags = new ReactiveArray []
-@selected_upvoters = new ReactiveArray []
+@selected_upvoter_ids = new ReactiveArray []
 
 Template.registerHelper 'logging_out', () -> Session.get 'logging_out'
 Template.registerHelper 'can_edit', () ->
@@ -20,7 +20,6 @@ Template.registerHelper 'can_edit', () ->
 
 Template.registerHelper 'to_percent', (number) -> (number*100).toFixed()
 Template.registerHelper 'sorted_tags', () -> @tags.sort()
-Template.registerHelper 'is_pro', () -> Meteor.isProduction
 Template.registerHelper 'current_doc', ->
     doc = Docs.findOne Router.current().params.doc_id
     user = Meteor.users.findOne Router.current().params.doc_id
@@ -29,7 +28,6 @@ Template.registerHelper 'current_doc', ->
     if doc then doc else if user then user
 
 
-Template.registerHelper 'dev', -> Meteor.isDevelopment
 Template.registerHelper 'is_dev', () ->
     if Meteor.user() and Meteor.user().roles
         if 'dev' in Meteor.user().roles then true else false
@@ -40,66 +38,53 @@ Template.registerHelper 'author', () -> Meteor.users.findOne @_author_id
 
 
 Template.registerHelper 'in_dev', -> Meteor.isDevelopment
+Template.registerHelper 'in_pro', () -> Meteor.isProduction
 
 
 Template.voting_full.events
     'click .upvote': (e,t)-> Meteor.call 'upvote', @
     'click .downvote': (e,t)-> Meteor.call 'downvote', @
 Template.voting_full.helpers
-    upvote_class: ->
-        if Meteor.userId() in @upvoter_ids then 'green' else 'outline'
-    downvote_class: ->
-        if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
-
-
-
-
-
-
-
+    # upvote_class: ->
+    #     if Meteor.userId() in @upvoter_ids then 'green' else 'outline'
+    # downvote_class: ->
+    #     if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
 
 
 Template.nav.onRendered ->
     @autorun => Meteor.subscribe 'me'
-Template.user_dashboard.onRendered ->
-    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoters.array())
-
 Template.nav.events
     'click .add_question': ->
         new_question_id = Docs.insert
             model:'question'
         Router.go "/question/#{new_question_id}/edit"
 
+
+
+
+
+
+
+
+Template.home.onRendered ->
+    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoter_ids.array())
+
 Template.question_cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
-        selected_upvoters.array()
+        selected_upvoter_ids.array()
     )
 Template.question_cloud.helpers
     all_tags: ->
         question_count = Docs.find(model:'question').count()
         if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
     selected_tags: -> selected_tags.array()
+    selected_upvoter_ids: -> selected_upvoter_ids.array()
 Template.question_cloud.events
     'click .select_tag': -> selected_tags.push @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
 
-
-Template.upvoter_cloud.onCreated ->
-    @autorun -> Meteor.subscribe('tags',
-        selected_tags.array()
-        selected_upvoters.array()
-    )
-Template.upvoter_cloud.helpers
-    all_upvoters: ->
-        upvoter_count = Docs.find(model:'upvoter').count()
-        if 0 < upvoter_count < 3 then Upvoters.find { count: $lt: upvoter_count } else Upvoters.find({},{limit:42})
-    selected_upvoters: -> selected_upvoters.array()
-Template.upvoter_cloud.events
-    'click .select_upvoter': -> selected_upvoters.push @name
-    'click .unselect_upvoter': -> selected_upvoters.remove @valueOf()
-    'click #clear_upvoters': -> selected_upvoters.clear()
 
 
 Template.question_segment.onCreated ->
@@ -238,13 +223,14 @@ Template.register.helpers
 
 
 
-Template.user_dashboard.onCreated ->
+Template.home.onCreated ->
     # @autorun -> Meteor.subscribe 'model_docs', 'union'
     @autorun -> Meteor.subscribe 'users'
-Template.user_dashboard.events
+Template.home.events
     'click .add_user': ->
         console.log @
-Template.user_dashboard.helpers
+        selected_upvoter_ids.push @_id
+Template.home.helpers
     questions: ->
         Docs.find {
             model:'question'
@@ -252,32 +238,3 @@ Template.user_dashboard.helpers
         }, limit: 1
 
     users: -> Meteor.users.find()
-    up_union_docs: ->
-        Docs.find {
-            user_ids: $in: [Router.current().params.user_id]
-            model:'union'
-        }, sort: up_points: -1
-
-    other_user_ids: ->
-        # console.log @
-        _.without(@user_ids, Router.current().params.user_id)
-
-Template.user_up.onCreated ->
-    @autorun -> Meteor.subscribe 'user_up_answers', Router.current().params.user_id
-    @autorun -> Meteor.subscribe 'model_docs', 'question'
-    @autorun -> Meteor.subscribe 'model_docs', 'union'
-Template.user_up.helpers
-    up_answers: ->
-        Docs.find {
-            upvoter_ids:$in:[Meteor.userId()]
-        }, sort: _timestamp: -1
-
-    union_doc: ->
-        Docs.findOne
-            model:'union'
-            user_ids:$all:[Meteor.userId(), Router.current().params.user_id]
-Template.user_up.events
-    'click .calc_up_overlap': ->
-        Meteor.call 'calc_user_up_cloud', Meteor.userId()
-        Meteor.call 'calc_user_up_cloud', Router.current().params.user_id
-        Meteor.call 'calc_up_union', Meteor.userId(), Router.current().params.user_id
