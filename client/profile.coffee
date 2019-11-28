@@ -35,9 +35,11 @@ Template.profile_layout.helpers
 Template.user_dashboard.onCreated ->
     @autorun -> Meteor.subscribe 'user_up_questions', Router.current().params.user_id
     @autorun -> Meteor.subscribe 'user_down_questions', Router.current().params.user_id
+Template.user_dashboard.onRendered ->
+    Meteor.call 'calc_user_stats', Router.current().params.user_id
 
 
-Template.profile_layout.events
+Template.nav.events
     'click .recalc_stats': ->
         Meteor.call 'calc_user_stats', Router.current().params.user_id
 

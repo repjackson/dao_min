@@ -24,12 +24,14 @@ Template.questions.onRendered ->
     )
 Template.questions.helpers
     questions: ->
-        Docs.find
+        Docs.find {
             model:'question'
-    view_answered_class: -> if Session.equals('view_answered',true) then 'active' else ''
-    view_unanswered_class: -> if Session.equals('view_unanswered',true) then 'active' else ''
-    view_up_class: -> if Session.equals('view_up',true) then 'active' else ''
-    view_down_class: -> if Session.equals('view_down',true) then 'active' else ''
+            answer_ids: $nin: [Meteor.userId()]
+        }, limit: 1
+    # view_answered_class: -> if Session.equals('view_answered',true) then 'active' else ''
+    # view_unanswered_class: -> if Session.equals('view_unanswered',true) then 'active' else ''
+    # view_up_class: -> if Session.equals('view_up',true) then 'active' else ''
+    # view_down_class: -> if Session.equals('view_down',true) then 'active' else ''
 Template.nav.events
     'click .add_question': ->
         new_question_id = Docs.insert

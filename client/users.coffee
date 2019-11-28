@@ -93,7 +93,7 @@ Template.user_dashboard.helpers
         }, sort: up_points: -1
 
     other_user_ids: ->
-        console.log @
+        # console.log @
         _.without(@user_ids, Router.current().params.user_id)
 
     down_union_docs: ->

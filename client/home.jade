@@ -2,10 +2,10 @@ template(name='nav')
     .ui.grid
         .row
             .center.aligned.sixteen.wide.column
-                a.ui.icon.big.circular.basic.button(href='/')
-                    i.yin.yang.large.icon
-                a.ui.icon.big.circular.basic.button(href='/users')
-                    i.users.large.icon
+                //- a.ui.icon.big.circular.basic.button(href='/')
+                //-     i.yin.yang.large.icon
+                a.ui.icon.large.circular.basic.button(href='/users')
+                    i.user.outline.large.icon
                 .ui.icon.big.circular.basic.button.add_question(title='add question')
                     i.large.plus.icon                
                 unless currentUser
@@ -15,7 +15,7 @@ template(name='nav')
                         | register
                 if currentUser
                     unless logging_out
-                        a.ui.big.circular.basic.button(href="/user/#{currentUser._id}")
+                        a.ui.big.circular.basic.button.recalc_stats(href="/user/#{currentUser._id}")
                             //- i.user.outline.icon
                             span #{currentUser.username} 
                     if logging_out
@@ -24,14 +24,14 @@ template(name='nav')
 
 template(name='questions')
     .ui.stackable.padded.grid
+        //- .centered.row
+        //-     .eight.wide.center.aligned.column
+        //-         if currentUser
+        //-             .ui.circular.button.view_answered(class=view_answered_class) voted
+        //-             .ui.circular.button.view_unanswered(class=view_unanswered_class) unvoted
         .centered.row
-            .eight.wide.center.aligned.column
-                if currentUser
-                    .ui.circular.button.view_answered(class=view_answered_class) voted
-                    .ui.circular.button.view_unanswered(class=view_unanswered_class) unvoted
-        .row
-            .eight.wide.right.aligned.column
-                +question_cloud
+            //- .eight.wide.right.aligned.column
+            //-     +question_cloud
             .eight.wide.column
                 .scrolling    
                     each questions
@@ -167,3 +167,149 @@ template(name='donate')
                         small #{when}:
                         | #{message}
             
+
+
+
+template(name='profile_layout')
+    +nav
+    +questions
+    with current_user
+        .ui.stackable.padded.grid
+            .row
+                .three.wide.column
+                    .ui.center.aligned.inline.header.recalc_stats
+                        |#{current_user.username}'s dashboard
+                    .ui.center.aligned.inline.header
+                        | #{user.first_name} #{user.last_name}
+                    //- a.ui.large.button.logout_other_clients(href="#" title='logout other clients')
+                    //-     //- i.globe.icon
+                    //-     |log out other clients
+                    .ui.fluid.vertical.menu
+                        a.item(href="/user/#{user._id}/")
+                            |dashboard
+                        a.item(href="/user/#{user._id}/up" class)
+                            |up
+                        a.item(href="/user/#{user._id}/down")
+                            |down
+                    if is_current_user
+                        a.ui.fluid.button(href="/user/#{current_user._id}/edit")
+                            |settings
+                        .ui.fluid.button.logout
+                            |log out
+                .thirteen.wide.column
+                    +yield    
+                
+                    
+template(name='user_dashboard')                    
+    .ui.stackable.padded.grid
+        .two.column.row
+            //- .column
+            //-     .ui.header #{current_user.answered_count} answered questions 
+            //-     each current_user.answered_cloud
+            //-         .ui.label #{name}
+            //-             //- small #{count}
+            //-     div list
+            //-     .ui.link.list
+            //-         each answered_questions
+            //-             .item 
+            //-                 .content 
+            //-                     .header #{title}
+            //-                     .meta 
+            //-                         small #{when}
+            .column
+                .ui.header #{current_user.up_count} 
+                    i.chevron.up.icon
+                each current_user.up_cloud
+                    .ui.large.basic.label #{name}
+                    //- small #{count}    
+                .ui.link.large.list
+                    each upvotes
+                        .item #{title}
+                        //- .meta 
+                            //- small #{when}
+                .ui.header up matching
+                .ui.large.list
+                    each up_union_docs
+                        .item
+                            |#{up_points} up
+                            each other_user_ids
+                                +user_info this
+                    
+            .column
+                .ui.header #{current_user.down_count} 
+                    i.chevron.down.icon
+                each current_user.down_cloud
+                    .ui.large.basic.label #{name}
+                    //- small #{count}       
+                |list
+                .ui.link.large.list
+                    each downvotes
+                        .item #{title}
+                .ui.header down matching
+                .ui.large.list
+                each down_union_docs
+                    .item
+                        |#{down_points} down
+                        each other_user_ids
+                            +user_info this
+
+
+template(name='user_down')
+    .ui.center.aligned.header user down
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.down_count} down 
+                each current_user.down_cloud
+                    .ui.basic.large.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each down_answers
+                            a.item(href="/question/#{_id}/view") #{title}
+            .column
+                .ui.inline.header overlap
+                i.circular.refresh.link.icon.calc_down_overlap
+                .ui.header #{union_doc.down_points} down matching points
+                //- each union_doc.down_list
+                //-     .ui.basic.large.label #{this}
+                each union_doc.down_cloud
+                    .ui.basic.large.label #{name} 
+                        small #{count}
+            .column
+                .ui.header #{currentUser.down_count} down 
+                each currentUser.down_cloud
+                    .ui.basic.large.label #{name}
+                        small #{count}
+                .ui.header most matched users
+                
+                
+template(name='user_up')
+    .ui.center.aligned.header user up
+    .ui.stackable.grid 
+        .three.column.row
+            .column
+                .ui.header #{current_user.username} 
+                    small #{current_user.up_count} up answers 
+                each current_user.up_cloud
+                    .ui.basic.large.label #{name}
+                        small #{count}    
+                .scrolling
+                    .ui.link.list
+                        each up_answers
+                            a.item(href="/question/#{_id}/view") #{title}
+            .column
+                .ui.inline.header overlap
+                i.refresh.circular.icon.calc_up_overlap 
+                .ui.header #{union_doc.up_points} up points
+                //- each union_doc.up_list
+                //-     .ui.basic.large.label #{this}
+                each union_doc.up_cloud
+                    .ui.basic.large.label #{name} 
+                        small #{count}
+            .column
+                .ui.header #{currentUser.username} #{currentUser.up_count} up answers 
+                each currentUser.up_cloud
+                    .ui.basic.large.label #{name}
+                        small #{count}
+                .ui.header most matched users

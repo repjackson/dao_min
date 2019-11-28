@@ -56,7 +56,7 @@ Meteor.methods
             term_summed_count.count = other_count.count + my_count.count
             result.push term_summed_count
 
-        console.log result
+        # console.log result
         union_doc  = Docs.findOne({
             model:'union'
             user_ids:$all:[user1_id, user2_id]
@@ -99,7 +99,7 @@ Meteor.methods
             term_summed_count.count = other_count.count + my_count.count
             result.push term_summed_count
 
-        console.log result
+        # console.log result
         union_doc  = Docs.findOne({
             model:'union'
             user_ids:$all:[user1_id, user2_id]

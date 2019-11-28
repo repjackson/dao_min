@@ -41,13 +41,14 @@ Meteor.publish 'tags', (
     # console.log selected_tags
     # console.log view_answered
     # console.log view_unanswered
-    if view_answered
-        match.answer_ids = $in:[Meteor.userId()]
-    if view_unanswered
-        match.answer_ids = $nin:[Meteor.userId()]
+    # if view_answered
+    #     match.answer_ids = $in:[Meteor.userId()]
+    # if view_unanswered
+    #     match.answer_ids = $nin:[Meteor.userId()]
 
     if selected_tags.length > 0 then match.tags = $all: selected_tags
     match.model = 'question'
+    match.answer_ids = $nin:[Meteor.userId()]
     cloud = Docs.aggregate [
         { $match: match }
         { $project: tags: 1 }
@@ -79,12 +80,13 @@ Meteor.publish 'facet_docs', (
     # console.log view_unanswered
     self = @
     match = {}
-    if view_answered
-        match.answer_ids = $in:[Meteor.userId()]
-    if view_unanswered
-        match.answer_ids = $nin:[Meteor.userId()]
+    # if view_answered
+    #     match.answer_ids = $in:[Meteor.userId()]
+    # if view_unanswered
+    #     match.answer_ids = $nin:[Meteor.userId()]
     if selected_tags.length > 0 then match.tags = $all: selected_tags
 
+    match.answer_ids = $nin:[Meteor.userId()]
 
     match.model = 'question'
     Docs.find match,
