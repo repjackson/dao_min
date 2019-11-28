@@ -106,7 +106,6 @@ Meteor.methods
                         console.log 'found non image, sending to watson', doc.url
                         console.log 'domain', doc.domain, 'calling watson'
                         Meteor.call 'call_watson', doc._id, 'url', 'url'
-
             console.log 'done counting tags'
 
 
