@@ -124,7 +124,7 @@ Template.question_edit.events
             val = t.$('.edit_title').val().trim().toLowerCase()
             Docs.update Router.current().params.doc_id,
                 $set:title:val
-
+            Meteor.call 'search_reddit', val
 
 
     'keyup .new_tag': (e,t)->

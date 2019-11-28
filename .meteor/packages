@@ -28,3 +28,6 @@ reactive-var@1.0.11
 coffeescript
 session@1.2.0
 babrahams:constellation
+modules
+ecmascript
+http

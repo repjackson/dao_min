@@ -6,7 +6,7 @@ template(name='nav')
                 //-     i.yin.yang.large.icon
                 a.ui.icon.large.circular.basic.button(href='/users')
                     i.user.outline.large.icon
-                .ui.icon.big.circular.basic.button.add_question(title='add question')
+                .ui.icon.large.circular.basic.button.add_question(title='add question')
                     i.large.plus.icon                
                 unless currentUser
                     a.ui.big.circular.basic.button(href='/login') 
@@ -120,7 +120,7 @@ template(name='question_edit')
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column 
-                    .ui.header 
+                    .ui.inline.header 
                         | edit '#{title}'
                     a.ui.big.icon.circular.basic.button(href="/question/#{_id}/view" title='save')
                         //- |save
