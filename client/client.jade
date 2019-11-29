@@ -44,112 +44,8 @@ template(name='nav')
                 .ui.big.circular.label  
                     +loginButtons     
                 if currentUser      
-                    .ui.icon.circular.button.add_question(title='add question')
+                    .ui.icon.circular.button.add_question(title='add concept')
                         i.large.plus.icon   
-
-template(name='question_cloud')
-    //- #cloud
-        //- .ui.left.icon.input
-        //-     i.search.icon
-        //-     input#search(type='text' placeholder='search')
-            //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
-    .ui.inline.grey.header
-        i.user.outline.icon
-    if selected_upvoters
-        #clear_upvoters.ui.active.icon.large.compact.button
-            i.remove.icon
-        each selected_upvoters
-            .unselect_upvoter.ui.active.large.compact.button
-                strong #{this}
-    each all_upvoters
-        .ui.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
-            strong #{this.name}
-    .spacer
-    .ui.inline.grey.header
-        i.tag.icon
-    if selected_tags
-        #clear_tags.ui.active.icon.circular.large.compact.button
-            i.remove.icon
-        each selected_tags
-            .unselect_tag.ui.active.circular.large.compact.button
-                strong #{this}
-    each all_tags
-        .ui.circular.large.compact.button.select_tag(class=cloud_tag_class) 
-            strong #{this.name}
-
-
-template(name='question_segment')
-    //- .ui.card    
-    .ui.center.aligned.basic.segment
-        .ui.header #{title}
-        +voting_full
-        
-
-
-
-template(name='question_view')
-    with current_doc
-        .ui.stackable.padded.grid
-            .centered.row
-                .ten.wide.center.aligned.column
-                    .ui.large.inline.header #{title}
-                    if can_edit
-                        a.ui.icon.button(href="/question/#{_id}/edit")
-                            i.pencil.icon
-                        //- +remove_button
-                    //- each tags 
-                    //-     .ui.label #{this}
-                    +voting_full
-            .centered.row
-                .ten.wide.column            
-                    .ui.inline.header stats
-                    .ui.icon.small.button.calc_stats
-                        i.refresh.icon
-                    .ui.list 
-                        //- .item #{view_count} views
-                        .item #{vote_count} votes
-                        .item up
-                            each upvoters
-                                +user_info this
-                        .item down
-                            each downvoters
-                                +user_info this
-
-template(name='question_edit')
-    with current_doc
-        .ui.stackable.padded.grid
-            .centered.row
-                .ten.wide.center.aligned.column 
-                    .ui.inline.header 
-                        | edit '#{title}'
-                    a.ui.big.icon.circular.button(href="/question/#{_id}/view" title='save')
-                        //- |save
-                        i.big.checkmark.icon
-                    +remove_button
-            .centered.row
-                .ten.wide.column 
-                    .ui.inline.grey.header question
-                    .ui.fluid.big.input
-                        input.edit_title(type='text' value=title autocomplete="off")
-                    .ui.hidden.divider
-                    .ui.inline.grey.header tags
-                    div
-                    .ui.icon.input
-                        i.plus.icon
-                        input.new_tag(type='text' autocomplete="off")
-                    each tags
-                        .ui.large.label
-                            i.delete.icon.remove_element
-                            |#{this}
-                
-
-
-
-template(name='remove_button')
-    .ui.icon.circular.button.remove
-        i.remove.icon
-
-
 
 
 template(name='home')                    
@@ -173,3 +69,113 @@ template(name='home')
         .one.column.row
             .center.aligned.column
                 +question_cloud
+                .ui.big.link.list 
+                    each docs 
+                        a.item(href="/question/#{_id}/edit") #{title}
+
+
+
+template(name='question_cloud')
+    //- #cloud
+    .ui.inline.grey.header
+        i.user.outline.icon
+    if selected_upvoters
+        #clear_upvoters.ui.active.icon.large.compact.button
+            i.remove.icon
+        each selected_upvoters
+            .unselect_upvoter.ui.active.large.compact.button
+                strong #{this}
+    each all_upvoters
+        .ui.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
+            strong #{this.name}
+    .spacer
+    .ui.inline.grey.header
+        i.tag.icon
+    .ui.left.icon.input
+        i.search.icon
+        input#search(type='text' placeholder='search' autocomplete="off")
+        //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off"            
+    if selected_tags
+        #clear_tags.ui.active.icon.circular.large.compact.button
+            i.remove.icon
+        each selected_tags
+            .unselect_tag.ui.active.circular.large.compact.button
+                strong #{this}
+    each all_tags
+        .ui.circular.large.compact.button.select_tag(class=cloud_tag_class) 
+            strong #{this.name}
+
+
+template(name='question_segment')
+    //- .ui.card    
+    .ui.center.aligned.segment
+        .ui.large.header #{title}
+        +voting_full
+        
+
+
+
+template(name='question_view')
+    with current_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .ten.wide.center.aligned.column
+                    .ui.large.inline.header #{title}
+                    if can_edit
+                        a.ui.icon.circular.button(href="/question/#{_id}/edit")
+                            i.pencil.icon
+                        //- +remove_button
+                    +voting_full
+            .centered.row
+                .fifteen.wide.column            
+                    each tags 
+                        .ui.large.label #{this}
+            .centered.row
+                .ten.wide.column            
+                    .ui.inline.header stats
+                    .ui.icon.small.button.calc_stats
+                        i.refresh.icon
+                    .ui.list 
+                        //- .item #{view_count} views
+                        .item #{vote_count} votes
+                        .item up
+                            each upvoters
+                                .ui.big.label #{this}
+                        .item down
+                            each downvoters
+                                .ui.big.label #{this}
+                                
+
+template(name='question_edit')
+    with current_doc
+        .ui.stackable.padded.grid
+            .centered.row
+                .ten.wide.center.aligned.column 
+                    .ui.inline.header 
+                        | edit '#{title}'
+                    a.ui.big.icon.circular.button(href="/question/#{_id}/view" title='save')
+                        //- |save
+                        i.big.checkmark.icon
+                    +remove_button
+            .centered.row
+                .fifteen.wide.column 
+                    .ui.inline.grey.header concept
+                    .ui.fluid.big.input
+                        input.edit_title(type='text' value=title autocomplete="off")
+                    .ui.hidden.divider
+                    .ui.inline.grey.header tags
+                    div
+                    .ui.icon.input
+                        i.plus.icon
+                        input.new_tag(type='text' autocomplete="off")
+                    each tags
+                        .ui.large.label
+                            i.delete.icon.remove_element
+                            |#{this}
+                
+
+
+
+template(name='remove_button')
+    .ui.icon.circular.button.remove
+        i.remove.icon

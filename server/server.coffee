@@ -159,3 +159,11 @@ Meteor.publish 'facet_docs', (
 
 Meteor.publish 'users', ->
     Meteor.users.find()
+
+
+Meteor.methods
+    pull_tag: (tag)->
+        tag_doc_count =
+            Docs.find(tags:$in:[tag]).count()
+        console.log 'tag doc count', tag_doc_count
+        Docs.update({tags:$in:[tag]}, {$pull:tags:tag}, {multi:true})

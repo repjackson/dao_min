@@ -39,7 +39,8 @@ Docs.before.insert (userId, doc)->
     ap = moment(timestamp).format('a')
     month = moment(timestamp).format('MMMM')
     year = moment(timestamp).format('YYYY')
-
+    upvoters = []
+    downvoters = []
     # date_array = [ap, "hour #{hour}", "min #{minute}", weekday, month, date, year]
     date_array = [ap, weekday, month, date, year]
     if _

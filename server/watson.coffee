@@ -13,7 +13,6 @@ natural_language_understanding = new NaturalLanguageUnderstandingV1(
 
 Meteor.methods
     call_wiki: (query)->
-
         console.log 'calling wiki', query
         term = query.split(' ').join('_')
         found_doc =
@@ -21,12 +20,14 @@ Meteor.methods
                 url: "https://en.wikipedia.org/wiki/#{term}"
         if found_doc
             console.log 'found wiki doc for term', term, found_doc
+            Docs.remove found_doc._id
             # Docs.update found_doc._id,
             #     $addToSet:tags:'wikipedia'
-            Meteor.call 'call_watson', found_doc._id, 'url','url', query
+            # Meteor.call 'call_watson', found_doc._id, 'url','url', query
         else
             new_wiki_id = Docs.insert
                 title: query
+                root: query
                 model:'wiki'
                 tags:[query]
                 url:"https://en.wikipedia.org/wiki/#{term}"
@@ -47,7 +48,7 @@ Meteor.methods
         # console.log 'analyzing', doc.title, 'tags', doc.tags
         parameters =
             concepts:
-                limit:20
+                limit:10
             features:
                 entities:
                     emotion: false
@@ -58,7 +59,7 @@ Meteor.methods
                     sentiment: false
                     # limit: 2
                 concepts: {}
-                # categories: {}
+                categories: {}
                 # emotion: {}
                 # metadata: {}
                 # relations: {}
@@ -92,18 +93,18 @@ Meteor.methods
                 keyword_array = _.pluck(response.keywords, 'text')
                 lowered_keywords = keyword_array.map (keyword)-> keyword.toLowerCase()
                 # console.log 'lowered keywords', lowered_keywords
-                # if Meteor.isDevelopment
-                #     console.log 'categories',response.categories
+                if Meteor.isDevelopment
+                    console.log 'categories',response.categories
                 adding_tags = []
-                # if response.categories
-                #     for category in response.categories
-                #         console.log category.label.split('/')[1..]
-                #         console.log category.label.split('/')
-                #         for tag in category.label.split('/')
-                #             if tag.length > 0 then adding_tags.push tag
-                # Docs.update { _id: doc_id },
-                #     $addToSet:
-                #         tags:$each:adding_tags
+                if response.categories
+                    for category in response.categories
+                        console.log category.label.split('/')[1..]
+                        console.log category.label.split('/')
+                        for tag in category.label.split('/')
+                            if tag.length > 0 then adding_tags.push tag
+                Docs.update { _id: doc_id },
+                    $addToSet:
+                        tags:$each:adding_tags
                 if response.entities and response.entities.length > 0
                     for entity in response.entities
                         # console.log entity.type, entity.text
@@ -136,10 +137,10 @@ Meteor.methods
                 related_question_doc =
                     Docs.findOne
                         model:'question'
-                        title:final_doc.title
+                        title:final_doc.root
                 console.log related_question_doc
                 Docs.update related_question_doc._id,
-                    $set: tags: final_doc.tags
+                    $addToSet: tags: $each: final_doc.tags
                 if Meteor.isDevelopment
                     # console.log 'all tags', final_doc.tags
                     console.log 'final doc tag', final_doc.title, final_doc.tags, final_doc.tags.length, 'length'

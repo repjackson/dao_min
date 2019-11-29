@@ -53,10 +53,10 @@ Template.voting_full.events
     'click .upvote': (e,t)-> Meteor.call 'upvote', @
     'click .downvote': (e,t)-> Meteor.call 'downvote', @
 Template.voting_full.helpers
-    # upvote_class: ->
-    #     if Meteor.userId() in @upvoters then 'green' else 'outline'
-    # downvote_class: ->
-    #     if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
+    upvote_class: ->
+        if @upvoters and Meteor.user().username in @upvoters then '' else 'outline grey'
+    downvote_class: ->
+        if @downvoters and Meteor.user().username in @downvoters then '' else 'outline grey'
 
 
 Template.nav.onRendered ->
@@ -67,7 +67,10 @@ Template.nav.events
             model:'question'
         Router.go "/question/#{new_question_id}/edit"
 
-
+Template.home.helpers
+    docs: ->
+        Docs.find
+            model:'question'
 
 
 
@@ -82,8 +85,8 @@ Template.question_cloud.onCreated ->
 Template.question_cloud.helpers
     all_tags: ->
         question_count = Docs.find(model:'question').count()
-        # if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
-        Tags.find {}
+        if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
+        # Tags.find {}
     all_upvoters: ->
         question_count = Docs.find(model:'question').count()
         # if 0 < question_count < 3 then Upvoters.find { count: $lt: question_count } else Upvoters.find({},{limit:42})
@@ -98,12 +101,14 @@ Template.question_cloud.events
     'click .unselect_upvoter': -> selected_upvoters.remove @valueOf()
     'click #clear_upvoters': -> selected_upvoters.clear()
 
-
+    'keyup #search': (e,t)->
+        if e.which is 13
+            search_term = t.$('#search').val().trim().toLowerCase()
+            selected_tags.push search_term
+            t.$('#search').val('')
 
 Template.question_segment.onCreated ->
     # console.log @
-    # @autorun => Meteor.subscribe('answer_sessions_from_question_id', @data._id)
-    # @autorun => Meteor.subscribe('my_answer_from_question_id', @data._id)
 
 Template.question_edit.onRendered ->
     Meteor.setTimeout ->
@@ -124,7 +129,7 @@ Template.question_edit.events
             Docs.update Router.current().params.doc_id,
                 $set:title:val
             Meteor.call 'call_wiki', val
-            # Meteor.call 'search_reddit', val
+            Meteor.call 'search_reddit', val
     'keyup .new_tag': (e,t)->
         if e.which is 13
             tag_val = t.$('.new_tag').val().trim().toLowerCase()
