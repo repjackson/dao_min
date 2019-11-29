@@ -31,47 +31,126 @@ Docs.allow
 
 
 
+Meteor.publish 'me', ->
+    Meteor.users.find Meteor.userId()
+
+Meteor.publish 'unanswered_questions', (user_id)->
+    Docs.find
+        model:'question'
+        answer_ids: $nin: [user_id]
 
 
-# Meteor.methods
-#     calc_up_union: (user1_id, user2_id)->
-#         me = Meteor.users.findOne user1_id
-#         my_tag_list = Meteor.user().up_list
-#         target = Meteor.users.findOne user2_id
-#         target_tag_list = target.up_list
-#
-#         result = []
-#
-#         intersection = _.intersection(my_tag_list, target_tag_list)
-#         union_points = 0
-#         for term in intersection
-#             other_count = _.findWhere(target.up_cloud, {name: term})
-#             my_count = _.findWhere(me.up_cloud, {name: term})
-#             # console.log other_count
-#             # console.log my_count
-#             union_points += my_count.count
-#             union_points += other_count.count
-#             term_summed_count = {}
-#             term_summed_count.name = term
-#             term_summed_count.count = other_count.count + my_count.count
-#             result.push term_summed_count
-#
-#         # console.log result
-#         union_doc  = Docs.findOne({
-#             model:'union'
-#             user_ids:$all:[user1_id, user2_id]
-#         })
-#         unless union_doc
-#             new_union_id = Docs.insert
-#                 model:'union'
-#                 user_ids:[user1_id, user2_id]
-#             union_doc = Docs.findOne new_union_id
-#         union_doc  = Docs.update(
-#             {
-#                 _id:union_doc._id
-#             }, {
-#                 $set:
-#                     up_cloud: result
-#                     up_list: intersection
-#                     up_points: union_points
-#             })
+Meteor.publish 'user_from_username', (username)->
+    Meteor.users.find username:username
+
+Meteor.publish 'model_docs', (model)->
+    Docs.find
+        model:model
+
+Meteor.publish 'user_up_questions', (username)->
+    Docs.find
+        model:'question'
+        upvoters: $in: [username]
+
+
+Meteor.publish 'tags', (
+    selected_tags
+    selected_upvoters
+    )->
+    self = @
+    match = {}
+
+    console.log selected_tags
+
+    if selected_tags.length > 0 then match.tags = $all: selected_tags
+    match.upvoters = $all: selected_upvoters
+    # if selected_upvoters.length > 0 then match.upvoters = $all: selected_upvoters
+    match.model = 'question'
+    # match.answer_ids = $in:[Meteor.userId()]
+
+    tag_cloud = Docs.aggregate [
+        { $match: match }
+        { $project: tags: 1 }
+        { $unwind: "$tags" }
+        { $group: _id: '$tags', count: $sum: 1 }
+        { $match: _id: $nin: selected_tags }
+        { $sort: count: -1, _id: 1 }
+        { $limit: 42 }
+        { $project: _id: 0, name: '$_id', count: 1 }
+        ]
+    tag_cloud.forEach (tag, i) ->
+        self.added 'tags', Random.id(),
+            name: tag.name
+            count: tag.count
+            index: i
+
+
+
+        doc_match = {}
+        doc_match.author_id = $in: [other_user._id, Meteor.userId()]
+        if selected_overlap_tags.length > 0 then doc_match.tags = $all: selected_overlap_tags
+        doc_match.model = model
+
+        subHandle = Docs.find(doc_match, {limit:20, sort: timestamp:-1}).observeChanges(
+            added: (id, fields) ->
+                # console.log 'added doc', id, fields
+                # doc_results.push id
+                self.added 'docs', id, fields
+            changed: (id, fields) ->
+                # console.log 'changed doc', id, fields
+                self.changed 'docs', id, fields
+            removed: (id) ->
+                # console.log 'removed doc', id, fields
+                # doc_results.pull id
+                self.removed 'docs', id
+        )
+
+        # for doc_result in doc_results
+
+        # user_results = Meteor.users.find(_id:$in:doc_results).observeChanges(
+        #     added: (id, fields) ->
+        #         # console.log 'added doc', id, fields
+        #         self.added 'docs', id, fields
+        #     changed: (id, fields) ->
+        #         # console.log 'changed doc', id, fields
+        #         self.changed 'docs', id, fields
+        #     removed: (id) ->
+        #         # console.log 'removed doc', id, fields
+        #         self.removed 'docs', id
+        # )
+
+
+
+        # console.log 'doc handle count', subHandle._observeDriver._results
+
+
+
+
+
+
+
+
+    self.ready()
+
+
+Meteor.publish 'facet_docs', (
+    selected_tags
+    selected_upvoters
+    )->
+
+    self = @
+    match = {}
+    if selected_tags.length > 0 then match.tags = $all: selected_tags
+    # if selected_upvoters.length > 0 then match.upvoters = $all: selected_upvoters
+    match.upvoters = $all: selected_upvoters
+
+    # match.answer_ids = $nin:[Meteor.userId()]
+
+    match.model = 'question'
+    Docs.find match,
+        sort:_timestamp:1
+        limit: 5
+
+
+Meteor.publish 'users', ->
+    Meteor.users.find()

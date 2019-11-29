@@ -30,6 +30,7 @@ body {
 
 .label{
     margin: .2em !important;
+    border-radius: 8px;
 }
 
 .-autocomplete-container {
@@ -41,9 +42,6 @@ body {
   height: 10px;
 }
 
-.label {
-  border-radius: 8px;
-}
 
 .inline {
   display:inline !important;
@@ -109,15 +107,6 @@ body {
 	/* padding-top: 1em; */
 	/*padding-left: 1em;*/
 }
-.mediumscroll{
-	overflow-y:scroll;
-	overflow-x:hidden;
-	max-height:500px;
-	/*max-height:85vh;*/
-	padding-top: 1em;
-	margin-top: .5em;
-	/*padding-left: 1em;*/
-}
 
 
 /* Handle */
@@ -132,10 +121,6 @@ body {
 
 .lowercase {
     text-transform: lowercase !important;
-}
-
-.capitalize {
-    text-transform: capitalize !important;
 }
 
 
@@ -178,21 +163,11 @@ input:not(.no_format){
 }
 
 
-.inline {
-  display:inline !important;
-  padding-right: 5px !important;
-  margin-right: 0px !important;
-  /* margin: .5em !important;2 */
-}
-
 
 .segment, .input, .header {
   animation: fadein .25s;
 }
 
-.icon.item {
-  animation: fadein .25s;
-}
 
 @keyframes fadein {
   from { opacity: 0}
@@ -207,23 +182,7 @@ input:not(.no_format){
 	/* padding-top: 1em; */
 	/*padding-left: 1em;*/
 }
-.smallscroll{
-	overflow-y:scroll;
-	overflow-x:hidden;
-	max-height:100px;
-	/*max-height:85vh;*/
-	padding-top: 1em;
-	/*padding-left: 1em;*/
-}
-
-
-.card {
-    opacity: .9 !important;
-}
 
 .scrolling::-webkit-scrollbar {
     display: none;
-}
-.smallscroll::-webkit-scrollbar {
-    width: 2px;
 }

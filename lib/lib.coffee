@@ -2,6 +2,29 @@
 @Tags = new Meteor.Collection 'tags'
 @Upvoter_ids = new Meteor.Collection 'upvoter_ids'
 
+
+
+
+
+Router.configure
+    layoutTemplate: 'layout'
+    notFoundTemplate: 'not_found'
+    loadingTemplate: 'splash'
+    trackPageView: false
+
+
+Router.route '*', -> @render 'not_found'
+
+Router.route '/', (->
+    @layout 'layout'
+    @render 'home'
+    ), name:'home'
+
+
+
+
+
+
 Docs.before.insert (userId, doc)->
     if Meteor.user()
         doc._author_id = Meteor.userId()

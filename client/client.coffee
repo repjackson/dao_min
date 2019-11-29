@@ -6,9 +6,26 @@ Router.route '/question/:doc_id/view', (->
     @layout 'layout'
     @render 'question_view'
     ), name:'question_view'
+Router.route '/register', (->
+    @layout 'layout'
+    @render 'register'
+    ), name:'register'
+
+
+
 
 @selected_tags = new ReactiveArray []
-@selected_upvoter_ids = new ReactiveArray []
+@selected_upvoters = new ReactiveArray []
+
+
+
+Accounts.ui.config
+    passwordSignupFields: 'USERNAME_ONLY'
+
+
+
+
+
 
 Template.registerHelper 'logging_out', () -> Session.get 'logging_out'
 Template.registerHelper 'can_edit', () ->
@@ -69,21 +86,21 @@ Template.nav.events
 Template.question_cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
-        selected_upvoter_ids.array()
+        selected_upvoters.array()
     )
 Template.question_cloud.helpers
     all_tags: ->
         question_count = Docs.find(model:'question').count()
         if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
     selected_tags: -> selected_tags.array()
-    selected_upvoter_ids: -> selected_upvoter_ids.array()
+    selected_upvoters: -> selected_upvoters.array()
 Template.question_cloud.events
     'click .select_tag': -> selected_tags.push @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
-    'click .select_upvoter_id': -> selected_upvoter_ids.push @name
-    'click .unselect_upvoter_id': -> selected_upvoter_ids.remove @valueOf()
-    'click #clear_upvoter_ids': -> selected_upvoter_ids.clear()
+    'click .select_upvoter_id': -> selected_upvoters.push @name
+    'click .unselect_upvoter_id': -> selected_upvoters.remove @valueOf()
+    'click #clear_upvoter_ids': -> selected_upvoters.clear()
 
 
 
@@ -150,85 +167,21 @@ Template.remove_button.events
 
 
 
-Router.route '/register', (->
-    @layout 'layout'
-    @render 'register'
-    ), name:'register'
-Template.register.onCreated ->
-    Session.set 'username', null
-Template.register.events
-    'keyup .username': ->
-        username = $('.username').val()
-        Session.set 'username', username
-        Meteor.call 'find_username', username, (err,res)->
-            if res
-                Session.set 'enter_mode', 'login'
-            else
-                Session.set 'enter_mode', 'register'
-
-    'blur .username': ->
-        username = $('.username').val()
-        Session.set 'username', username
-        Meteor.call 'find_username', username, (err,res)->
-            if res
-                Session.set 'enter_mode', 'login'
-            else
-                Session.set 'enter_mode', 'register'
-
-    'click .register': (e,t)->
-        username = $('.username').val()
-        # email = $('.email').val()
-        password = $('.password').val()
-        # if Session.equals 'enter_mode', 'register'
-        # if confirm "register #{username}?"
-        options = {
-            username:username
-            password:password
-        }
-        Meteor.call 'create_user', options, (err,res)=>
-            console.log res
-            Meteor.loginWithPassword username, password, (err,res)=>
-                if err
-                    alert err.reason
-                    # if err.error is 403
-                    #     Session.set 'message', "#{username} not found"
-                    #     Session.set 'enter_mode', 'register'
-                    #     Session.set 'username', "#{username}"
-                else
-                    # Meteor.users.update Meteor.userId(),
-                    #     $set:
-                    #         first_name: Session.get('first_name')
-                    #         last_name: Session.get('last_name')
-                    Router.go '/'
-        # else
-        #     Meteor.loginWithPassword username, password, (err,res)=>
-        #         if err
-        #             if err.error is 403
-        #                 Session.set 'message', "#{username} not found"
-        #                 Session.set 'enter_mode', 'register'
-        #                 Session.set 'username', "#{username}"
-        #         else
-        #             Router.go '/'
-Template.register.helpers
-    can_register: ->
-        # Session.get('first_name') and Session.get('last_name') and Session.get('email')
-        Session.get('username')
-
-    username: -> Session.get 'username'
-    registering: -> Session.equals 'enter_mode', 'register'
-    enter_class: -> if Meteor.loggingIn() then 'loading disabled' else ''
-
-
 
 Template.home.onCreated ->
-    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoter_ids.array())
+    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoters.array())
     @autorun -> Meteor.subscribe('unanswered_questions', Meteor.userId())
     # @autorun -> Meteor.subscribe 'model_docs', 'union'
-    @autorun -> Meteor.subscribe 'users'
+    # @autorun -> Meteor.subscribe 'users'
 Template.home.events
     'click .add_user': ->
-        console.log @
-        selected_upvoter_ids.push @_id
+        # console.log @
+        selected_upvoters.push @_id
+    'click .logout': ->
+        Session.set 'logging_out', true
+        Meteor.logout()
+        Session.set 'logging_out', false
+
 Template.home.helpers
     unanswered_questions: ->
         Docs.find {
