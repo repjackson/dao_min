@@ -1,9 +1,6 @@
 @Docs = new Meteor.Collection 'docs'
 @Tags = new Meteor.Collection 'tags'
-@Upvoter_ids = new Meteor.Collection 'upvoter_ids'
-
-
-
+@Upvoters = new Meteor.Collection 'upvoters'
 
 
 Router.configure
@@ -60,30 +57,7 @@ Docs.before.insert (userId, doc)->
 #     when: -> moment(@_timestamp).fromNow()
 
 if Meteor.isServer
-    Docs.allow
-        # insert: (userId, doc) -> userId
-        # update: (userId, doc) -> userId is @_author_id
-        # remove: (userId, doc) -> userId is @_author_id
-        insert: (userId, doc) ->
-            if doc.model is 'bug'
-                true
-            else
-                userId and doc._author_id is userId
-        update: (userId, doc) ->
-            if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
-                true
-            else
-                doc._author_id is userId
-        # update: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
-        remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
-
-    Meteor.publish 'doc', (id)->
-        doc = Docs.findOne id
-        user = Meteor.users.findOne id
-        if doc
-            Docs.find id
-        else if user
-            Meteor.users.find id
+    Meteor.publish 'doc', (id)-> Docs.find id
     Meteor.publish 'docs', (selected_tags)->
         self = @
         match = {}
@@ -94,75 +68,63 @@ if Meteor.isServer
 
 Meteor.methods
     upvote: (doc)->
-        if Meteor.userId()
-            if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
+        if Meteor.user().username
+            if doc.downvoters and Meteor.user().username in doc.downvoters
                 Docs.update doc._id,
                     $pull:
-                        downvoter_ids:Meteor.userId()
+                        downvoters:Meteor.user().username
                     $addToSet:
-                        upvoter_ids:Meteor.userId()
+                        upvoters:Meteor.user().username
                     $inc:
                         points:2
                         upvotes:1
                         downvotes:-1
-            else if doc.upvoter_ids and Meteor.userId() in doc.upvoter_ids
+            else if doc.upvoters and Meteor.user().username in doc.upvoters
                 Docs.update doc._id,
                     $pull:
-                        upvoter_ids:Meteor.userId()
-                        answer_ids:Meteor.userId()
+                        upvoters:Meteor.user().username
+                        answered:Meteor.user().username
                     $inc:
                         points:-1
                         upvotes:-1
             else
                 Docs.update doc._id,
                     $addToSet:
-                        upvoter_ids:Meteor.userId()
-                        answer_ids:Meteor.userId()
+                        upvoters:Meteor.user().username
+                        answered:Meteor.user().username
                     $inc:
                         upvotes:1
                         points:1
             Meteor.users.update doc._author_id,
                 $inc:karma:1
-        else
-            Docs.update doc._id,
-                $inc:
-                    anon_points:1
-                    anon_upvotes:1
-            Meteor.users.update doc._author_id,
-                $inc:anon_karma:1
 
     downvote: (doc)->
-        if Meteor.userId()
-            if doc.upvoter_ids and Meteor.userId() in doc.upvoter_ids
+        if Meteor.user().username
+            if doc.upvoters and Meteor.user().username in doc.upvoters
                 Docs.update doc._id,
-                    $pull: upvoter_ids:Meteor.userId()
-                    $addToSet: downvoter_ids:Meteor.userId()
+                    $pull:
+                        upvoters:Meteor.user().username
+                    $addToSet:
+                        downvoters:Meteor.user().username
                     $inc:
                         points:-2
                         downvotes:1
                         upvotes:-1
-            else if doc.downvoter_ids and Meteor.userId() in doc.downvoter_ids
+            else if doc.downvoters and Meteor.user().username in doc.downvoters
                 Docs.update doc._id,
                     $pull:
-                        downvoter_ids:Meteor.userId()
-                        answer_ids:Meteor.userId()
+                        downvoters:Meteor.user().username
+                        answered:Meteor.user().username
                     $inc:
                         points:1
                         downvotes:-1
             else
                 Docs.update doc._id,
                     $addToSet:
-                        downvoter_ids:Meteor.userId()
-                        answer_ids:Meteor.userId()
+                        downvoters:Meteor.user().username
+                        answered:Meteor.user().username
                     $inc:
                         points:-1
                         downvotes:1
             Meteor.users.update doc._author_id,
                 $inc:karma:-1
-        else
-            Docs.update doc._id,
-                $inc:
-                    anon_points:-1
-                    anon_downvotes:1
-            Meteor.users.update doc._author_id,
-                $inc:anon_karma:-1

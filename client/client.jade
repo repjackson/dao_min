@@ -39,20 +39,34 @@ template(name='nav')
     .ui.grid
         .row
             .center.aligned.sixteen.wide.column
-                //- a.ui.icon.big.circular.button(href='/')
-                //-     i.yin.yang.large.icon
-                .ui.icon.large.circular.button.add_question(title='add question')
-                    i.large.plus.icon   
-                .ui.big.label  
-                    +loginButtons           
+                a.ui.icon.large.circular.button(href='/')
+                    i.yin.yang.large.icon
+                .ui.big.circular.label  
+                    +loginButtons     
+                if currentUser      
+                    .ui.icon.circular.button.add_question(title='add question')
+                        i.large.plus.icon   
 
 template(name='question_cloud')
-    .ui.header tag cloud
     //- #cloud
         //- .ui.left.icon.input
         //-     i.search.icon
         //-     input#search(type='text' placeholder='search')
             //- +inputAutocomplete settings=settings id="search" class="" autocomplete="off" 
+    .ui.inline.grey.header
+        i.user.outline.icon
+    if selected_upvoters
+        #clear_upvoters.ui.active.icon.large.compact.button
+            i.remove.icon
+        each selected_upvoters
+            .unselect_upvoter.ui.active.large.compact.button
+                strong #{this}
+    each all_upvoters
+        .ui.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
+            strong #{this.name}
+    .spacer
+    .ui.inline.grey.header
+        i.tag.icon
     if selected_tags
         #clear_tags.ui.active.icon.circular.large.compact.button
             i.remove.icon
@@ -62,16 +76,6 @@ template(name='question_cloud')
     each all_tags
         .ui.circular.large.compact.button.select_tag(class=cloud_tag_class) 
             strong #{this.name}
-    if selected_upvoter_ids
-        #clear_upvoter_ids.ui.active.icon.circular.large.compact.button
-            i.remove.icon
-        each selected_upvoter_ids
-            .unselect_upvoter_id.ui.active.circular.large.compact.button
-                strong #{this}
-    each all_upvoter_ids
-        .ui.circular.large.compact.button.select_upvoter_id(class=cloud_upvoter_id_class) 
-            strong #{this.name}
-
 
 
 template(name='question_segment')
@@ -105,10 +109,10 @@ template(name='question_view')
                         //- .item #{view_count} views
                         .item #{vote_count} votes
                         .item up
-                            each upvoter_ids
+                            each upvoters
                                 +user_info this
                         .item down
-                            each downvoter_ids
+                            each downvoters
                                 +user_info this
 
 template(name='question_edit')
@@ -155,17 +159,17 @@ template(name='home')
                 .column
                     each unanswered_questions
                         +question_segment
+        //- .one.column.row
+        //-     .column
+                //- .ui.inline.header selected users
+                //- each selected_users
+                //-     .ui.large.label
+                //-         |#{this}
+                //- .ui.inline.header add user
+                //- .ui.input
+                //-     input.add_username(type='text' placeholder='add username')
+                //- each users 
+                //-     .ui.button.add_user #{username}
         .one.column.row
-            .column
-                .ui.inline.header selected users
-                each selected_users
-                    .ui.large.label
-                        |#{this}
-                .ui.inline.header add user
-                .ui.input
-                    input.add_username(type='text' placeholder='add username')
-                each users 
-                    .ui.button.add_user #{username}
-        .one.column.row
-            .column
+            .center.aligned.column
                 +question_cloud

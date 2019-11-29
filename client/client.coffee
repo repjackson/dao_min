@@ -6,12 +6,6 @@ Router.route '/question/:doc_id/view', (->
     @layout 'layout'
     @render 'question_view'
     ), name:'question_view'
-Router.route '/register', (->
-    @layout 'layout'
-    @render 'register'
-    ), name:'register'
-
-
 
 
 @selected_tags = new ReactiveArray []
@@ -21,9 +15,6 @@ Router.route '/register', (->
 
 Accounts.ui.config
     passwordSignupFields: 'USERNAME_ONLY'
-
-
-
 
 
 
@@ -63,7 +54,7 @@ Template.voting_full.events
     'click .downvote': (e,t)-> Meteor.call 'downvote', @
 Template.voting_full.helpers
     # upvote_class: ->
-    #     if Meteor.userId() in @upvoter_ids then 'green' else 'outline'
+    #     if Meteor.userId() in @upvoters then 'green' else 'outline'
     # downvote_class: ->
     #     if Meteor.userId() in @downvoter_ids then 'red' else 'outline'
 
@@ -91,16 +82,21 @@ Template.question_cloud.onCreated ->
 Template.question_cloud.helpers
     all_tags: ->
         question_count = Docs.find(model:'question').count()
-        if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
+        # if 0 < question_count < 3 then Tags.find { count: $lt: question_count } else Tags.find({},{limit:42})
+        Tags.find {}
+    all_upvoters: ->
+        question_count = Docs.find(model:'question').count()
+        # if 0 < question_count < 3 then Upvoters.find { count: $lt: question_count } else Upvoters.find({},{limit:42})
+        Upvoters.find({},{limit:42})
     selected_tags: -> selected_tags.array()
     selected_upvoters: -> selected_upvoters.array()
 Template.question_cloud.events
     'click .select_tag': -> selected_tags.push @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
-    'click .select_upvoter_id': -> selected_upvoters.push @name
-    'click .unselect_upvoter_id': -> selected_upvoters.remove @valueOf()
-    'click #clear_upvoter_ids': -> selected_upvoters.clear()
+    'click .select_upvoter': -> selected_upvoters.push @name
+    'click .unselect_upvoter': -> selected_upvoters.remove @valueOf()
+    'click #clear_upvoters': -> selected_upvoters.clear()
 
 
 
@@ -127,7 +123,8 @@ Template.question_edit.events
             val = t.$('.edit_title').val().trim().toLowerCase()
             Docs.update Router.current().params.doc_id,
                 $set:title:val
-            Meteor.call 'search_reddit', val
+            Meteor.call 'call_wiki', val
+            # Meteor.call 'search_reddit', val
     'keyup .new_tag': (e,t)->
         if e.which is 13
             tag_val = t.$('.new_tag').val().trim().toLowerCase()
@@ -152,7 +149,6 @@ Template.question_edit.helpers
 
 
 Template.question_view.onCreated ->
-    @autorun => Meteor.subscribe 'answer_sessions_from_question_id', Router.current().params.doc_id
     @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
 Template.question_view.onRendered ->
     Meteor.call 'increment_view', Router.current().params.doc_id, ->
@@ -177,16 +173,10 @@ Template.home.events
     'click .add_user': ->
         # console.log @
         selected_upvoters.push @_id
-    'click .logout': ->
-        Session.set 'logging_out', true
-        Meteor.logout()
-        Session.set 'logging_out', false
 
 Template.home.helpers
     unanswered_questions: ->
         Docs.find {
             model:'question'
-            answer_ids: $nin: [Meteor.userId()]
+            answered: $nin: [Meteor.user().username]
         }, limit: 1
-
-    users: -> Meteor.users.find()

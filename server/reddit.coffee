@@ -66,6 +66,7 @@ Meteor.methods
                         # comment_count: data.num_comments
                         permalink: data.permalink
                         title: data.title
+                        root: query
                         # selftext: false
                         # thumbnail: false
                         tags:[query, data.title.toLowerCase()]
@@ -105,7 +106,7 @@ Meteor.methods
         )
 
 
-    get_reddit_post: (doc_id, reddit_id)->
+    get_reddit_post: (doc_id, reddit_id, root)->
         # console.log 'getting reddit post'
         HTTP.get "http://reddit.com/by_id/t3_#{reddit_id}.json", (err,res)->
             if err then console.error err

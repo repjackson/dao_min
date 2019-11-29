@@ -21,19 +21,20 @@ Meteor.methods
                 url: "https://en.wikipedia.org/wiki/#{term}"
         if found_doc
             console.log 'found wiki doc for term', term, found_doc
-            Docs.update found_doc._id,
-                $addToSet:tags:'wikipedia'
-            Meteor.call 'call_watson', found_doc._id, 'url','url'
+            # Docs.update found_doc._id,
+            #     $addToSet:tags:'wikipedia'
+            Meteor.call 'call_watson', found_doc._id, 'url','url', query
         else
             new_wiki_id = Docs.insert
-                title: "wikipedia: #{query}"
-                tags:['wikipedia', query]
+                title: query
+                model:'wiki'
+                tags:[query]
                 url:"https://en.wikipedia.org/wiki/#{term}"
-            Meteor.call 'call_watson', new_wiki_id, 'url','url'
+            Meteor.call 'call_watson', new_wiki_id, 'url','url', query
 
 
 
-    call_watson: (doc_id, key, mode) ->
+    call_watson: (doc_id, key, mode, query) ->
         console.log 'calling watson'
         self = @
         # console.log doc_id
@@ -71,7 +72,7 @@ Meteor.methods
                 parameters.text = doc["#{key}"]
             when 'url'
                 parameters.url = doc["#{key}"]
-                parameters.return_analyzed_text = true
+                parameters.return_analyzed_text = false
                 parameters.clean = true
 
         natural_language_understanding.analyze parameters, Meteor.bindEnvironment((err, response) ->
@@ -132,7 +133,14 @@ Meteor.methods
                     $addToSet:
                         tags:$each:lowered_keywords
                 final_doc = Docs.findOne doc_id
+                related_question_doc =
+                    Docs.findOne
+                        model:'question'
+                        title:final_doc.title
+                console.log related_question_doc
+                Docs.update related_question_doc._id,
+                    $set: tags: final_doc.tags
                 if Meteor.isDevelopment
                     # console.log 'all tags', final_doc.tags
-                    console.log 'final doc tag', final_doc.title, final_doc.tags.length, 'length'
+                    console.log 'final doc tag', final_doc.title, final_doc.tags, final_doc.tags.length, 'length'
         )
