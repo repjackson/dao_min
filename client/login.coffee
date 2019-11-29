@@ -63,7 +63,7 @@ Template.login.events
                         })
                     else
                         # Router.go "/user/#{username}"
-                        Router.go "/user/#{Meteor.user()._id}"
+                        Router.go "/"
 
 
 Template.login.helpers

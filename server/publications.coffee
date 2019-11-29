@@ -1,10 +1,10 @@
 Meteor.publish 'me', ->
     Meteor.users.find Meteor.userId()
 
-Meteor.publish 'user_answered_questions', (user_id)->
+Meteor.publish 'unanswered_questions', (user_id)->
     Docs.find
         model:'question'
-        answer_ids: $in: [user_id]
+        answer_ids: $nin: [user_id]
 Meteor.publish 'user_from_id', (user_id)->
     Meteor.users.find user_id
 
@@ -40,7 +40,8 @@ Meteor.publish 'tags', (
     #     match.answer_ids = $nin:[Meteor.userId()]
 
     if selected_tags.length > 0 then match.tags = $all: selected_tags
-    if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
+    match.upvoter_ids = $all: selected_upvoter_ids
+    # if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
     match.model = 'question'
     # match.answer_ids = $in:[Meteor.userId()]
 
@@ -71,7 +72,8 @@ Meteor.publish 'facet_docs', (
     self = @
     match = {}
     if selected_tags.length > 0 then match.tags = $all: selected_tags
-    if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
+    # if selected_upvoter_ids.length > 0 then match.upvoter_ids = $all: selected_upvoter_ids
+    match.upvoter_ids = $all: selected_upvoter_ids
 
     # match.answer_ids = $nin:[Meteor.userId()]
 

@@ -35,6 +35,5 @@ Template.layout.events
         Meteor.logoutOtherClients()
     'click .logout': ->
         Session.set 'logging_out', true
-        Router.go '/login'
         Meteor.logout()
         Session.set 'logging_out', false

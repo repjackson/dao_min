@@ -66,9 +66,6 @@ Template.nav.events
 
 
 
-Template.home.onRendered ->
-    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoter_ids.array())
-
 Template.question_cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
@@ -84,6 +81,9 @@ Template.question_cloud.events
     'click .select_tag': -> selected_tags.push @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
+    'click .select_upvoter_id': -> selected_upvoter_ids.push @name
+    'click .unselect_upvoter_id': -> selected_upvoter_ids.remove @valueOf()
+    'click #clear_upvoter_ids': -> selected_upvoter_ids.clear()
 
 
 
@@ -92,8 +92,6 @@ Template.question_segment.onCreated ->
     # @autorun => Meteor.subscribe('answer_sessions_from_question_id', @data._id)
     # @autorun => Meteor.subscribe('my_answer_from_question_id', @data._id)
 
-Template.question_segment.events
-Template.question_segment.helpers
 Template.question_edit.onRendered ->
     Meteor.setTimeout ->
         $('.accordion').accordion()
@@ -222,8 +220,9 @@ Template.register.helpers
 
 
 
-
 Template.home.onCreated ->
+    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoter_ids.array())
+    @autorun -> Meteor.subscribe('unanswered_questions', Meteor.userId())
     # @autorun -> Meteor.subscribe 'model_docs', 'union'
     @autorun -> Meteor.subscribe 'users'
 Template.home.events
@@ -231,7 +230,7 @@ Template.home.events
         console.log @
         selected_upvoter_ids.push @_id
 Template.home.helpers
-    questions: ->
+    unanswered_questions: ->
         Docs.find {
             model:'question'
             answer_ids: $nin: [Meteor.userId()]
