@@ -44,7 +44,7 @@ template(name='nav')
                 .ui.big.circular.label  
                     +loginButtons     
                 if currentUser      
-                    .ui.icon.circular.button.add_question(title='add concept')
+                    .ui.icon.circular.button.add_concept(title='add concept')
                         i.large.plus.icon   
 
 
@@ -53,29 +53,18 @@ template(name='home')
         if currentUser 
             .one.column.row
                 .column
-                    each unanswered_questions
-                        +question_segment
-        //- .one.column.row
-        //-     .column
-                //- .ui.inline.header selected users
-                //- each selected_users
-                //-     .ui.large.label
-                //-         |#{this}
-                //- .ui.inline.header add user
-                //- .ui.input
-                //-     input.add_username(type='text' placeholder='add username')
-                //- each users 
-                //-     .ui.button.add_user #{username}
+                    each unanswered_concepts
+                        +concept_segment
         .one.column.row
             .center.aligned.column
-                +question_cloud
+                +concept_cloud
                 .ui.big.link.list 
                     each docs 
-                        a.item(href="/question/#{_id}/edit") #{title}
+                        a.item(href="/concept/#{_id}/view") #{title}
 
 
 
-template(name='question_cloud')
+template(name='concept_cloud')
     //- #cloud
     .ui.inline.grey.header
         i.user.outline.icon
@@ -106,54 +95,50 @@ template(name='question_cloud')
             strong #{this.name}
 
 
-template(name='question_segment')
+template(name='concept_segment')
     //- .ui.card    
     .ui.center.aligned.segment
         .ui.large.header #{title}
-        +voting_full
+        +response_edit
         
 
 
 
-template(name='question_view')
+template(name='concept_view')
     with current_doc
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column
                     .ui.large.inline.header #{title}
                     if can_edit
-                        a.ui.icon.circular.button(href="/question/#{_id}/edit")
+                        a.ui.icon.circular.button(href="/concept/#{_id}/edit")
                             i.pencil.icon
                         //- +remove_button
-                    +voting_full
+                    //- +voting_full
             .centered.row
                 .fifteen.wide.column            
                     each tags 
                         .ui.large.label #{this}
             .centered.row
-                .ten.wide.column            
-                    .ui.inline.header stats
-                    .ui.icon.small.button.calc_stats
-                        i.refresh.icon
-                    .ui.list 
-                        //- .item #{view_count} views
-                        .item #{vote_count} votes
-                        .item up
-                            each upvoters
-                                .ui.big.label #{this}
-                        .item down
-                            each downvoters
-                                .ui.big.label #{this}
+                .ten.wide.column   
+                    .ui.header my response
+                    +response_edit
+                    .ui.header tag responses
+                    each responses 
+                        .ui.segment 
+                            each tags 
+                                .ui.large.label #{this}
+                            .ui.header by #{_author_username}
                                 
 
-template(name='question_edit')
+template(name='concept_edit')
     with current_doc
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column 
                     .ui.inline.header 
                         | edit '#{title}'
-                    a.ui.big.icon.circular.button(href="/question/#{_id}/view" title='save')
+                    a.ui.big.icon.circular.button(href="/concept/#{_id}/view" title='save')
                         //- |save
                         i.big.checkmark.icon
                     +remove_button
@@ -162,20 +147,30 @@ template(name='question_edit')
                     .ui.inline.grey.header concept
                     .ui.fluid.big.input
                         input.edit_title(type='text' value=title autocomplete="off")
-                    .ui.hidden.divider
-                    .ui.inline.grey.header tags
-                    div
-                    .ui.icon.input
-                        i.plus.icon
-                        input.new_tag(type='text' autocomplete="off")
-                    each tags
-                        .ui.large.label
-                            i.delete.icon.remove_element
-                            |#{this}
+    
+    
+template(name='response_edit')
+    unless my_response 
+        .ui.button.add_response
+            |add response
+    else 
+        with my_response 
+            .ui.inline.grey.header tags
+            .ui.icon.input
+                i.plus.icon
+                input.new_tag(type='text' autocomplete="off")
+            each tags
+                +tag_button
+            +remove_button
                 
+template(name='tag_button')                
+    .ui.large.label
+        i.delete.icon.remove_tag
+        |#{this}
+                    
 
 
 
 template(name='remove_button')
-    .ui.icon.circular.button.remove
+    .ui.icon.circular.button.remove_doc
         i.remove.icon

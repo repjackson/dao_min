@@ -1,8 +1,7 @@
 {
 	"dependencies": {
 		"@babel/runtime": "^7.6.3",
-		"bcrypt": "^2.0.0",
-		"ibm-watson": "^5.1.0"
+		"bcrypt": "^2.0.0"
 	},
 	"scripts": {
 		"start": "MONGO_URL=mongodb://daoadmin:daoadminpassword@aws-us-east-1-portal.21.dblayer.com:10444/daodb?ssl=true meteor --settings settings.json",

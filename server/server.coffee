@@ -8,16 +8,15 @@ Meteor.users.allow
         # if userId and doc._id == userId
         #     true
 
-
-
 Docs.allow
     insert: (userId, doc) ->
         userId and doc._author_id is userId
     update: (userId, doc) ->
-        if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
-            true
-        else
-            doc._author_id is userId
+        true
+        # if Meteor.user() and Meteor.user().roles and 'admin' in Meteor.user().roles
+        #     true
+        # else
+        #     doc._author_id is userId
     # update: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
     remove: (userId, doc) -> doc._author_id is userId or 'admin' in Meteor.user().roles
 
@@ -27,11 +26,18 @@ Docs.allow
 Meteor.publish 'me', ->
     Meteor.users.find Meteor.userId()
 
-Meteor.publish 'unanswered_questions', (user_id)->
+Meteor.publish 'unanswered_concepts', (user_id)->
     user = Meteor.users.findOne user_id
     Docs.find
-        model:'question'
+        model:'concept'
         answered: $nin: [user.username]
+
+
+Meteor.publish 'concept_responses', (concept_id)->
+    user = Meteor.users.findOne user_id
+    Docs.find
+        model:'response'
+        parent_id: concept_id
 
 
 Meteor.publish 'user_from_username', (username)->
@@ -41,15 +47,15 @@ Meteor.publish 'model_docs', (model)->
     Docs.find
         model:model
 
-Meteor.publish 'user_up_questions', (username)->
+Meteor.publish 'user_up_concepts', (username)->
     Docs.find
-        model:'question'
-        upvoters: $in: [username]
+        model:'concept'
+        authors: $in: [username]
 
 
 Meteor.publish 'tags', (
     selected_tags
-    selected_upvoters
+    selected_authors
     )->
     self = @
     match = {}
@@ -57,9 +63,9 @@ Meteor.publish 'tags', (
     console.log selected_tags
 
     if selected_tags.length > 0 then match.tags = $all: selected_tags
-    # match.upvoters = $all: selected_upvoters
-    if selected_upvoters.length > 0 then match.upvoters = $all: selected_upvoters
-    match.model = 'question'
+    # match.authors = $all: selected_authors
+    if selected_authors.length > 0 then match.authors = $all: selected_authors
+    match.model = 'response'
     # match.answered = $in:[Meteor.userId()]
 
     tag_cloud = Docs.aggregate [
@@ -78,21 +84,20 @@ Meteor.publish 'tags', (
             count: tag.count
             index: i
 
-
-    upvoter_cloud = Docs.aggregate [
+    author_cloud = Docs.aggregate [
         { $match: match }
-        { $project: upvoters: 1 }
-        { $unwind: "$upvoters" }
-        { $group: _id: '$upvoters', count: $sum: 1 }
-        { $match: _id: $nin: selected_upvoters }
+        { $project: authors: 1 }
+        { $unwind: "$authors" }
+        { $group: _id: '$authors', count: $sum: 1 }
+        { $match: _id: $nin: selected_authors }
         { $sort: count: -1, _id: 1 }
         { $limit: 42 }
         { $project: _id: 0, name: '$_id', count: 1 }
         ]
-    upvoter_cloud.forEach (upvoter, i) ->
-        self.added 'upvoters', Random.id(),
-            name: upvoter.name
-            count: upvoter.count
+    author_cloud.forEach (author, i) ->
+        self.added 'authors', Random.id(),
+            name: author.name
+            count: author.count
             index: i
 
 
@@ -129,9 +134,6 @@ Meteor.publish 'tags', (
         #         # console.log 'removed doc', id, fields
         #         self.removed 'docs', id
         # )
-
-
-
         # console.log 'doc handle count', subHandle._observeDriver._results
 
 
@@ -140,18 +142,18 @@ Meteor.publish 'tags', (
 
 Meteor.publish 'facet_docs', (
     selected_tags
-    selected_upvoters
+    selected_authors
     )->
 
     self = @
     match = {}
     if selected_tags.length > 0 then match.tags = $all: selected_tags
-    if selected_upvoters.length > 0 then match.upvoters = $all: selected_upvoters
-    # match.upvoters = $all: selected_upvoters
+    if selected_authors.length > 0 then match.authors = $all: selected_authors
+    # match.authors = $all: selected_authors
 
     # match.answered = $nin:[Meteor.userId()]
 
-    match.model = 'question'
+    match.model = 'concept'
     Docs.find match,
         sort:_timestamp:1
         limit: 5
@@ -167,3 +169,21 @@ Meteor.methods
             Docs.find(tags:$in:[tag]).count()
         console.log 'tag doc count', tag_doc_count
         Docs.update({tags:$in:[tag]}, {$pull:tags:tag}, {multi:true})
+
+    calc_parent_tags: (doc_id)->
+        parent = Docs.findOne doc_id
+        console.log parent
+        children_cursor =
+            Docs.find
+                model:'response'
+                parent_id: doc_id
+        parent_tags = []
+        for child in children_cursor.fetch()
+            # parent_tags.concat child.tags
+            console.log child
+            if child.tags
+                for tag in child.tags
+                    parent_tags.push tag
+        console.log parent_tags
+        Docs.update doc_id,
+            $set: tags: parent_tags
