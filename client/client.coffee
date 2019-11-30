@@ -1,15 +1,15 @@
-Router.route '/concept/:doc_id/edit', (->
+Router.route '/post/:doc_id/edit', (->
     @layout 'layout'
-    @render 'concept_edit'
-    ), name:'concept_edit'
-Router.route '/concept/:doc_id/view', (->
+    @render 'post_edit'
+    ), name:'post_edit'
+Router.route '/post/:doc_id/view', (->
     @layout 'layout'
-    @render 'concept_view'
-    ), name:'concept_view'
+    @render 'post_view'
+    ), name:'post_view'
 
 
 @selected_tags = new ReactiveArray []
-@selected_upvoters = new ReactiveArray []
+@selected_authors = new ReactiveArray []
 
 
 
@@ -54,55 +54,52 @@ Template.voting_full.events
     'click .downvote': (e,t)-> Meteor.call 'downvote', @
 Template.voting_full.helpers
     upvote_class: ->
-        if @upvoters and Meteor.user().username in @upvoters then '' else 'outline grey'
+        if @authors and Meteor.user().username in @authors then '' else 'outline grey'
     downvote_class: ->
         if @downvoters and Meteor.user().username in @downvoters then '' else 'outline grey'
 
 
 Template.nav.onCreated ->
     @autorun => Meteor.subscribe 'me'
-    @autorun => Meteor.subscribe 'model_docs', 'response'
 Template.nav.events
-    'click .add_concept': ->
-        new_concept_id = Docs.insert
-            model:'concept'
-        Router.go "/concept/#{new_concept_id}/edit"
+    'click .add_post': ->
+        new_post_id = Docs.insert
+            model:'post'
+        Router.go "/post/#{new_post_id}/edit"
 
-Template.nav.onCreated ->
-    @autorun => Meteor.subscribe 'model_docs', 'response'
 
 Template.home.helpers
     docs: ->
         Docs.find
-            model:'concept'
+            model:'post'
 
 
 
 
 
-Template.concept_cloud.onCreated ->
+Template.cloud.onCreated ->
     @autorun -> Meteor.subscribe('tags',
         selected_tags.array()
-        selected_upvoters.array()
+        selected_authors.array()
     )
-Template.concept_cloud.helpers
+Template.cloud.helpers
     all_tags: ->
-        concept_count = Docs.find(model:'concept').count()
-        if 0 < concept_count < 3 then Tags.find { count: $lt: concept_count } else Tags.find({},{limit:42})
+        post_count = Docs.find(model:'post').count()
+        if 0 < post_count < 3 then Tags.find { count: $lt: post_count } else Tags.find({},{limit:42})
         # Tags.find {}
-    all_upvoters: ->
-        concept_count = Docs.find(model:'concept').count()
-        # if 0 < concept_count < 3 then Upvoters.find { count: $lt: concept_count } else Upvoters.find({},{limit:42})
-        Upvoters.find({},{limit:42})
+    all_authors: ->
+        post_count = Docs.find(model:'post').count()
+        # if 0 < post_count < 3 then Authors.find { count: $lt: post_count } else Upvoters.find({},{limit:42})
+        Authors.find({},{limit:42})
     selected_tags: -> selected_tags.array()
-    selected_upvoters: -> selected_upvoters.array()
-Template.concept_cloud.events
+    selected_authors: -> selected_authors.array()
+Template.cloud.events
     'click .select_tag': -> selected_tags.push @name
     'click .unselect_tag': -> selected_tags.remove @valueOf()
     'click #clear_tags': -> selected_tags.clear()
-    'click .select_upvoter': -> selected_upvoters.push @name
-    'click .unselect_upvoter': -> selected_upvoters.remove @valueOf()
-    'click #clear_upvoters': -> selected_upvoters.clear()
+    'click .select_author': -> selected_authors.push @name
+    'click .unselect_author': -> selected_authors.remove @valueOf()
+    'click #clear_authors': -> selected_authors.clear()
 
     'keyup #search': (e,t)->
         if e.which is 13
@@ -110,17 +107,16 @@ Template.concept_cloud.events
             selected_tags.push search_term
             t.$('#search').val('')
 
-Template.concept_segment.onCreated ->
+Template.post_segment.onCreated ->
     # console.log @
-Template.concept_edit.onRendered ->
+Template.post_edit.onRendered ->
     Meteor.setTimeout ->
         $('.accordion').accordion()
     , 1000
-Template.concept_edit.onCreated ->
+Template.post_edit.onCreated ->
     @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
-    @autorun => Meteor.subscribe 'concept_docs', Router.current().params.doc_id
     # @autorun => Meteor.subscribe 'model_docs', 'dep'
-Template.concept_edit.events
+Template.post_edit.events
     'blur .edit_title': (e,t)->
         val = t.$('.edit_title').val().trim().toLowerCase()
         Docs.update Router.current().params.doc_id,
@@ -131,81 +127,46 @@ Template.concept_edit.events
             Docs.update Router.current().params.doc_id,
                 $set:title:val
 
-
-Template.response_edit.helpers
-    my_response: ->
-        Docs.findOne
-            root:@title
-            model:'response'
-            _author_id: Meteor.userId()
-
-Template.response_edit.events
-    'click .add_response': ->
-        console.log @
-        Docs.insert
-            model:'response'
-            root:@title
-            parent_id: @_id
-
+Template.post_edit.events
     'keyup .new_tag': (e,t)->
         if e.which is 13
             tag_val = t.$('.new_tag').val().trim().toLowerCase()
             Docs.update @_id,
                 $addToSet:tags:tag_val
-            concept = Template.currentData()
+            post = Template.currentData()
             t.$('.new_tag').val('')
             # console.log Template.parentData()
-            Meteor.call 'calc_parent_tags', Template.currentData()._id
 
 Template.tag_button.events
     'click .remove_tag': (e,t)->
-        response = Template.parentData()
-        console.log 'response', response
+        post = Template.parentData()
+        console.log 'post', post
         console.log 'this', @
-        # response = Template.currentData()
-        concept = Template.parentData(2)
-        console.log 'concept', concept
+        # post = Template.currentData()
+        post = Template.parentData(2)
+        console.log 'post', post
         tag = Template.currentData()
         console.log 'tag', tag
 
-        Docs.update response._id,
+        Docs.update post._id,
             $pull: tags: tag
-        # Docs.update concept._id,
+        # Docs.update post._id,
         #     $pull: tags: tag
         # t.$('.new_tag').focus()
         t.$('.new_tag').val(tag)
-        Meteor.call 'calc_parent_tags', concept._id
-
-
-
-Template.response_edit.events
-
-Template.concept_edit.helpers
-    my_response: ->
-        console.log @
-        Docs.findOne
-            root:@title
-            model:'response'
-            _author_id: Meteor.userId()
 
 
 
 
-Template.concept_view.onCreated ->
+Template.post_view.onCreated ->
     @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
-    @autorun => Meteor.subscribe 'concept_responses', Router.current().params.doc_id
 
-Template.concept_edit.onCreated ->
+Template.post_edit.onCreated ->
     @autorun => Meteor.subscribe 'doc', Router.current().params.doc_id
 
 
-Template.concept_view.onRendered ->
+Template.post_view.onRendered ->
 
-Template.concept_view.helpers
-    responses: ->
-        Docs.find
-            model:'response'
-            parent_id: Router.current().params.doc_id
 
 
 Template.remove_button.events
@@ -219,18 +180,15 @@ Template.remove_button.events
 
 
 Template.home.onCreated ->
-    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_upvoters.array())
-    @autorun -> Meteor.subscribe('unanswered_concepts', Meteor.userId())
-    # @autorun -> Meteor.subscribe 'model_docs', 'union'
-    # @autorun -> Meteor.subscribe 'users'
+    @autorun -> Meteor.subscribe('facet_docs', selected_tags.array(), selected_authors.array())
 Template.home.events
     'click .add_user': ->
         # console.log @
-        selected_upvoters.push @_id
+        selected_authors.push @_id
 
 Template.home.helpers
-    unanswered_concepts: ->
-        Docs.find {
-            model:'concept'
-            answered: $nin: [Meteor.user().username]
-        }, limit: 1
+    # unanswered_posts: ->
+    #     Docs.find {
+    #         model:'post'
+    #         answered: $nin: [Meteor.user().username]
+    #     }, limit: 1

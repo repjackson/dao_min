@@ -44,42 +44,45 @@ template(name='nav')
                 .ui.big.circular.label  
                     +loginButtons     
                 if currentUser      
-                    .ui.icon.circular.button.add_concept(title='add concept')
+                    .ui.icon.circular.button.add_post(title='add post')
                         i.large.plus.icon   
 
 
 template(name='home')                    
     .ui.stackable.padded.grid
-        if currentUser 
-            .one.column.row
-                .column
-                    each unanswered_concepts
-                        +concept_segment
+        //- if currentUser 
+        //-     .one.column.row
+        //-         .column
+        //-             each unanswered_posts
+        //-                 +post_segment
         .one.column.row
             .center.aligned.column
-                +concept_cloud
+                +cloud
                 .ui.big.link.list 
                     each docs 
-                        a.item(href="/concept/#{_id}/view") #{title}
+                        a.item(href="/post/#{_id}/view")
+                            |view
+                        each tags 
+                            .ui.large.label #{this}
 
 
 
-template(name='concept_cloud')
+template(name='cloud')
     //- #cloud
-    .ui.inline.grey.header
-        i.user.outline.icon
-    if selected_upvoters
-        #clear_upvoters.ui.active.icon.large.compact.button
-            i.remove.icon
-        each selected_upvoters
-            .unselect_upvoter.ui.active.large.compact.button
-                strong #{this}
-    each all_upvoters
-        .ui.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
-            strong #{this.name}
-    .spacer
-    .ui.inline.grey.header
-        i.tag.icon
+    //- .ui.inline.grey.header
+    //-     i.user.outline.icon
+    //- if selected_upvoters
+    //-     #clear_upvoters.ui.active.icon.large.compact.button
+    //-         i.remove.icon
+    //-     each selected_upvoters
+    //-         .unselect_upvoter.ui.active.large.compact.button
+    //-             strong #{this}
+    //- each all_upvoters
+    //-     .ui.large.compact.button.select_upvoter(class=cloud_upvoter_class) 
+    //-         strong #{this.name}
+    //- .spacer
+    //- .ui.inline.grey.header
+    //-     i.tag.icon
     .ui.left.icon.input
         i.search.icon
         input#search(type='text' placeholder='search' autocomplete="off")
@@ -95,23 +98,24 @@ template(name='concept_cloud')
             strong #{this.name}
 
 
-template(name='concept_segment')
+template(name='post_segment')
     //- .ui.card    
     .ui.center.aligned.segment
+        each tags 
+            .ui.header #{this} 
         .ui.large.header #{title}
-        +response_edit
         
 
 
 
-template(name='concept_view')
+template(name='post_view')
     with current_doc
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column
                     .ui.large.inline.header #{title}
                     if can_edit
-                        a.ui.icon.circular.button(href="/concept/#{_id}/edit")
+                        a.ui.icon.circular.button(href="/post/#{_id}/edit")
                             i.pencil.icon
                         //- +remove_button
                     //- +voting_full
@@ -119,49 +123,34 @@ template(name='concept_view')
                 .fifteen.wide.column            
                     each tags 
                         .ui.large.label #{this}
-            .centered.row
-                .ten.wide.column   
-                    .ui.header my response
-                    +response_edit
-                    .ui.header tag responses
-                    each responses 
-                        .ui.segment 
-                            each tags 
-                                .ui.large.label #{this}
-                            .ui.header by #{_author_username}
-                                
+                      .ui.header #{_author_username}          
 
-template(name='concept_edit')
+
+
+
+
+template(name='post_edit')
     with current_doc
         .ui.stackable.padded.grid
             .centered.row
                 .ten.wide.center.aligned.column 
                     .ui.inline.header 
                         | edit '#{title}'
-                    a.ui.big.icon.circular.button(href="/concept/#{_id}/view" title='save')
+                    a.ui.big.icon.circular.button(href="/post/#{_id}/view" title='save')
                         //- |save
                         i.big.checkmark.icon
                     +remove_button
             .centered.row
                 .fifteen.wide.column 
-                    .ui.inline.grey.header concept
-                    .ui.fluid.big.input
-                        input.edit_title(type='text' value=title autocomplete="off")
+                    .ui.inline.grey.header tags
+                    .ui.icon.input
+                        i.plus.icon
+                        input.new_tag(type='text' autocomplete="off")
+                    each tags
+                        +tag_button
+                    +remove_button
+
     
-    
-template(name='response_edit')
-    unless my_response 
-        .ui.button.add_response
-            |add response
-    else 
-        with my_response 
-            .ui.inline.grey.header tags
-            .ui.icon.input
-                i.plus.icon
-                input.new_tag(type='text' autocomplete="off")
-            each tags
-                +tag_button
-            +remove_button
                 
 template(name='tag_button')                
     .ui.large.label
